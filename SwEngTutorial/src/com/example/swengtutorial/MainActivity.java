@@ -8,6 +8,11 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+/** Defines the activity launched when the app starts.
+ * 
+ * @author Philémon Favrod (philemon.favrod@epfl.ch)
+ *
+ */
 public class MainActivity extends Activity {
 
     @Override

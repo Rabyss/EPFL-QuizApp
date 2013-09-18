@@ -6,6 +6,11 @@ import android.content.Intent;
 import android.view.Menu;
 import android.widget.TextView;
 
+/** Defines the activity resulting from a click on the button.
+ * 
+ * @author Philémon Favrod (philemon.favrod@epfl.ch)
+ *
+ */
 public class ShowMessageActivity extends Activity {
 
 	@Override
