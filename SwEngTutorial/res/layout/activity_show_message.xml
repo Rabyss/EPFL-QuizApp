@@ -9,8 +9,8 @@
     tools:context=".ShowMessageActivity" >
 
     <TextView
-        android:id="@+id/displayed_text"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:id="@+id/displayed_text" />
 
 </RelativeLayout>

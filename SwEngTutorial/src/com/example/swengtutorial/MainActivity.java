@@ -8,9 +8,9 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-/** Defines the activity launched when the app starts.
+/**
  * 
- * @author Philémon Favrod (philemon.favrod@epfl.ch)
+ * @author andy17
  *
  */
 public class MainActivity extends Activity {
@@ -30,7 +30,7 @@ public class MainActivity extends Activity {
     }
     
     public void displayMessage(View view) {
-    	Toast.makeText(this, "Display has been clicked", Toast.LENGTH_SHORT).show();
+    	Toast.makeText(this, "You clicked Display!", Toast.LENGTH_SHORT).show();
     	Intent displayActivityIntent = new Intent(this, ShowMessageActivity.class);
     	
     	EditText editText = (EditText) findViewById(R.id.edit_text);
@@ -39,4 +39,5 @@ public class MainActivity extends Activity {
     	displayActivityIntent.putExtra(this.getClass().getName(), userText);
     	startActivity(displayActivityIntent);
     }
+    
 }

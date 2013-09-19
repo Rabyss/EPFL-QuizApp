@@ -6,9 +6,8 @@ import android.content.Intent;
 import android.view.Menu;
 import android.widget.TextView;
 
-/** Defines the activity resulting from a click on the button.
- * 
- * @author Philémon Favrod (philemon.favrod@epfl.ch)
+/**
+ * @author andy17
  *
  */
 public class ShowMessageActivity extends Activity {
@@ -18,9 +17,8 @@ public class ShowMessageActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_show_message);
 		
-		Intent callingIntent = getIntent();
-		
-		String userText = callingIntent.getStringExtra(MainActivity.class.getName());
+		Intent intent = getIntent();
+		String userText = intent.getStringExtra(MainActivity.class.getName());
 		
 		TextView textView = (TextView) findViewById(R.id.displayed_text);
 		textView.setText(userText);
