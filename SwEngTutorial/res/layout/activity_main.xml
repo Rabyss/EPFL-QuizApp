@@ -7,17 +7,16 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainActivity" >
-
+    
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-    	android:hint="@string/edit_message"
-    	android:id="@+id/edit_text" />
-    
+        android:hint="@string/edit_message"
+        android:id="@+id/edit_text" />
     <Button
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" 
+        android:layout_height="wrap_content"
         android:text="@string/send_button"
-        android:onClick="displayMessage"/>
+        android:onClick="displayMessage" />
 
 </LinearLayout>
