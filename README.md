@@ -8,8 +8,8 @@ More to come...
 
 <table>
 	<tr><th>16 sept</th> <td> - </td></tr>
-	<tr><th>23 sept</th> <td>Phil</td></tr>
-	<tr><th>30 sept</th> <td>Elieva</td></tr>
+	<tr><th>23 sept</th> <td>Elieva</td></tr>
+	<tr><th>30 sept</th> <td>Phil</td></tr>
 	<tr><th>7  oct </th> <td>Sacha</td></tr>
 	<tr><th>14 oct </th> <td>Jérémy</td></tr>
 	<tr><th>21 oct </th> <td>Andy</td></tr>
