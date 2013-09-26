@@ -17,8 +17,13 @@ public class QuizQuestionModel {
     private final String[] mTags;
     private final String mOwner;
 
-    public QuizQuestionModel(int id, String question, String[] answers,
-            int solutionIndex, String[] tags, String owner) {
+    public QuizQuestionModel(int id, 
+                             String question, 
+                             String[] answers,
+                             int solutionIndex, 
+                             String[] tags, 
+                             String owner) 
+    {
         mId = id;
         mQuestion = question;
         mAnswers = answers;

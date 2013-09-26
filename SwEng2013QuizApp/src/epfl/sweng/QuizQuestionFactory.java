@@ -15,8 +15,7 @@ public class QuizQuestionFactory {
     
     private static final String REQUEST_URL = "https://sweng-quiz.appspot.com/quizquestions/random";
     
-    public static QuizQuestionModel getRandomQuizQuestion() {
-        
+    public static QuizQuestionModel getRandomQuizQuestion() {    
         HttpGet randomQuestionRequest = new HttpGet(REQUEST_URL);
         ResponseHandler<String> randomQuestionHandler = new BasicResponseHandler();
         
