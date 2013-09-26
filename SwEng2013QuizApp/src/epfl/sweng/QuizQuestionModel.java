@@ -4,8 +4,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/** Represents a question of the quiz.
- *  @author Philemon Favrod (philemon.favrod@epfl.ch)
+/**
+ * Represents a question of the quiz.
+ * 
+ * @author Philemon Favrod (philemon.favrod@epfl.ch)
  */
 public class QuizQuestionModel {
     private final int mId;
@@ -14,14 +16,15 @@ public class QuizQuestionModel {
     private final int mSolutionIndex;
     private final String[] mTags;
     private final String mOwner;
-    
-    public QuizQuestionModel(int id, String question, String[] answers, int solutionIndex, String[] tags, String owner) {
+
+    public QuizQuestionModel(int id, String question, String[] answers,
+            int solutionIndex, String[] tags, String owner) {
         mId = id;
         mQuestion = question;
         mAnswers = answers;
         mSolutionIndex = solutionIndex;
         mTags = tags;
-	    mOwner = owner;
+        mOwner = owner;
     }
 
     public QuizQuestionModel(JSONObject jsonModel) throws JSONException {
@@ -32,15 +35,7 @@ public class QuizQuestionModel {
         mTags = extractArrayFromJson(jsonModel.getJSONArray("tags"));
         mOwner = jsonModel.getString("owner");
     }
-    
-    private static String[] extractArrayFromJson(JSONArray jsonArray) throws JSONException {
-        String[] stringArray = new String[jsonArray.length()];
-        for (int i = 0; i < stringArray.length; i++) {
-            stringArray[i] = jsonArray.getString(i);
-        }
-        return stringArray;
-    }
-    
+
     public int getId() {
         return mId;
     }
@@ -53,8 +48,9 @@ public class QuizQuestionModel {
         return mAnswers;
     }
 
-    /** Checks whether the given index is the index of the solution.
-    */
+    /**
+     * Checks whether the given index is the index of the solution.
+     */
     public boolean isSolution(int index) {
         return (mSolutionIndex == index);
     }
@@ -66,5 +62,14 @@ public class QuizQuestionModel {
     public String getOwner() {
         return mOwner;
     }
-    
+
+    private static String[] extractArrayFromJson(JSONArray jsonArray)
+            throws JSONException {
+        String[] stringArray = new String[jsonArray.length()];
+        for (int i = 0; i < stringArray.length; i++) {
+            stringArray[i] = jsonArray.getString(i);
+        }
+        return stringArray;
+    }
+
 }
