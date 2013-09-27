@@ -25,8 +25,7 @@ public class QuizQuestion {
                              String[] answers,
                              Integer solutionIndex, 
                              String[] tags, 
-                             String owner) 
-    {
+                             String owner) {
         mId = id;
         mQuestion = question;
         mAnswers = answers;
@@ -60,7 +59,7 @@ public class QuizQuestion {
      * Checks whether the given index is the index of the solution.
      */
     public boolean isSolution(int index) {
-        return (mSolutionIndex == index);
+        return mSolutionIndex == index;
     }
 
     public String[] getTags() {
@@ -95,7 +94,7 @@ public class QuizQuestion {
     }
     
     private static String[] extractArrayFromJson(JSONArray jsonArray)
-            throws JSONException {
+    	throws JSONException {
         String[] stringArray = new String[jsonArray.length()];
         for (int i = 0; i < stringArray.length; i++) {
             stringArray[i] = jsonArray.getString(i);
