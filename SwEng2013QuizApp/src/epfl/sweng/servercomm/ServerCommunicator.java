@@ -17,6 +17,7 @@ import epfl.sweng.QuizQuestion;
 public final class ServerCommunicator {
 
 	private static ServerCommunicator mInstance = null;
+	private final String REQUEST_URL = "";
 	
 	private ServerCommunicator() {
 		
@@ -36,8 +37,9 @@ public final class ServerCommunicator {
 			@Override
 			protected QuizQuestion doInBackground(Void... params) {
 			    
+			    //Construct the request
+			    HttpGet questionRequest = new HttpGet(REQUEST_URL);
 			    
-				// TODO Auto-generated method stub
 				return null;
 			}
 
