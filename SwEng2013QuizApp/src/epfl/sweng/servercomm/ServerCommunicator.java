@@ -1,7 +1,6 @@
 package epfl.sweng.servercomm;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.concurrent.ExecutionException;
 
 import org.apache.http.client.ClientProtocolException;
@@ -10,9 +9,10 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicResponseHandler;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.os.AsyncTask;
-import android.widget.Toast;
 import epfl.sweng.QuizQuestion;
 
 /**
@@ -39,23 +39,47 @@ public final class ServerCommunicator {
 	}
 
 	public QuizQuestion getRandomQuestion() throws InterruptedException,
-			ExecutionException {
+			ExecutionException, AssertionError {
+		// Creates an asynchronous task to getch from the server.
 		AsyncTask<Void, Void, QuizQuestion> fetchTask = new AsyncTask<Void, Void, QuizQuestion>() {
 
 			@Override
 			protected QuizQuestion doInBackground(Void... params) {
 
 				// Construct the request
-				HttpGet questionRequest = new HttpGet(SERVER_URL);
+				HttpGet questionFetchRequest = new HttpGet(SERVER_URL
+						+ "/quizquestions/random");
+				ResponseHandler<String> questionFetchHandler = new BasicResponseHandler();
 
-				return null;
+				String strRandomQuestion;
+				try {
+					strRandomQuestion = SwengHttpClientFactory
+							.getInstance()
+							.execute(questionFetchRequest, questionFetchHandler);
+					JSONObject jsonModel = new JSONObject(strRandomQuestion);
+					return new QuizQuestion(jsonModel);
+				} catch (ClientProtocolException e) {
+					return null;
+				} catch (IOException e) {
+					return null;
+				} catch (JSONException e) {
+					return null;
+				}
 			}
 
 		};
-		return fetchTask.execute().get();
+
+		// Waits for the anser.
+		QuizQuestion randomQuestion = fetchTask.execute().get();
+
+		// Makes sure the server was reachable
+		assert randomQuestion != null;
+
+		return randomQuestion;
 	}
 
-	public void submitQuizQuestion(QuizQuestion question) throws InterruptedException, ExecutionException {
+	public void submitQuizQuestion(QuizQuestion question) 
+		throws InterruptedException, ExecutionException, AssertionError {
 
 		AsyncTask<QuizQuestion, Void, String> submitTask = new AsyncTask<QuizQuestion, Void, String>() {
 
@@ -75,7 +99,7 @@ public final class ServerCommunicator {
 				} catch (IOException e) {
 					response = null;
 				}
-				
+
 				assert response != null;
 				return response;
 			}
