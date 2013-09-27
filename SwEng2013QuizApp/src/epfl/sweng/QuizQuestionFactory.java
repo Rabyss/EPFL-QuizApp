@@ -15,17 +15,17 @@ public class QuizQuestionFactory {
     
     private static final String REQUEST_URL = "https://sweng-quiz.appspot.com/quizquestions/random";
     
-    public static QuizQuestionModel getRandomQuizQuestion() {    
+    public static QuizQuestion getRandomQuizQuestion() {    
         HttpGet randomQuestionRequest = new HttpGet(REQUEST_URL);
         ResponseHandler<String> randomQuestionHandler = new BasicResponseHandler();
         
-        QuizQuestionModel randomQuestion = null;
+        QuizQuestion randomQuestion = null;
         
         try {
             
             String randomQuestionRaw = SwengHttpClientFactory.getInstance().execute(
                     randomQuestionRequest, randomQuestionHandler);
-            randomQuestion = new QuizQuestionModel(new JSONObject(randomQuestionRaw));
+            randomQuestion = new QuizQuestion(new JSONObject(randomQuestionRaw));
         } catch (JSONException e) {
             // TODO Handle parsing error.
         } catch (ClientProtocolException e) {
