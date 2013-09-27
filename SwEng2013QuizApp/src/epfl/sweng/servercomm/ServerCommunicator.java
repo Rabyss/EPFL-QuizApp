@@ -1,12 +1,18 @@
 package epfl.sweng.servercomm;
 
+import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+
 import org.apache.http.impl.client.BasicResponseHandler;
+import org.json.JSONException;
 import org.json.JSONObject;
+
 
 import android.os.AsyncTask;
 import epfl.sweng.QuizQuestion;
@@ -21,7 +27,7 @@ import epfl.sweng.QuizQuestion;
 public final class ServerCommunicator {
 
 	private static ServerCommunicator mInstance = null;
-	private final String REQUEST_URL = "";
+	private final static String SERVER_URL = "https://sweng-quiz.appspot.com";
 	
 	private ServerCommunicator() {
 		
@@ -34,23 +40,44 @@ public final class ServerCommunicator {
 		return mInstance;
 	}
 	
-	public QuizQuestion getRandomQuestion() throws InterruptedException,
-			ExecutionException {
+	public QuizQuestion getRandomQuestion() 
+	        throws InterruptedException, ExecutionException, AssertionError 
+	{
+	    //Creates an asynchronous task to getch from the server.
 		AsyncTask<Void, Void, QuizQuestion> fetchTask = new AsyncTask<Void, Void, QuizQuestion>() {
 
 			@Override
 			protected QuizQuestion doInBackground(Void... params) {
 			    
 			    //Construct the request
-			    HttpGet questionRequest = new HttpGet(REQUEST_URL);
-			    ResponseHandler<String> firstHandler = new BasicResponseHandler();
-			    String firstQuestion = SwengHttpClientFactory.getInstance().execute(firstRandom, firstHandler);
-			    JSONObject 
-				return null;
+			    HttpGet questionFetchRequest = new HttpGet(SERVER_URL + "/quizquestions/random");
+			    ResponseHandler<String> questionFetchHandler = new BasicResponseHandler();
+			    
+			        String strRandomQuestion;
+                    try {
+                        strRandomQuestion = SwengHttpClientFactory.getInstance().execute(questionFetchRequest, questionFetchHandler);
+                        JSONObject jsonModel = new JSONObject(strRandomQuestion);
+                        return new QuizQuestion(jsonModel);
+                    } catch (ClientProtocolException e) {
+                        return null;
+                    } catch (IOException e) {
+                        return null;
+                    } catch (JSONException e) {
+                        return null;
+                    }
+			        
+			    
 			}
 
 		};
-		return fetchTask.execute().get();
+		
+		//Waits for the anser.
+		QuizQuestion randomQuestion = fetchTask.execute().get();
+		
+		//Makes sure the server was reachable
+		assert randomQuestion != null;
+		
+		return randomQuestion;
 	}
 	
 	public void submitQuizQuestion(QuizQuestion question) throws InterruptedException, ExecutionException {
@@ -59,7 +86,8 @@ public final class ServerCommunicator {
 
 			@Override
 			protected Void doInBackground(QuizQuestion... params) {
-				// TODO Auto-generated method stub
+				HttpPost post = new HttpPost(SERVER_URL + "/quizquestions/");
+				
 				return null;
 			}
 
