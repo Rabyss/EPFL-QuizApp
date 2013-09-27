@@ -8,7 +8,7 @@ import android.app.Activity;
 import android.view.Menu;
 
 /**
- * TODO Commentaire Javadoc
+ * Entry Point of the SwEng2013QuizApp
  */
 public class MainActivity extends Activity {
 
@@ -17,6 +17,7 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
+		// let the testing infrastructure know that entry point has been initialized
 		TestingTransactions.check(TTChecks.MAIN_ACTIVITY_SHOWN);
 	}
 
