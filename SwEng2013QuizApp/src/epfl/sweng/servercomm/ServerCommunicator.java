@@ -2,7 +2,11 @@ package epfl.sweng.servercomm;
 
 import java.util.concurrent.ExecutionException;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.BasicResponseHandler;
+import org.json.JSONObject;
 
 import android.os.AsyncTask;
 import epfl.sweng.QuizQuestion;
@@ -39,7 +43,9 @@ public final class ServerCommunicator {
 			    
 			    //Construct the request
 			    HttpGet questionRequest = new HttpGet(REQUEST_URL);
-			    
+			    ResponseHandler<String> firstHandler = new BasicResponseHandler();
+			    String firstQuestion = SwengHttpClientFactory.getInstance().execute(firstRandom, firstHandler);
+			    JSONObject 
 				return null;
 			}
 
