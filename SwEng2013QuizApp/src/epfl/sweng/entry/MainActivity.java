@@ -1,11 +1,14 @@
 package epfl.sweng.entry;
 
 import epfl.sweng.R;
+import epfl.sweng.editquestions.EditQuestionActivity;
 import epfl.sweng.testing.TestingTransactions;
 import epfl.sweng.testing.TestingTransactions.TTChecks;
 import android.os.Bundle;
 import android.app.Activity;
+import android.content.Intent;
 import android.view.Menu;
+import android.view.View;
 
 /**
  * Entry Point of the SwEng2013QuizApp
@@ -26,6 +29,11 @@ public class MainActivity extends Activity {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
+	}
+	
+	public void displayEditQuestions(View view) {
+		Intent displayEditQuestionsIntent = new Intent(this, EditQuestionActivity.class);
+		startActivity(displayEditQuestionsIntent);
 	}
 
 }
