@@ -1,8 +1,22 @@
 package epfl.sweng;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
 import java.util.HashMap;
 
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.BasicResponseHandler;
+import org.json.JSONArray;
 import org.json.JSONObject;
+
+import android.os.AsyncTask;
+import android.widget.Toast;
+
+import epfl.sweng.servercomm.SwengHttpClientFactory;
 
 /**
  * 
@@ -11,12 +25,14 @@ import org.json.JSONObject;
  * @author Rabyss (jeremy.rabasco@epfl.ch)
  * 
  */
-public class QuizQuestionSubmit {
+public class QuizQuestionSubmit extends AsyncTask<Void, Void, String> {
 
 	private String mQuestion;
 	private String[] mAnswers;
 	private int mSolutionIndex;
 	private String[] mTags;
+
+	private final static String SERVER_URL = "https://sweng-quiz.appspot.com";
 
 	public QuizQuestionSubmit(String question, String[] answers,
 			int solutionIndex, String[] tags) {
@@ -26,35 +42,56 @@ public class QuizQuestionSubmit {
 		mTags = tags;
 	}
 
-	
-	public void submitViaObject() {
+	public String submitViaObject() {
 		HashMap<String, Object> question = new HashMap<String, Object>();
-		
+
 		question.put("question", mQuestion);
-		question.put("answers", mAnswers);
+		question.put("answers", new JSONArray(Arrays.asList(mAnswers)));
 		question.put("solutionIndex", mSolutionIndex);
-		question.put("tags", mTags);
-		
-		System.out.println(new JSONObject(question).toString());
-		
+		question.put("tags", new JSONArray(Arrays.asList(mTags)));
+
+		String questionInJSON = new JSONObject(question).toString();
+
+		HttpPost post = new HttpPost(SERVER_URL + "/quizquestions/");
+
+		try {
+			post.setEntity(new StringEntity(questionInJSON));
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		post.setHeader("Content-type", "application/json");
+		ResponseHandler<String> handler = new BasicResponseHandler();
+		String response = "";
+		try {
+			response = SwengHttpClientFactory.getInstance().execute(post,
+					handler);
+		} catch (ClientProtocolException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return response;
 	}
-	
-	
+
 	public void submitViaString() {
-		
-		
-		
-	}
-	
-	public static void main(String[] args) {
-
-		String question = "What is the answer to the ultimate question about the life and the universe ?";
-		String[] answers = {"24", "God", "Satan", "42"};
-		final int solutionIndex = 3;
-		String[] tags = {"h2g2", "yolo", "swag", "bff"};
-
-		new QuizQuestionSubmit(question, answers, solutionIndex, tags)
-				.submitViaObject();
 
 	}
+
+	@Override
+	protected String doInBackground(Void... params) {
+		// TODO Auto-generated method stub
+		return submitViaObject();
+	}
+
+	@Override
+	protected void onPostExecute(String response) {
+		if (response != null) {
+		} else {
+		}
+
+	}
+
 }
