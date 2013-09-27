@@ -6,5 +6,8 @@
     <string name="action_settings">Settings</string>
     <string name="show_random_question">Show a random question.</string>
     <string name="submit_quiz">Submit a quiz question.</string>
+    <string name="title_activity_show_questions">ShowQuestionsActivity</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_show_answer">ShowAnswer</string>
 
 </resources>
