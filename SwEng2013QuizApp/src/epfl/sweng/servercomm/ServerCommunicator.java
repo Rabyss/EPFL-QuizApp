@@ -3,6 +3,7 @@ package epfl.sweng.servercomm;
 import java.util.concurrent.ExecutionException;
 
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 
 import android.os.AsyncTask;
 import epfl.sweng.QuizQuestion;
@@ -17,7 +18,7 @@ import epfl.sweng.QuizQuestion;
 public final class ServerCommunicator {
 
 	private static ServerCommunicator mInstance = null;
-	private final String REQUEST_URL = "";
+	private final static String SERVER_URL = "https://sweng-quiz.appspot.com";
 	
 	private ServerCommunicator() {
 		
@@ -38,7 +39,7 @@ public final class ServerCommunicator {
 			protected QuizQuestion doInBackground(Void... params) {
 			    
 			    //Construct the request
-			    HttpGet questionRequest = new HttpGet(REQUEST_URL);
+			    HttpGet questionRequest = new HttpGet(SERVER_URL);
 			    
 				return null;
 			}
@@ -53,7 +54,8 @@ public final class ServerCommunicator {
 
 			@Override
 			protected Void doInBackground(QuizQuestion... params) {
-				// TODO Auto-generated method stub
+				HttpPost post = new HttpPost(SERVER_URL + "/quizquestions/");
+				
 				return null;
 			}
 
