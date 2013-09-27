@@ -1,5 +1,6 @@
 package epfl.sweng;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
 import org.json.JSONArray;
@@ -12,17 +13,17 @@ import org.json.JSONObject;
  * @author Philemon Favrod (philemon.favrod@epfl.ch)
  */
 public class QuizQuestion {
-    private final int mId;
+    private final Integer mId;
     private final String mQuestion;
     private final String[] mAnswers;
-    private final int mSolutionIndex;
+    private final Integer mSolutionIndex;
     private final String[] mTags;
     private final String mOwner;
 
-    public QuizQuestion(int id, 
+    public QuizQuestion(Integer id, 
                              String question, 
                              String[] answers,
-                             int solutionIndex, 
+                             Integer solutionIndex, 
                              String[] tags, 
                              String owner) 
     {
@@ -76,12 +77,19 @@ public class QuizQuestion {
      */
     public String toJSON() {
         HashMap<String, Object> questionMap = new HashMap<String, Object>();
-        questionMap.put("id", mId);
+        
+        if (mId != null) {
+            questionMap.put("id", mId);
+        }
+        
         questionMap.put("question", mQuestion);
-        questionMap.put("answers", mAnswers);
+        questionMap.put("answers", new JSONArray(Arrays.asList(mAnswers)));
         questionMap.put("solutionIndex", mSolutionIndex);
-        questionMap.put("tags", mTags);
-        questionMap.put("owner", mOwner);
+        questionMap.put("tags", new JSONArray(Arrays.asList(mTags)));
+        
+        if (mOwner != null) {
+            questionMap.put("owner", mOwner);
+        }
         
         return new JSONObject(questionMap).toString();
     }

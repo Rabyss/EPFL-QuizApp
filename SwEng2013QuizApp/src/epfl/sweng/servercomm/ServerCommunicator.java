@@ -2,6 +2,8 @@ package epfl.sweng.servercomm;
 
 import java.util.concurrent.ExecutionException;
 
+import org.apache.http.client.methods.HttpGet;
+
 import android.os.AsyncTask;
 import epfl.sweng.QuizQuestion;
 
@@ -9,9 +11,8 @@ import epfl.sweng.QuizQuestion;
  * 
  * Handles communication with the server.
  * 
- * @author Jérémy Rabasco (jeremy.rabasco@epfl.ch) & Philémon Favrod
- *         (philemon.favrod@epfl.ch)
- * 
+ * @author  Jeremy Rabasco (jeremy.rabasco@epfl.ch),
+ *          Philemon Favrod (philemon.favrod@epfl.ch)
  */
 public final class ServerCommunicator {
 
@@ -34,6 +35,8 @@ public final class ServerCommunicator {
 
 			@Override
 			protected QuizQuestion doInBackground(Void... params) {
+			    
+			    
 				// TODO Auto-generated method stub
 				return null;
 			}
