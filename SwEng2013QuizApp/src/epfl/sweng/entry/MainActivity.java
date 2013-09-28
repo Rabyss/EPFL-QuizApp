@@ -1,11 +1,15 @@
 package epfl.sweng.entry;
 
 import epfl.sweng.R;
+import epfl.sweng.showquestions.ShowQuestionsActivity;
 import epfl.sweng.testing.TestingTransactions;
 import epfl.sweng.testing.TestingTransactions.TTChecks;
 import android.os.Bundle;
 import android.app.Activity;
+import android.content.Intent;
 import android.view.Menu;
+import android.view.View;
+import android.widget.Toast;
 
 /**
  * Entry Point of the SwEng2013QuizApp
@@ -27,5 +31,9 @@ public class MainActivity extends Activity {
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
-
+	public void displayShowQuestion(View view) {
+	    Toast.makeText(this, "You clicked diplay a random question", Toast.LENGTH_SHORT).show();
+	    Intent displayActivityIntent = new Intent(this, ShowQuestionsActivity.class);
+	    startActivity(displayActivityIntent);
+	}
 }

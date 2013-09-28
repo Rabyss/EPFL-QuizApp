@@ -15,7 +15,8 @@
         android:layout_alignLeft="@+id/button2"
         android:layout_alignParentTop="true"
         android:layout_marginTop="112dp"
-        android:text="@string/show_random_question" />
+        android:text="@string/show_random_question" 
+        android:onClick="displayShowQuestion"/>
 
     <Button
         android:id="@+id/button2"
