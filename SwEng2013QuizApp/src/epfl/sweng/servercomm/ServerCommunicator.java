@@ -31,7 +31,7 @@ public final class ServerCommunicator {
 
 	}
 
-	public synchronized ServerCommunicator getInstance() {
+	public static synchronized ServerCommunicator getInstance() {
 		if (mInstance == null) {
 			mInstance = new ServerCommunicator();
 		}
