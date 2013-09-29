@@ -6,9 +6,10 @@ import java.util.concurrent.ExecutionException;
 import epfl.sweng.QuizQuestion;
 import epfl.sweng.R;
 import epfl.sweng.servercomm.ServerCommunicator;
+import epfl.sweng.testing.TestingTransactions;
+import epfl.sweng.testing.TestingTransactions.TTChecks;
 import android.os.Bundle;
 import android.app.Activity;
-import android.content.Intent;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -16,9 +17,9 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
+
 /**
- * Upload a new question and display it
+ * Uploads a new question and displays it
  *
  */
 public class ShowQuestionsActivity extends Activity {
@@ -28,6 +29,7 @@ public class ShowQuestionsActivity extends Activity {
 	private Button nextQuestion;
 	private TextView[] correctness;
 	private int indexButton;
+	private LinearLayout linearLayout;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -45,7 +47,7 @@ public class ShowQuestionsActivity extends Activity {
 	 */
 	public void updateQuestion() {
 		//creates the main layout
-		LinearLayout linearLayout = new LinearLayout(this);
+		linearLayout = new LinearLayout(this);
 		linearLayout.setOrientation(LinearLayout.VERTICAL);
 		linearLayout.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 		//uploads a random question from the server
@@ -74,14 +76,23 @@ public class ShowQuestionsActivity extends Activity {
 			}
 		});
 		
+		displayAnswer();
+		
+		linearLayout.addView(nextQuestion);
+		displayTags();
+		displaySolutionIndex();
+		setContentView(linearLayout);
+		TestingTransactions.check(TTChecks.QUESTION_SHOWN);
+	}
+	public void displayAnswer() {
 		int totalAnswer=mRandomQuestion.getAnswers().length;
 		answer=new Button[totalAnswer];
 		correctness=new TextView[totalAnswer];
 		//initializes all the buttons of answer
 		for (indexButton=0; indexButton<totalAnswer; indexButton++) {
-			LinearLayout buttonLayout=new LinearLayout(this);
-			buttonLayout.setOrientation(LinearLayout.HORIZONTAL);
-			buttonLayout.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+			LinearLayout answerLayout=new LinearLayout(this);
+			answerLayout.setOrientation(LinearLayout.HORIZONTAL);
+			answerLayout.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 			
 			correctness[indexButton] = new TextView(this);
 			if (mRandomQuestion.isSolution(indexButton)) {
@@ -91,9 +102,9 @@ public class ShowQuestionsActivity extends Activity {
 			}
 			correctness[indexButton].setVisibility(View.INVISIBLE);
 			answer[indexButton] = new Button(this);
+			answer[indexButton].setClickable(true);
 			answer[indexButton].setText(mRandomQuestion.getAnswers()[indexButton]);
-			//answer[indexButton].setTag(mRandomQuestion.getTags()[indexButton]);
-			answer[indexButton].setOnClickListener(new OnClickListener() {
+			answer[indexButton].setOnClickListener(new View.OnClickListener() {
 				
 					@Override
 					public void onClick(View v) {
@@ -114,14 +125,28 @@ public class ShowQuestionsActivity extends Activity {
 								}
 							}
 						}
+						TestingTransactions.check(TTChecks.ANSWER_SELECTED);
 					}
 				});
-			buttonLayout.addView(answer[indexButton]);
-			buttonLayout.addView(correctness[indexButton]);
-			linearLayout.addView(buttonLayout);
+			answerLayout.addView(answer[indexButton]);
+			answerLayout.addView(correctness[indexButton]);
+			linearLayout.addView(answerLayout);
 		}
-		linearLayout.addView(nextQuestion);
-		setContentView(linearLayout);
 	}
-	
+	public void displayTags() {
+		int totalTags = mRandomQuestion.getTags().length;
+		for (int i=0; i<totalTags; i++) {
+			TextView tagText= new TextView(this);
+			tagText.setText(mRandomQuestion.getTags()[i]);
+			linearLayout.addView(tagText);
+		}
+		
+	}
+	public void displaySolutionIndex() {
+		TextView solutionIndex= new TextView(this);
+		int index= mRandomQuestion.getSolutionIndex();
+		String solutionText= String.valueOf(index);
+		solutionIndex.setText(solutionText);
+		linearLayout.addView(solutionIndex);
+	}
 }

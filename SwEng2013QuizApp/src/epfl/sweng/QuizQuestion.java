@@ -69,6 +69,9 @@ public class QuizQuestion {
     public String getOwner() {
         return mOwner;
     }
+    public int getSolutionIndex() {
+    	return mSolutionIndex;
+    }
 
     /**Converts the object to its JSON description.
      * 
