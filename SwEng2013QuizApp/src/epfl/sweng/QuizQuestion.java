@@ -96,6 +96,22 @@ public class QuizQuestion {
         return new JSONObject(questionMap).toString();
     }
     
+    public void audit() throws IllegalArgumentException {
+        if (mQuestion == null || mQuestion.isEmpty()) {
+            throw new IllegalArgumentException("Question cannot be null or empty.");
+        } else if (mAnswers == null || mAnswers.length < 1) {
+            throw new IllegalArgumentException("Question must have answer.");
+        } else if (mSolutionIndex < 0 || mSolutionIndex >= mAnswers.length) {
+            throw new IllegalArgumentException("The index of the solution is out of array bounds.");
+        }
+        
+        for (String answer : mAnswers) {
+            if (answer == null || answer.isEmpty()) {
+                throw new IllegalArgumentException("Question have empty answers.");
+            }
+        }
+    }
+    
     private static String[] extractArrayFromJson(JSONArray jsonArray)
     	throws JSONException {
         String[] stringArray = new String[jsonArray.length()];
