@@ -1,9 +1,11 @@
 package epfl.sweng.editquestions;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 import epfl.sweng.QuizQuestion;
 import epfl.sweng.R;
+import epfl.sweng.servercomm.ServerCommunicator;
 import epfl.sweng.testing.TestingTransactions;
 import epfl.sweng.testing.TestingTransactions.TTChecks;
 import android.os.Bundle;
@@ -73,6 +75,19 @@ public class EditQuestionActivity extends Activity {
 		
 		QuizQuestion quizQuestion = new QuizQuestion(null, question, (String[]) answersText.toArray(),
 				solutionIndex, tags, null);
+		
+		try {
+			ServerCommunicator.getInstance().submitQuizQuestion(quizQuestion);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (AssertionError e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }
