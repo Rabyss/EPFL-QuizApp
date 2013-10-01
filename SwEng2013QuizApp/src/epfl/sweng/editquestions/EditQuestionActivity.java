@@ -6,10 +6,12 @@ import java.util.concurrent.ExecutionException;
 import epfl.sweng.QuizQuestion;
 import epfl.sweng.R;
 import epfl.sweng.servercomm.ServerCommunicator;
+import epfl.sweng.showquestions.ShowQuestionsActivity;
 import epfl.sweng.testing.TestingTransactions;
 import epfl.sweng.testing.TestingTransactions.TTChecks;
 import android.os.Bundle;
 import android.app.Activity;
+import android.content.Intent;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
@@ -73,11 +75,11 @@ public class EditQuestionActivity extends Activity {
 		String tagsText = ((EditText) findViewById(R.id.editTags)).getText().toString();
 		String[] tags = tagsText.split("\\W+");
 		
-		QuizQuestion quizQuestion = new QuizQuestion(null, question, (String[]) answersText.toArray(),
+		QuizQuestion quizQuestion = new QuizQuestion(null, question, answersText.toArray(new String[answers.size()]),
 				solutionIndex, tags, null);
 		
 		try {
-			ServerCommunicator.getInstance().submitQuizQuestion(quizQuestion);
+			System.out.println(ServerCommunicator.getInstance().submitQuizQuestion(quizQuestion));
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -88,6 +90,10 @@ public class EditQuestionActivity extends Activity {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		Toast.makeText(this, "Successful Submit", 1000).show();
+		Intent displayActivityIntent = new Intent(this, ShowQuestionsActivity.class);
+	    startActivity(displayActivityIntent);
 	}
 
 }
