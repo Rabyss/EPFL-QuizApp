@@ -1,14 +1,10 @@
 package epfl.sweng.entry;
 
-import java.util.concurrent.ExecutionException;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
-import android.widget.Toast;
-import epfl.sweng.QuizQuestionSubmit;
 import epfl.sweng.R;
 import epfl.sweng.editquestions.EditQuestionActivity;
 import epfl.sweng.testing.TestingTransactions;

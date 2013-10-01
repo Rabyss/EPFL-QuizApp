@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         >
 
-        <EditText
+       <EditText
             android:id="@+id/editQuestionText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -61,7 +61,8 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentRight="true"
             android:layout_below="@+id/editTags"
-            android:text="@string/button_submit_question" />
+            android:text="@string/button_submit_question"
+            android:onClick="submitQuestion"/>
     </RelativeLayout>
 
 </ScrollView>

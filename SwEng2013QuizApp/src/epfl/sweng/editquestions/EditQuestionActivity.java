@@ -10,6 +10,8 @@ import android.app.Activity;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.Toast;
 
 /**
  * 
@@ -27,6 +29,8 @@ public class EditQuestionActivity extends Activity {
 		
 		answers = new ArrayList<Answer>();
 		answers.add(new Answer(this, (ViewGroup) findViewById(R.id.linearLayoutAnswers), true));
+		
+		findViewById(R.id.editQuestionText).requestFocus();
 		
 		// let the testing infrastructure know that edit question has been initialized
 		TestingTransactions.check(TTChecks.EDIT_QUESTIONS_SHOWN);
@@ -46,6 +50,10 @@ public class EditQuestionActivity extends Activity {
 	
 	public ArrayList<Answer> getAnswers() {
 		return answers;
+	}
+	
+	public void submitQuestion(View view) {
+		Toast.makeText(this, "Submitting", 1000).show();
 	}
 
 }

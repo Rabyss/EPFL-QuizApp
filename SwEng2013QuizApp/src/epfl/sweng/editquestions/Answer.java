@@ -21,7 +21,7 @@ public class Answer {
 	private boolean mCorrect;
 	private LinearLayout linearLayout;
 
-	public Answer(final EditQuestionActivity activity, ViewGroup view, boolean correct) {
+	public Answer(final EditQuestionActivity activity, ViewGroup view, boolean first) {
 		// Create Layout
 		linearLayout = new LinearLayout(activity);
 		linearLayout.setLayoutParams(new LayoutParams(
@@ -37,7 +37,7 @@ public class Answer {
 
 		// Create Button Correct
 		mCorrectButton = new Button(activity);
-		if (correct) {
+		if (first) {
 			mCorrectButton.setText(R.string.button_check);
 			mCorrectButton.setEnabled(false);
 			mCorrect = true;
@@ -68,6 +68,12 @@ public class Answer {
 		mRemoveButton.setText(R.string.button_remove);
 		linearLayout.addView(mRemoveButton);
 		
+		if (first) {
+			mRemoveButton.setEnabled(false);
+		} else {
+			activity.getAnswers().get(0).mRemoveButton.setEnabled(true);
+		}
+		
 		
 		// TODO Make it cleaner
 		final Answer mThis = this;
@@ -83,6 +89,10 @@ public class Answer {
 				}
 				
 				remove();
+				
+				if (answers.size() == 1) { 
+					answers.get(0).mRemoveButton.setEnabled(false);
+				}
 			}
 		});
 	}
