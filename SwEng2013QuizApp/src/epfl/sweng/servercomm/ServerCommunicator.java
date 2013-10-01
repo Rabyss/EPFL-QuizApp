@@ -24,87 +24,64 @@ import epfl.sweng.QuizQuestion;
  */
 public final class ServerCommunicator {
 
-	private static ServerCommunicator mInstance = null;
-	private final static String SERVER_URL = "https://sweng-quiz.appspot.com";
+    private static ServerCommunicator sInstance = null;
+    private final static String SERVER_URL = "https://sweng-quiz.appspot.com";
 
-	private ServerCommunicator() {
+    private ServerCommunicator() {
 
-	}
+    }
 
-	public static synchronized ServerCommunicator getInstance() {
-		if (mInstance == null) {
-			mInstance = new ServerCommunicator();
-		}
-		return mInstance;
-	}
+    public static synchronized ServerCommunicator getInstance() {
+        if (sInstance == null) {
+            sInstance = new ServerCommunicator();
+        }
+        return sInstance;
+    }
 
-	public QuizQuestion getRandomQuestion() throws InterruptedException,
-			ExecutionException, AssertionError {
-		// Creates an asynchronous task to getch from the server.
-		AsyncTask<Void, Void, QuizQuestion> fetchTask = new AsyncTask<Void, Void, QuizQuestion>() {
+    public QuizQuestion getRandomQuestion() throws InterruptedException,
+            ExecutionException, ClientProtocolException, IOException,
+            JSONException {
 
-			@Override
-			protected QuizQuestion doInBackground(Void... params) {
+        // Construct the request
+        HttpGet questionFetchRequest = new HttpGet(SERVER_URL
+                + "/quizquestions/random");
+        ResponseHandler<String> questionFetchHandler = new BasicResponseHandler();
 
-				// Construct the request
-				HttpGet questionFetchRequest = new HttpGet(SERVER_URL
-						+ "/quizquestions/random");
-				ResponseHandler<String> questionFetchHandler = new BasicResponseHandler();
+        String strRandomQuestion;
+        JSONObject jsonModel;
+        strRandomQuestion = SwengHttpClientFactory.getInstance().execute(
+                questionFetchRequest, questionFetchHandler);
+        jsonModel = new JSONObject(strRandomQuestion);
+        return new QuizQuestion(jsonModel);
+    }
 
-				String strRandomQuestion;
-				try {
-					strRandomQuestion = SwengHttpClientFactory
-							.getInstance()
-							.execute(questionFetchRequest, questionFetchHandler);
-					JSONObject jsonModel = new JSONObject(strRandomQuestion);
-					return new QuizQuestion(jsonModel);
-				} catch (ClientProtocolException e) {
-					return null;
-				} catch (IOException e) {
-					return null;
-				} catch (JSONException e) {
-					return null;
-				}
-			}
+    public void submitQuizQuestion(QuizQuestion question)
+            throws InterruptedException, ExecutionException, AssertionError {
 
-		};
+        AsyncTask<QuizQuestion, Void, String> submitTask = new AsyncTask<QuizQuestion, Void, String>() {
 
-		// Waits for the anser.
-		QuizQuestion randomQuestion = fetchTask.execute().get();
+            @Override
+            protected String doInBackground(QuizQuestion... params) {
+                HttpPost post = new HttpPost(SERVER_URL + "/quizquestions/");
+                String response = "";
+                try {
+                    post.setEntity(new StringEntity(params[0].toJSON()));
+                    post.setHeader("Content-type", "application/json");
+                    ResponseHandler<String> handler = new BasicResponseHandler();
 
-		// Makes sure the server was reachable
-		assert randomQuestion != null;
+                    response = SwengHttpClientFactory.getInstance().execute(
+                            post, handler);
+                } catch (ClientProtocolException e) {
+                    response = null;
+                } catch (IOException e) {
+                    response = null;
+                }
 
-		return randomQuestion;
-	}
+                assert response != null;
+                return response;
+            }
 
-	public void submitQuizQuestion(QuizQuestion question) 
-		throws InterruptedException, ExecutionException, AssertionError {
-
-		AsyncTask<QuizQuestion, Void, String> submitTask = new AsyncTask<QuizQuestion, Void, String>() {
-
-			@Override
-			protected String doInBackground(QuizQuestion... params) {
-				HttpPost post = new HttpPost(SERVER_URL + "/quizquestions/");
-				String response = "";
-				try {
-					post.setEntity(new StringEntity(params[0].toJSON()));
-					post.setHeader("Content-type", "application/json");
-					ResponseHandler<String> handler = new BasicResponseHandler();
-
-					response = SwengHttpClientFactory.getInstance().execute(
-							post, handler);
-				} catch (ClientProtocolException e) {
-					response = null;
-				} catch (IOException e) {
-					response = null;
-				}
-
-				assert response != null;
-				return response;
-			}
-
-		};
-		submitTask.execute(question).get();
-	}
+        };
+        submitTask.execute(question).get();
+    }
 }
