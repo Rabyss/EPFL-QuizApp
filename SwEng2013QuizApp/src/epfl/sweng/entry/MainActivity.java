@@ -1,14 +1,15 @@
 package epfl.sweng.entry;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.View;
 import epfl.sweng.R;
+import epfl.sweng.editquestions.EditQuestionActivity;
 import epfl.sweng.showquestions.ShowQuestionsActivity;
 import epfl.sweng.testing.TestingTransactions;
 import epfl.sweng.testing.TestingTransactions.TTChecks;
-import android.os.Bundle;
-import android.app.Activity;
-import android.content.Intent;
-import android.view.Menu;
-import android.view.View;
 import android.widget.Toast;
 
 /**
@@ -29,11 +30,18 @@ public class MainActivity extends Activity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
+		
 		return true;
 	}
+	
 	public void displayShowQuestion(View view) {
 	    Toast.makeText(this, "You clicked diplay a random question", Toast.LENGTH_SHORT).show();
 	    Intent displayActivityIntent = new Intent(this, ShowQuestionsActivity.class);
 	    startActivity(displayActivityIntent);
+	}
+	
+	public void displayEditQuestions(View view) {
+		Intent displayEditQuestionsIntent = new Intent(this, EditQuestionActivity.class);
+		startActivity(displayEditQuestionsIntent);
 	}
 }

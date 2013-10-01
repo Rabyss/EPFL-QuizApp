@@ -5,7 +5,7 @@
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="18"
+        android:minSdkVersion="17"
         android:targetSdkVersion="18" />
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -30,8 +30,9 @@
             android:label="@string/title_activity_show_questions" >
         </activity>
         <activity
-            android:name="epfl.sweng.showquestions.ShowAnswer"
-            android:label="@string/title_activity_show_answer" >
+            android:name="epfl.sweng.editquestions.EditQuestionActivity"
+            android:label="@string/title_activity_edit_question"
+            android:configChanges="orientation|keyboardHidden|screenSize" >
         </activity>
     </application>
 
