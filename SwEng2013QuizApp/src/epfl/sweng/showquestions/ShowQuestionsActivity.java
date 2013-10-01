@@ -1,6 +1,7 @@
 package epfl.sweng.showquestions;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
@@ -59,13 +60,13 @@ public class ShowQuestionsActivity extends Activity {
         try {
             mRandomQuestion = ServerCommunicator.getInstance()
                     .getRandomQuestion();
-        } catch (ClientProtocolException e) {
+        } catch (InterruptedException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        } catch (IOException e) {
+        } catch (ExecutionException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        } catch (JSONException e) {
+        } catch (AssertionError e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
