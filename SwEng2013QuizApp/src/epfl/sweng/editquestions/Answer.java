@@ -55,7 +55,7 @@ public class Answer {
 			public void onClick(View v) {
 				ArrayList<Answer> answers = activity.getAnswers();
 				for (Answer a: answers) {
-					if (a.getCorrect()) {
+					if (a.isCorrect()) {
 						a.setCorrect(false);
 					}
 				}
@@ -84,7 +84,7 @@ public class Answer {
 				ArrayList<Answer> answers = activity.getAnswers();
 				answers.remove(mThis);
 				
-				if (mThis.getCorrect()) {
+				if (mThis.isCorrect()) {
 					answers.get(0).setCorrect(true);
 				}
 				
@@ -101,7 +101,7 @@ public class Answer {
 		return mContent.getText().toString();
 	}
 
-	public boolean getCorrect() {
+	public boolean isCorrect() {
 		return mCorrect;
 	}
 

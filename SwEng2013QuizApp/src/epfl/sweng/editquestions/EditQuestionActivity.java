@@ -2,6 +2,7 @@ package epfl.sweng.editquestions;
 
 import java.util.ArrayList;
 
+import epfl.sweng.QuizQuestion;
 import epfl.sweng.R;
 import epfl.sweng.testing.TestingTransactions;
 import epfl.sweng.testing.TestingTransactions.TTChecks;
@@ -10,6 +11,7 @@ import android.app.Activity;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.Toast;
 
 /**
@@ -53,6 +55,24 @@ public class EditQuestionActivity extends Activity {
 	
 	public void submitQuestion(View view) {
 		Toast.makeText(this, "Submitting", 1000).show();
+		
+		String question = ((EditText) findViewById(R.id.editQuestionText)).getText().toString();
+		
+		ArrayList<String> answersText = new ArrayList<String>();
+		int solutionIndex = 0;
+		
+		for (Answer answer : answers) {
+			answersText.add(answer.getContent());
+			if (answer.isCorrect()) {
+				solutionIndex = answers.indexOf(answer);
+			}
+		}
+		
+		String tagsText = ((EditText) findViewById(R.id.editTags)).getText().toString();
+		String[] tags = tagsText.split("\\W+");
+		
+		QuizQuestion quizQuestion = new QuizQuestion(null, question, (String[]) answersText.toArray(),
+				solutionIndex, tags, null);
 	}
 
 }
