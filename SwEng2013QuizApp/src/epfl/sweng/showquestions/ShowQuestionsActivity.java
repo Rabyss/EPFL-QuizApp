@@ -1,18 +1,12 @@
 package epfl.sweng.showquestions;
 
 import java.io.IOException;
-import java.util.concurrent.ExecutionException;
 
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 
-import epfl.sweng.QuizQuestion;
-import epfl.sweng.R;
-import epfl.sweng.servercomm.ServerCommunicator;
-import epfl.sweng.testing.TestingTransactions;
-import epfl.sweng.testing.TestingTransactions.TTChecks;
-import android.os.Bundle;
 import android.app.Activity;
+import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -20,6 +14,11 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import epfl.sweng.QuizQuestion;
+import epfl.sweng.R;
+import epfl.sweng.servercomm.ServerCommunicator;
+import epfl.sweng.testing.TestingTransactions;
+import epfl.sweng.testing.TestingTransactions.TTChecks;
 
 /**
  * Uploads a new question and displays it
