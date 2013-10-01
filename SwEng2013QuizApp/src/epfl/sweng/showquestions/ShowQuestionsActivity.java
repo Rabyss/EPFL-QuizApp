@@ -60,12 +60,6 @@ public class ShowQuestionsActivity extends Activity {
         try {
             mRandomQuestion = ServerCommunicator.getInstance()
                     .getRandomQuestion();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-
-        } catch (ExecutionException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
         } catch (ClientProtocolException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

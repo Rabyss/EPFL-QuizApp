@@ -38,9 +38,9 @@ public final class ServerCommunicator {
         return sInstance;
     }
 
-    public QuizQuestion getRandomQuestion() throws InterruptedException,
-            ExecutionException, ClientProtocolException, IOException,
-            JSONException {
+    public QuizQuestion getRandomQuestion() 
+            throws ClientProtocolException, IOException, JSONException 
+    {
 
         // Construct the request
         HttpGet questionFetchRequest = new HttpGet(SERVER_URL
