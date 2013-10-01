@@ -78,7 +78,7 @@ public final class ServerCommunicator {
 		return randomQuestion;
 	}
 
-	public void submitQuizQuestion(QuizQuestion question) 
+	public String submitQuizQuestion(QuizQuestion question) 
 		throws InterruptedException, ExecutionException, AssertionError {
 
 		AsyncTask<QuizQuestion, Void, String> submitTask = new AsyncTask<QuizQuestion, Void, String>() {
@@ -105,6 +105,6 @@ public final class ServerCommunicator {
 			}
 
 		};
-		submitTask.execute(question).get();
+		return submitTask.execute(question).get();
 	}
 }
