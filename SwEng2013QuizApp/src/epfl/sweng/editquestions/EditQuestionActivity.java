@@ -102,9 +102,9 @@ public class EditQuestionActivity extends Activity {
             // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
         Toast.makeText(this, "Successful Submit", displayTime).show();
         Intent displayActivityIntent = new Intent(this,
