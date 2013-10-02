@@ -93,8 +93,8 @@ public class EditQuestionActivity extends Activity {
                 tags, null);
 
         try {
-            System.out.println(ServerCommunicator.getInstance()
-                    .submitQuizQuestion(quizQuestion));
+            ServerCommunicator.getInstance()
+                    .submitQuizQuestion(quizQuestion, this);
         } catch (InterruptedException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

@@ -58,17 +58,15 @@ public class ShowQuestionsActivity extends Activity {
                 LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         // uploads a random question from the server
         try {
-            try {
-                mRandomQuestion = ServerCommunicator.getInstance()
-                        .getRandomQuestion();
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+            mRandomQuestion = ServerCommunicator.getInstance()
+                    .getRandomQuestion();
         } catch (InterruptedException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (ExecutionException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         } 
