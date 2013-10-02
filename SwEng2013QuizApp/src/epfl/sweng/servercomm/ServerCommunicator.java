@@ -39,7 +39,7 @@ public final class ServerCommunicator {
 	}
 
 	public QuizQuestion getRandomQuestion() throws InterruptedException,
-			ExecutionException, AssertionError {
+			ExecutionException, IOException {
 		// Creates an asynchronous task to getch from the server.
 		AsyncTask<Void, Void, QuizQuestion> fetchTask = new AsyncTask<Void, Void, QuizQuestion>() {
 
@@ -72,14 +72,17 @@ public final class ServerCommunicator {
 		// Waits for the anser.
 		QuizQuestion randomQuestion = fetchTask.execute().get();
 
-		// Makes sure the server was reachable
-		assert randomQuestion != null;
-
+		//verification that the server was reachable
+        if (randomQuestion == null) {
+            throw new IOException("Server unreachable.");
+        }
+        
+		
 		return randomQuestion;
 	}
 
 	public String submitQuizQuestion(QuizQuestion question) 
-		throws InterruptedException, ExecutionException, AssertionError {
+		throws InterruptedException, ExecutionException, IOException {
 
 		AsyncTask<QuizQuestion, Void, String> submitTask = new AsyncTask<QuizQuestion, Void, String>() {
 
@@ -99,12 +102,17 @@ public final class ServerCommunicator {
 				} catch (IOException e) {
 					response = null;
 				}
-
-				assert response != null;
 				return response;
 			}
 
 		};
-		return submitTask.execute(question).get();
+		
+		String response = submitTask.execute(question).get();
+		//verification that the server was reachable
+		if (response == null) {
+		    throw new IOException("Server unreachable.");
+		}
+		
+		return response;
 	}
 }
