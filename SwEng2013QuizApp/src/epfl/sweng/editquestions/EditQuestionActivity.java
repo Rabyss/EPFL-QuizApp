@@ -1,5 +1,6 @@
 package epfl.sweng.editquestions;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
@@ -15,6 +16,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 import epfl.sweng.QuizQuestion;
 import epfl.sweng.R;
+import epfl.sweng.entry.MainActivity;
 import epfl.sweng.servercomm.ServerCommunicator;
 import epfl.sweng.testing.TestingTransactions;
 import epfl.sweng.testing.TestingTransactions.TTChecks;
@@ -27,6 +29,8 @@ import epfl.sweng.testing.TestingTransactions.TTChecks;
 public class EditQuestionActivity extends Activity {
 
     private ArrayList<Answer> answers;
+
+    private final int displayTime = 2000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,15 +101,21 @@ public class EditQuestionActivity extends Activity {
         } catch (ExecutionException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        } catch (AssertionError e) {
+        } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
-        Toast.makeText(this, "Successful Submit", 2000).show();
+        Toast.makeText(this, "Successful Submit", displayTime).show();
         Intent displayActivityIntent = new Intent(this,
                 EditQuestionActivity.class);
         startActivity(displayActivityIntent);
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent displayActivitxIntent = new Intent(this, MainActivity.class);
+        startActivity(displayActivitxIntent);
     }
 
 }
