@@ -1,7 +1,7 @@
 package epfl.sweng.servercomm;
 
 import java.io.IOException;
-import java.util.concurrent.ExecutionException;
+import java.util.Observable;
 
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
@@ -13,7 +13,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import epfl.sweng.QuizQuestion;
 
@@ -24,24 +23,28 @@ import epfl.sweng.QuizQuestion;
  * @author Jeremy Rabasco (jeremy.rabasco@epfl.ch), Philemon Favrod
  *         (philemon.favrod@epfl.ch)
  */
-public final class ServerCommunicator {
+public final class ServerCommunicator extends Observable{
 
-    private static ServerCommunicator mInstance = null;
+    private static ServerCommunicator sInstance = null;
     private final static String SERVER_URL = "https://sweng-quiz.appspot.com";
+	private boolean isFetching;
+	private boolean isSubmitting;
 
     private ServerCommunicator() {
 
     }
 
     public static synchronized ServerCommunicator getInstance() {
-        if (mInstance == null) {
-            mInstance = new ServerCommunicator();
+        if (sInstance == null) {
+            sInstance = new ServerCommunicator();
         }
-        return mInstance;
+        return sInstance;
     }
 
-    public QuizQuestion getRandomQuestion() throws InterruptedException,
-            ExecutionException, IOException {
+    public void getRandomQuestion() {
+    	
+    	isFetching = true;
+    	
         // Creates an asynchronous task to getch from the server.
         AsyncTask<Void, Void, QuizQuestion> fetchTask = new AsyncTask<Void, Void, QuizQuestion>() {
 
@@ -68,28 +71,29 @@ public final class ServerCommunicator {
                     return null;
                 }
             }
+            
+            @Override
+            protected void onPostExecute(QuizQuestion result) {
+            	super.onPostExecute(result);
+                ServerCommunicator.getInstance().setChanged();
+                ServerCommunicator.getInstance().notifyObservers(result);
+                ServerCommunicator.getInstance().clearChanged();
+                isFetching = false;
+            }
 
         };
 
-        // Waits for the anser.
-        QuizQuestion randomQuestion = fetchTask.execute().get();
-
-        // verification that the server was reachable
-        if (randomQuestion == null) {
-            throw new IOException("Server unreachable.");
-        }
-
-        return randomQuestion;
+        // Fetch the question
+        fetchTask.execute();
     }
 
-    public String submitQuizQuestion(QuizQuestion question,
-            final Activity activity) throws InterruptedException,
-            ExecutionException, IOException {
+    public void submitQuizQuestion(QuizQuestion question,
+            final Activity activity) {
+    	
+    	isSubmitting = true;
 
         AsyncTask<QuizQuestion, Void, String> submitTask = new AsyncTask<QuizQuestion, Void, String>() {
-
-            private ProgressDialog progDialog;
-
+        	
             @Override
             protected String doInBackground(QuizQuestion... params) {
                 HttpPost post = new HttpPost(SERVER_URL + "/quizquestions/");
@@ -110,30 +114,24 @@ public final class ServerCommunicator {
             }
 
             @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-                progDialog = new ProgressDialog(activity);
-                progDialog.setMessage("Loading...");
-                progDialog.setIndeterminate(false);
-                progDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                progDialog.setCancelable(true);
-                progDialog.show();
-            }
-
-            @Override
             protected void onPostExecute(String result) {
                 super.onPostExecute(result);
-                progDialog.dismiss();
+                ServerCommunicator.getInstance().setChanged();
+                ServerCommunicator.getInstance().notifyObservers(result);
+                ServerCommunicator.getInstance().clearChanged();
+                isSubmitting = false;
             };
 
         };
-        String response = "lll";
+        
         submitTask.execute(question);
-        // verification that the server was reachable
-        if (response == null) {
-            throw new IOException("Server unreachable.");
-        }
-
-        return response;
     }
+
+	public boolean isFetchingQuestion() {
+		return isFetching;
+	}
+
+	public boolean isSubmittingQuestion() {
+		return isSubmitting;
+	}
 }

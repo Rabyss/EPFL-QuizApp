@@ -1,12 +1,13 @@
 package epfl.sweng.showquestions;
 
-
-import java.io.IOException;
-import java.util.concurrent.ExecutionException;
-
-
+import java.util.Observable;
+import java.util.Observer;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
@@ -17,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import epfl.sweng.QuizQuestion;
 import epfl.sweng.R;
+import epfl.sweng.entry.MainActivity;
 import epfl.sweng.servercomm.ServerCommunicator;
 import epfl.sweng.testing.TestingTransactions;
 import epfl.sweng.testing.TestingTransactions.TTChecks;
@@ -25,143 +27,180 @@ import epfl.sweng.testing.TestingTransactions.TTChecks;
  * Uploads a new question and displays it
  * 
  */
-public class ShowQuestionsActivity extends Activity {
+public class ShowQuestionsActivity extends Activity implements Observer {
 
-    private QuizQuestion mRandomQuestion = null;
-    private Button[] mAnswer;
-    private Button mNextQuestion;
-    private TextView[] mCorrectness;
-    private int mIndexButton;
-    private LinearLayout mLinearLayout;
+	private QuizQuestion mRandomQuestion = null;
+	private Button[] mAnswer;
+	private Button mNextQuestion;
+	private TextView[] mCorrectness;
+	private int mIndexButton;
+	private LinearLayout mLinearLayout;
+	private ProgressDialog progDialog;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        updateQuestion();
-    }
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		ServerCommunicator.getInstance().addObserver(this);
+		getQuestion();
+	}
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.show_questions, menu);
-        return true;
-    }
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.show_questions, menu);
+		return true;
+	}
 
-    /**
-     * Updates and displays a new random question
-     */
-    public void updateQuestion() {
-        // creates the main layout
-        mLinearLayout = new LinearLayout(this);
-        mLinearLayout.setOrientation(LinearLayout.VERTICAL);
-        mLinearLayout.setLayoutParams(new LayoutParams(
-                LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-        // uploads a random question from the server
-        try {
-            mRandomQuestion = ServerCommunicator.getInstance()
-                    .getRandomQuestion();
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } 
-        // initializes the title of the question
-        TextView question = new TextView(this);
-        question.setText(mRandomQuestion.getQuestion());
-        mLinearLayout.addView(question);
-        // initializes the button nextQuestion
-        mNextQuestion = new Button(this);
-        mNextQuestion.setText("Next Question");
-        mNextQuestion.setEnabled(false);
-        mNextQuestion.setOnClickListener(new OnClickListener() {
+	/**
+	 * Updates and displays a new random question
+	 */
+	public void getQuestion() {
+		// creates the main layout
+		mLinearLayout = new LinearLayout(this);
+		mLinearLayout.setOrientation(LinearLayout.VERTICAL);
+		mLinearLayout.setLayoutParams(new LayoutParams(
+				LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+		// uploads a random question from the server
+		ServerCommunicator.getInstance().getRandomQuestion();
+		progDialog = new ProgressDialog(this);
+		progDialog.setMessage("Fetching...");
+		progDialog.setIndeterminate(false);
+		progDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+		progDialog.setCancelable(true);
+		progDialog.show();
+	}
 
-            @Override
-            public void onClick(View v) {
-                updateQuestion();
-            }
-        });
+	public void showQuestion() {
+		// initializes the title of the question
+		TextView question = new TextView(this);
+		question.setText(mRandomQuestion.getQuestion());
+		mLinearLayout.addView(question);
+		// initializes the button nextQuestion
+		mNextQuestion = new Button(this);
+		mNextQuestion.setText("Next Question");
+		mNextQuestion.setEnabled(false);
+		mNextQuestion.setOnClickListener(new OnClickListener() {
 
-        displayAnswer();
+			@Override
+			public void onClick(View v) {
+				getQuestion();
+			}
+		});
 
-        mLinearLayout.addView(mNextQuestion);
-        displayTags();
-        displaySolutionIndex();
-        setContentView(mLinearLayout);
-        TestingTransactions.check(TTChecks.QUESTION_SHOWN);
-    }
+		displayAnswer();
 
-    public void displayAnswer() {
-        int totalAnswer = mRandomQuestion.getAnswers().length;
-        mAnswer = new Button[totalAnswer];
-        mCorrectness = new TextView[totalAnswer];
-        // initializes all the buttons of answer
-        for (mIndexButton = 0; mIndexButton < totalAnswer; mIndexButton++) {
-            LinearLayout answerLayout = new LinearLayout(this);
-            answerLayout.setOrientation(LinearLayout.HORIZONTAL);
-            answerLayout.setLayoutParams(new LayoutParams(
-                    LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+		mLinearLayout.addView(mNextQuestion);
+		displayTags();
+		displaySolutionIndex();
+		setContentView(mLinearLayout);
+		TestingTransactions.check(TTChecks.QUESTION_SHOWN);
+	}
 
-            mCorrectness[mIndexButton] = new TextView(this);
-            if (mRandomQuestion.isSolution(mIndexButton)) {
-                mCorrectness[mIndexButton].setText("\u2714");
-            } else {
-                mCorrectness[mIndexButton].setText("\u2718");
-            }
-            mCorrectness[mIndexButton].setVisibility(View.INVISIBLE);
-            mAnswer[mIndexButton] = new Button(this);
-            mAnswer[mIndexButton].setClickable(true);
-            mAnswer[mIndexButton]
-                    .setText(mRandomQuestion.getAnswers()[mIndexButton]);
-            mAnswer[mIndexButton].setOnClickListener(new View.OnClickListener() {
+	public void displayAnswer() {
+		int totalAnswer = mRandomQuestion.getAnswers().length;
+		mAnswer = new Button[totalAnswer];
+		mCorrectness = new TextView[totalAnswer];
+		// initializes all the buttons of answer
+		for (mIndexButton = 0; mIndexButton < totalAnswer; mIndexButton++) {
+			LinearLayout answerLayout = new LinearLayout(this);
+			answerLayout.setOrientation(LinearLayout.HORIZONTAL);
+			answerLayout.setLayoutParams(new LayoutParams(
+					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 
-                @Override
-                public void onClick(View v) {
+			mCorrectness[mIndexButton] = new TextView(this);
+			if (mRandomQuestion.isSolution(mIndexButton)) {
+				mCorrectness[mIndexButton].setText("\u2714");
+			} else {
+				mCorrectness[mIndexButton].setText("\u2718");
+			}
+			mCorrectness[mIndexButton].setVisibility(View.INVISIBLE);
+			mAnswer[mIndexButton] = new Button(this);
+			mAnswer[mIndexButton].setClickable(true);
+			mAnswer[mIndexButton]
+					.setText(mRandomQuestion.getAnswers()[mIndexButton]);
+			mAnswer[mIndexButton]
+					.setOnClickListener(new View.OnClickListener() {
 
-                    int actualAnswer = 0;
-                    for (int i = 0; i < mRandomQuestion.getAnswers().length; i++) {
-                        if (v == mAnswer[i]) {
-                            actualAnswer = i;
-                        }
-                    }
-                    mCorrectness[actualAnswer].setVisibility(View.VISIBLE);
-                    if (mRandomQuestion.isSolution(actualAnswer)) {
-                        mNextQuestion.setEnabled(true);
-                        for (int i = 0; i < mRandomQuestion.getAnswers().length; i++) {
-                            mAnswer[i].setEnabled(false);
-                            if (i != actualAnswer) {
-                                mCorrectness[i].setVisibility(View.INVISIBLE);
-                            }
-                        }
-                    }
-                    TestingTransactions.check(TTChecks.ANSWER_SELECTED);
-                }
-            });
-            answerLayout.addView(mAnswer[mIndexButton]);
-            answerLayout.addView(mCorrectness[mIndexButton]);
-            mLinearLayout.addView(answerLayout);
-        }
-    }
+						@Override
+						public void onClick(View v) {
 
-    public void displayTags() {
-        int totalTags = mRandomQuestion.getTags().length;
-        for (int i = 0; i < totalTags; i++) {
-            TextView tagText = new TextView(this);
-            tagText.setText(mRandomQuestion.getTags()[i]);
-            mLinearLayout.addView(tagText);
-        }
+							int actualAnswer = 0;
+							for (int i = 0; i < mRandomQuestion.getAnswers().length; i++) {
+								if (v == mAnswer[i]) {
+									actualAnswer = i;
+								}
+							}
+							mCorrectness[actualAnswer]
+									.setVisibility(View.VISIBLE);
+							if (mRandomQuestion.isSolution(actualAnswer)) {
+								mNextQuestion.setEnabled(true);
+								for (int i = 0; i < mRandomQuestion
+										.getAnswers().length; i++) {
+									mAnswer[i].setEnabled(false);
+									if (i != actualAnswer) {
+										mCorrectness[i]
+												.setVisibility(View.INVISIBLE);
+									}
+								}
+							}
+							TestingTransactions.check(TTChecks.ANSWER_SELECTED);
+						}
+					});
+			answerLayout.addView(mAnswer[mIndexButton]);
+			answerLayout.addView(mCorrectness[mIndexButton]);
+			mLinearLayout.addView(answerLayout);
+		}
+	}
 
-    }
+	public void displayTags() {
+		int totalTags = mRandomQuestion.getTags().length;
+		for (int i = 0; i < totalTags; i++) {
+			TextView tagText = new TextView(this);
+			tagText.setText(mRandomQuestion.getTags()[i]);
+			mLinearLayout.addView(tagText);
+		}
 
-    public void displaySolutionIndex() {
-        TextView solutionIndex = new TextView(this);
-        int index = mRandomQuestion.getSolutionIndex();
-        String solutionText = String.valueOf(index);
-        solutionIndex.setText(solutionText);
-        mLinearLayout.addView(solutionIndex);
-    }
+	}
+
+	public void displaySolutionIndex() {
+		TextView solutionIndex = new TextView(this);
+		int index = mRandomQuestion.getSolutionIndex();
+		String solutionText = String.valueOf(index);
+		solutionIndex.setText(solutionText);
+		mLinearLayout.addView(solutionIndex);
+	}
+	
+	@Override
+	public void onBackPressed() {
+		Intent displayActivitxIntent = new Intent(this, MainActivity.class);
+		startActivity(displayActivitxIntent);
+	}
+
+	@Override
+	public void update(Observable observable, Object data) {
+		if (ServerCommunicator.getInstance().isFetchingQuestion()) {
+			progDialog.dismiss();
+			if (data != null) {
+				mRandomQuestion = (QuizQuestion) data;
+				showQuestion();
+			} else {
+				AlertDialog.Builder dlgAlert = new AlertDialog.Builder(this);
+
+				dlgAlert.setMessage("Server unreacheable");
+				dlgAlert.setTitle("Connection error");
+				dlgAlert.setPositiveButton("OK", null);
+				dlgAlert.setCancelable(true);
+				dlgAlert.create().show();
+
+				dlgAlert.setPositiveButton("Ok",
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog,
+									int which) {
+
+							}
+						});
+			}
+
+		}
+	}
 }
