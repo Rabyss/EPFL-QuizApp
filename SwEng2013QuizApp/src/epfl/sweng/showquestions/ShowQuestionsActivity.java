@@ -1,6 +1,7 @@
 package epfl.sweng.showquestions;
 
 
+import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
 
@@ -57,8 +58,13 @@ public class ShowQuestionsActivity extends Activity {
                 LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         // uploads a random question from the server
         try {
-            mRandomQuestion = ServerCommunicator.getInstance()
-                    .getRandomQuestion();
+            try {
+                mRandomQuestion = ServerCommunicator.getInstance()
+                        .getRandomQuestion();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         } catch (InterruptedException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
