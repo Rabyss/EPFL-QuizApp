@@ -8,6 +8,8 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
@@ -28,7 +30,8 @@ import epfl.sweng.testing.TestingTransactions.TTChecks;
  * 
  */
 public class ShowQuestionsActivity extends Activity implements Observer {
-
+	private final int PADDING_RIGHT=23;
+	private final int PADDING=0;
 	private QuizQuestion mRandomQuestion = null;
 	private Button[] mAnswer;
 	private Button mNextQuestion;
@@ -91,7 +94,7 @@ public class ShowQuestionsActivity extends Activity implements Observer {
 
 		mLinearLayout.addView(mNextQuestion);
 		displayTags();
-		displaySolutionIndex();
+		//displaySolutionIndex();
 		setContentView(mLinearLayout);
 		TestingTransactions.check(TTChecks.QUESTION_SHOWN);
 	}
@@ -154,21 +157,28 @@ public class ShowQuestionsActivity extends Activity implements Observer {
 
 	public void displayTags() {
 		int totalTags = mRandomQuestion.getTags().length;
+		LinearLayout tagLayout= new LinearLayout(this);
+		tagLayout.setOrientation(LinearLayout.HORIZONTAL);
+		tagLayout.setLayoutParams(new LayoutParams(
+				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 		for (int i = 0; i < totalTags; i++) {
 			TextView tagText = new TextView(this);
 			tagText.setText(mRandomQuestion.getTags()[i]);
-			mLinearLayout.addView(tagText);
+			tagText.setPadding(PADDING, PADDING, PADDING_RIGHT, PADDING);
+			tagText.setTextColor(Color.GRAY);
+			tagLayout.addView(tagText);
 		}
+		mLinearLayout.addView(tagLayout);
 
 	}
 
-	public void displaySolutionIndex() {
+	/*public void displaySolutionIndex() {
 		TextView solutionIndex = new TextView(this);
 		int index = mRandomQuestion.getSolutionIndex();
 		String solutionText = String.valueOf(index);
 		solutionIndex.setText(solutionText);
 		mLinearLayout.addView(solutionIndex);
-	}
+	}*/
 	
 	@Override
 	public void onBackPressed() {
