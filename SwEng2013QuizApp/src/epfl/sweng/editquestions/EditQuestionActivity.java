@@ -15,6 +15,7 @@ import epfl.sweng.R;
 import epfl.sweng.servercomm.ServerCommunicator;
 import epfl.sweng.testing.TestingTransactions;
 import epfl.sweng.testing.TestingTransactions.TTChecks;
+import epfl.sweng.ui.AnswerEditor;
 import epfl.sweng.ui.QuestionActivity;
 
 /**
@@ -24,7 +25,7 @@ import epfl.sweng.ui.QuestionActivity;
  */
 public class EditQuestionActivity extends QuestionActivity {
 
-	private ArrayList<Answer> answers;
+	private ArrayList<AnswerEditor> answers;
 
 	private final int TOAST_DISPLAY_TIME = 2000;
 
@@ -35,8 +36,8 @@ public class EditQuestionActivity extends QuestionActivity {
 
 		ServerCommunicator.getInstance().addObserver(this);
 
-		answers = new ArrayList<Answer>();
-		answers.add(new Answer(this,
+		answers = new ArrayList<AnswerEditor>();
+		answers.add(new AnswerEditor(this,
 				(ViewGroup) findViewById(R.id.linearLayoutAnswers), true));
 
 		findViewById(R.id.editQuestionText).requestFocus();
@@ -55,10 +56,10 @@ public class EditQuestionActivity extends QuestionActivity {
 
 	public void addAnswer(View view) {
 		ViewGroup linearLayout = (ViewGroup) findViewById(R.id.linearLayoutAnswers);
-		answers.add(new Answer(this, linearLayout, false));
+		answers.add(new AnswerEditor(this, linearLayout, false));
 	}
 
-	public ArrayList<Answer> getAnswers() {
+	public ArrayList<AnswerEditor> getAnswers() {
 		return answers;
 	}
 
@@ -75,7 +76,7 @@ public class EditQuestionActivity extends QuestionActivity {
 		ArrayList<String> answersText = new ArrayList<String>();
 		int solutionIndex = 0;
 
-		for (Answer answer : answers) {
+		for (AnswerEditor answer : answers) {
 			answersText.add(answer.getContent());
 			if (answer.isCorrect()) {
 				solutionIndex = answers.indexOf(answer);
