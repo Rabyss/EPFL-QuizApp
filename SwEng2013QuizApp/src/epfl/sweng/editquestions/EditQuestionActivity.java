@@ -89,10 +89,16 @@ public class EditQuestionActivity extends QuestionActivity {
 		QuizQuestion quizQuestion = new QuizQuestion(null, question,
 				answersText.toArray(new String[answers.size()]), solutionIndex,
 				tags, null);
+		
+		try {
+		    quizQuestion.audit();
+		    ServerCommunicator.getInstance().submitQuizQuestion(quizQuestion, this);
 
-		ServerCommunicator.getInstance().submitQuizQuestion(quizQuestion, this);
-
-		showProgressDialog();
+		    showProgressDialog();
+		
+		} catch (IllegalArgumentException e) {
+		    Toast.makeText(this, e.getMessage(), TOAST_DISPLAY_TIME);
+		}
 
 	}
 
