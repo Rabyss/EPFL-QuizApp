@@ -97,7 +97,7 @@ public class EditQuestionActivity extends QuestionActivity {
 		    showProgressDialog();
 		
 		} catch (IllegalArgumentException e) {
-		    Toast.makeText(this, e.getMessage(), TOAST_DISPLAY_TIME);
+		    Toast.makeText(this, e.getMessage(), TOAST_DISPLAY_TIME).show();
 		}
 
 	}
