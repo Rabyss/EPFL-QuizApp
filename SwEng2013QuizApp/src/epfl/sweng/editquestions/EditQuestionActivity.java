@@ -84,7 +84,7 @@ public class EditQuestionActivity extends QuestionActivity {
 
 		String tagsText = ((EditText) findViewById(R.id.editTags)).getText()
 				.toString();
-		String[] tags = tagsText.split("\\W+");
+		String[] tags = (tagsText.trim().isEmpty()) ? null:tagsText.split("\\W+");
 
 		QuizQuestion quizQuestion = new QuizQuestion(null, question,
 				answersText.toArray(new String[answers.size()]), solutionIndex,

@@ -98,16 +98,24 @@ public class QuizQuestion {
     
     public void audit() throws IllegalArgumentException {
         if (mQuestion == null || mQuestion.trim().isEmpty()) {
-            throw new IllegalArgumentException("Question cannot be null or empty.");
+            throw new IllegalArgumentException("The question must have a body.");
         } else if (mAnswers == null || mAnswers.length < 2) {
-            throw new IllegalArgumentException("Question must have answer.");
+            throw new IllegalArgumentException("The question must have at least 2 answers.");
         } else if (mSolutionIndex < 0 || mSolutionIndex >= mAnswers.length) {
             throw new IllegalArgumentException("One answer must be marked as correct.");
+        } else if (mTags == null || mTags.length < 1) {
+            throw new IllegalArgumentException("The question must have tags according to the server.");
         }
         
         for (String answer : mAnswers) {
             if (answer == null || answer.trim().isEmpty()) {
-                throw new IllegalArgumentException("Question have empty answers.");
+                throw new IllegalArgumentException("The question cannot have empty answer(s).");
+            }
+        }
+        
+        for (String tag : mTags) {
+            if (tag == null || tag.trim().isEmpty()) {
+                throw new IllegalArgumentException("The question must have tags according to the server.");
             }
         }
     }

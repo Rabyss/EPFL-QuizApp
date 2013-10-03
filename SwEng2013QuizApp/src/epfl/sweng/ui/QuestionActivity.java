@@ -12,7 +12,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import epfl.sweng.entry.MainActivity;
 
-public abstract class QuestionActivity extends Activity implements Observer{
+public abstract class QuestionActivity extends Activity implements Observer {
 
     private ProgressDialog progressDialog;
     
