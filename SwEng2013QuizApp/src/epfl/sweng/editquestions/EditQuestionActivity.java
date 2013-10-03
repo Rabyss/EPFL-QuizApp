@@ -27,7 +27,7 @@ public class EditQuestionActivity extends QuestionActivity {
 
 	private ArrayList<AnswerEditor> answers;
 
-	private final int TOAST_DISPLAY_TIME = 2000;
+	private final int kToastDisplayTime = 2000;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -98,7 +98,7 @@ public class EditQuestionActivity extends QuestionActivity {
 		    showProgressDialog();
 		
 		} catch (IllegalArgumentException e) {
-		    Toast.makeText(this, e.getMessage(), TOAST_DISPLAY_TIME).show();
+		    Toast.makeText(this, e.getMessage(), kToastDisplayTime).show();
 		}
 
 	}
@@ -110,7 +110,7 @@ public class EditQuestionActivity extends QuestionActivity {
 
     @Override
     protected void processDownloadedData(Object data) {
-        Toast.makeText(this, R.string.successful_submit, TOAST_DISPLAY_TIME).show();
+        Toast.makeText(this, R.string.successful_submit, kToastDisplayTime).show();
         Intent displayActivityIntent = new Intent(this,
                 EditQuestionActivity.class);
         startActivity(displayActivityIntent);

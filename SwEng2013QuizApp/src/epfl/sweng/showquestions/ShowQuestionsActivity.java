@@ -1,14 +1,5 @@
 package epfl.sweng.showquestions;
 
-import java.util.Observable;
-import java.util.Observer;
-
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
@@ -20,7 +11,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import epfl.sweng.QuizQuestion;
 import epfl.sweng.R;
-import epfl.sweng.entry.MainActivity;
 import epfl.sweng.servercomm.ServerCommunicator;
 import epfl.sweng.testing.TestingTransactions;
 import epfl.sweng.testing.TestingTransactions.TTChecks;
@@ -31,8 +21,8 @@ import epfl.sweng.ui.QuestionActivity;
  * 
  */
 public class ShowQuestionsActivity extends QuestionActivity {
-	private final int PADDING_RIGHT=23;
-	private final int PADDING=0;
+	private final int kPaddingRight=23;
+	private final int kPadding=0;
 	private QuizQuestion mRandomQuestion = null;
 	private Button[] mAnswer;
 	private Button mNextQuestion;
@@ -160,7 +150,7 @@ public class ShowQuestionsActivity extends QuestionActivity {
 		for (int i = 0; i < totalTags; i++) {
 			TextView tagText = new TextView(this);
 			tagText.setText(mRandomQuestion.getTags()[i]);
-			tagText.setPadding(PADDING, PADDING, PADDING_RIGHT, PADDING);
+			tagText.setPadding(kPadding, kPadding, kPaddingRight, kPadding);
 			tagText.setTextColor(Color.GRAY);
 			tagLayout.addView(tagText);
 		}
