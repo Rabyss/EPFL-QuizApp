@@ -24,12 +24,13 @@ import epfl.sweng.entry.MainActivity;
 import epfl.sweng.servercomm.ServerCommunicator;
 import epfl.sweng.testing.TestingTransactions;
 import epfl.sweng.testing.TestingTransactions.TTChecks;
+import epfl.sweng.ui.QuestionActivity;
 
 /**
  * Uploads a new question and displays it
  * 
  */
-public class ShowQuestionsActivity extends Activity implements Observer {
+public class ShowQuestionsActivity extends QuestionActivity {
 	private final int PADDING_RIGHT=23;
 	private final int PADDING=0;
 	private QuizQuestion mRandomQuestion = null;
@@ -38,7 +39,6 @@ public class ShowQuestionsActivity extends Activity implements Observer {
 	private TextView[] mCorrectness;
 	private int mIndexButton;
 	private LinearLayout mLinearLayout;
-	private ProgressDialog progDialog;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -65,12 +65,8 @@ public class ShowQuestionsActivity extends Activity implements Observer {
 				LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 		// uploads a random question from the server
 		ServerCommunicator.getInstance().getRandomQuestion();
-		progDialog = new ProgressDialog(this);
-		progDialog.setMessage("Fetching...");
-		progDialog.setIndeterminate(false);
-		progDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-		progDialog.setCancelable(true);
-		progDialog.show();
+		
+		showProgressDialog();
 	}
 
 	public void showQuestion() {
@@ -180,37 +176,15 @@ public class ShowQuestionsActivity extends Activity implements Observer {
 		mLinearLayout.addView(solutionIndex);
 	}*/
 	
-	@Override
-	public void onBackPressed() {
-		Intent displayActivitxIntent = new Intent(this, MainActivity.class);
-		startActivity(displayActivitxIntent);
-	}
 
-	@Override
-	public void update(Observable observable, Object data) {
-		if (ServerCommunicator.getInstance().isFetchingQuestion()) {
-			progDialog.dismiss();
-			if (data != null) {
-				mRandomQuestion = (QuizQuestion) data;
-				showQuestion();
-			} else {
-				AlertDialog.Builder dlgAlert = new AlertDialog.Builder(this);
+    @Override
+    protected boolean mustTakeAccountOfUpdate() {
+        return ServerCommunicator.getInstance().isFetchingQuestion();
+    }
 
-				dlgAlert.setMessage("Server unreacheable");
-				dlgAlert.setTitle("Connection error");
-				dlgAlert.setPositiveButton("OK", null);
-				dlgAlert.setCancelable(true);
-				dlgAlert.create().show();
-
-				dlgAlert.setPositiveButton("Ok",
-						new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog,
-									int which) {
-
-							}
-						});
-			}
-
-		}
-	}
+    @Override
+    protected void processDownloadedData(Object data) {
+        mRandomQuestion = (QuizQuestion) data;
+        showQuestion();
+    }
 }

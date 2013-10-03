@@ -97,16 +97,16 @@ public class QuizQuestion {
     }
     
     public void audit() throws IllegalArgumentException {
-        if (mQuestion == null || mQuestion.isEmpty()) {
+        if (mQuestion == null || mQuestion.trim().isEmpty()) {
             throw new IllegalArgumentException("Question cannot be null or empty.");
-        } else if (mAnswers == null || mAnswers.length < 1) {
+        } else if (mAnswers == null || mAnswers.length < 2) {
             throw new IllegalArgumentException("Question must have answer.");
         } else if (mSolutionIndex < 0 || mSolutionIndex >= mAnswers.length) {
-            throw new IllegalArgumentException("The index of the solution is out of array bounds.");
+            throw new IllegalArgumentException("One answer must be marked as correct.");
         }
         
         for (String answer : mAnswers) {
-            if (answer == null || answer.isEmpty()) {
+            if (answer == null || answer.trim().isEmpty()) {
                 throw new IllegalArgumentException("Question have empty answers.");
             }
         }

@@ -1,14 +1,7 @@
 package epfl.sweng.editquestions;
 
 import java.util.ArrayList;
-import java.util.Observable;
-import java.util.Observer;
-
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -19,23 +12,21 @@ import android.widget.EditText;
 import android.widget.Toast;
 import epfl.sweng.QuizQuestion;
 import epfl.sweng.R;
-import epfl.sweng.entry.MainActivity;
 import epfl.sweng.servercomm.ServerCommunicator;
 import epfl.sweng.testing.TestingTransactions;
 import epfl.sweng.testing.TestingTransactions.TTChecks;
+import epfl.sweng.ui.QuestionActivity;
 
 /**
  * 
  * Activity to edit questions
  * 
  */
-public class EditQuestionActivity extends Activity implements Observer {
+public class EditQuestionActivity extends QuestionActivity {
 
 	private ArrayList<Answer> answers;
 
-	private final int displayTime = 2000;
-
-	private ProgressDialog progDialog;
+	private final int TOAST_DISPLAY_TIME = 2000;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -101,49 +92,21 @@ public class EditQuestionActivity extends Activity implements Observer {
 
 		ServerCommunicator.getInstance().submitQuizQuestion(quizQuestion, this);
 
-		progDialog = new ProgressDialog(this);
-		progDialog.setMessage("Submitting...");
-		progDialog.setIndeterminate(false);
-		progDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-		progDialog.setCancelable(true);
-		progDialog.show();
+		showProgressDialog();
 
 	}
 
-	@Override
-	public void onBackPressed() {
-		Intent displayActivitxIntent = new Intent(this, MainActivity.class);
-		startActivity(displayActivitxIntent);
-	}
+    @Override
+    protected boolean mustTakeAccountOfUpdate() {
+        return ServerCommunicator.getInstance().isSubmittingQuestion();
+    }
 
-	@Override
-	public void update(Observable observable, Object data) {
-		if (ServerCommunicator.getInstance().isSubmittingQuestion()) {
-			String response = (String) data;
-			progDialog.dismiss();
-			if (response != null) {
-				Toast.makeText(this, "Successful Submit", displayTime).show();
-				Intent displayActivityIntent = new Intent(this,
-						EditQuestionActivity.class);
-				startActivity(displayActivityIntent);
-			} else {
-				AlertDialog.Builder dlgAlert = new AlertDialog.Builder(this);
-
-				dlgAlert.setMessage("Server unreacheable or question's fields empty/misformatted");
-				dlgAlert.setTitle("Submit failed");
-				dlgAlert.setPositiveButton("OK", null);
-				dlgAlert.setCancelable(true);
-				dlgAlert.create().show();
-
-				dlgAlert.setPositiveButton("Ok",
-						new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog,
-									int which) {
-
-							}
-						});
-			}
-		}
-	}
+    @Override
+    protected void processDownloadedData(Object data) {
+        Toast.makeText(this, R.string.successful_submit, TOAST_DISPLAY_TIME).show();
+        Intent displayActivityIntent = new Intent(this,
+                EditQuestionActivity.class);
+        startActivity(displayActivityIntent);
+    }
 
 }
