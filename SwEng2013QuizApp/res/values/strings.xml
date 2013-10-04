@@ -21,6 +21,7 @@
     <string name="successful_submit">Successful submit</string>
     <string name="error_server_comm">Server is unreachable.</string>
     <string name="error_failure">Failure</string>
+    <string name="next_question">Next Question</string>
     
 
 </resources>

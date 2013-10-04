@@ -81,7 +81,7 @@ public class ShowQuestionsActivity extends QuestionActivity {
 
 		// initializes the button nextQuestion
 		mNextQuestion = new Button(this);
-		mNextQuestion.setText("Next Question");
+		mNextQuestion.setText(R.string.next_question);
 		mNextQuestion.setEnabled(false);
 		mLinearLayout.addView(mNextQuestion);
 		mNextQuestion.setOnClickListener(new OnClickListener() {
