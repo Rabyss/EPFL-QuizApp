@@ -93,8 +93,8 @@ public class EditQuestionActivity extends QuestionActivity {
 
 		String tagsText = ((EditText) findViewById(R.id.editTags)).getText()
 				.toString();
-		String[] tags = (tagsText.trim().isEmpty()) ? null : tagsText
-				.split("\\W+");
+		String[] tags = (tagsText.trim().isEmpty()) ? null : cleanUp(tagsText.trim()
+				.split("\\W+"));
 
 		QuizQuestion quizQuestion = new QuizQuestion(null, question,
 				answersText.toArray(new String[answers.size()]), solutionIndex,
@@ -112,7 +112,16 @@ public class EditQuestionActivity extends QuestionActivity {
 		}
 
 	}
-
+	private String[] cleanUp(String[] strArray) {
+		ArrayList<String> result = new ArrayList<String>();
+		for (int i = 0; i < strArray.length; i++) {
+			if (strArray[i] != null && !strArray[i].equals("")) {
+				result.add(strArray[i]);
+			}
+		}
+		
+		return result.toArray(new String[result.size()]);
+	}
 	@Override
 	protected boolean mustTakeAccountOfUpdate() {
 		return ServerCommunicator.getInstance().isSubmittingQuestion();
