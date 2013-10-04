@@ -13,6 +13,7 @@ import org.json.JSONObject;
  * @author Philemon Favrod (philemon.favrod@epfl.ch)
  */
 public class QuizQuestion {
+    // Uses Integer instead of int to allow them to be nullable.
     private final Integer mId;
     private final String mQuestion;
     private final String[] mAnswers;
@@ -21,11 +22,11 @@ public class QuizQuestion {
     private final String mOwner;
 
     public QuizQuestion(Integer id, 
-                             String question, 
-                             String[] answers,
-                             Integer solutionIndex, 
-                             String[] tags, 
-                             String owner) {
+                        String question, 
+                        String[] answers,
+                        Integer solutionIndex, 
+                        String[] tags, 
+                        String owner) {
         mId = id;
         mQuestion = question;
         mAnswers = answers;
@@ -73,7 +74,8 @@ public class QuizQuestion {
     	return mSolutionIndex;
     }
 
-    /**Converts the object to its JSON description.
+    /**
+     * Converts the object to its JSON description.
      * 
      * @return a string containing the JSON description.
      */

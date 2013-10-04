@@ -79,6 +79,7 @@ public final class ServerCommunicator extends Observable {
         @Override
         protected String doInBackground(QuizQuestion... params) {
             HttpPost post = new HttpPost(SERVER_URL + "/quizquestions/");
+            //construction of the request
             String response = "";
             try {
                 post.setEntity(new StringEntity(params[0].toJSON()));
