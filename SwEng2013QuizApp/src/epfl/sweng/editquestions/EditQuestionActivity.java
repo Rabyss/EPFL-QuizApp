@@ -28,7 +28,7 @@ public class EditQuestionActivity extends QuestionActivity {
 
 	private ArrayList<AnswerEditor> answers;
 
-	private final int kToastDisplayTime = 2000;
+	private final static int TOAST_DISPLAY_TIME = 2000;
 	private boolean resettingUI = false;
 
 	@Override
@@ -108,7 +108,7 @@ public class EditQuestionActivity extends QuestionActivity {
 			showProgressDialog();
 
 		} catch (IllegalArgumentException e) {
-			Toast.makeText(this, e.getMessage(), kToastDisplayTime).show();
+			Toast.makeText(this, e.getMessage(), TOAST_DISPLAY_TIME).show();
 		}
 
 	}
@@ -129,7 +129,7 @@ public class EditQuestionActivity extends QuestionActivity {
 
 	@Override
 	protected void processDownloadedData(Object data) {
-		Toast.makeText(this, R.string.successful_submit, kToastDisplayTime)
+		Toast.makeText(this, R.string.successful_submit, TOAST_DISPLAY_TIME)
 				.show();
 		TestingTransactions.check(TTChecks.NEW_QUESTION_SUBMITTED);
 		
