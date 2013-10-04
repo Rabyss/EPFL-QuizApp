@@ -23,12 +23,12 @@ import epfl.sweng.QuizQuestion;
  * @author Jeremy Rabasco (jeremy.rabasco@epfl.ch), Philemon Favrod
  *         (philemon.favrod@epfl.ch)
  */
-public final class ServerCommunicator extends Observable{
+public final class ServerCommunicator extends Observable {
 
     private static ServerCommunicator sInstance = null;
     private final static String SERVER_URL = "https://sweng-quiz.appspot.com";
-	private boolean isFetching;
-	private boolean isSubmitting;
+    private boolean isFetching;
+    private boolean isSubmitting;
 
     private ServerCommunicator() {
 
@@ -42,96 +42,108 @@ public final class ServerCommunicator extends Observable{
     }
 
     public void getRandomQuestion() {
-    	
-    	isFetching = true;
-    	
-        // Creates an asynchronous task to getch from the server.
-        AsyncTask<Void, Void, QuizQuestion> fetchTask = new AsyncTask<Void, Void, QuizQuestion>() {
 
-            @Override
-            protected QuizQuestion doInBackground(Void... params) {
+        isFetching = true;
 
-                // Construct the request
-                HttpGet questionFetchRequest = new HttpGet(SERVER_URL
-                        + "/quizquestions/random");
-                ResponseHandler<String> questionFetchHandler = new BasicResponseHandler();
-
-                String strRandomQuestion;
-                try {
-                    strRandomQuestion = SwengHttpClientFactory
-                            .getInstance()
-                            .execute(questionFetchRequest, questionFetchHandler);
-                    JSONObject jsonModel = new JSONObject(strRandomQuestion);
-                    return new QuizQuestion(jsonModel);
-                } catch (ClientProtocolException e) {
-                    return null;
-                } catch (IOException e) {
-                    return null;
-                } catch (JSONException e) {
-                    return null;
-                }
-            }
-            
-            @Override
-            protected void onPostExecute(QuizQuestion result) {
-            	super.onPostExecute(result);
-                ServerCommunicator.getInstance().setChanged();
-                ServerCommunicator.getInstance().notifyObservers(result);
-                ServerCommunicator.getInstance().clearChanged();
-                isFetching = false;
-            }
-
-        };
-
-        // Fetch the question
-        fetchTask.execute();
+        // Creates an asynchronous task to fetch from the server.
+        // and fetch the question
+        new FetchTask().execute();
     }
 
     public void submitQuizQuestion(QuizQuestion question,
             final Activity activity) {
-    	
-    	isSubmitting = true;
 
-        AsyncTask<QuizQuestion, Void, String> submitTask = new AsyncTask<QuizQuestion, Void, String>() {
-        	
-            @Override
-            protected String doInBackground(QuizQuestion... params) {
-                HttpPost post = new HttpPost(SERVER_URL + "/quizquestions/");
-                String response = "";
-                try {
-                    post.setEntity(new StringEntity(params[0].toJSON()));
-                    post.setHeader("Content-type", "application/json");
-                    ResponseHandler<String> handler = new BasicResponseHandler();
+        isSubmitting = true;
 
-                    response = SwengHttpClientFactory.getInstance().execute(
-                            post, handler);
-                } catch (ClientProtocolException e) {
-                    response = null;
-                } catch (IOException e) {
-                    response = null;
-                }
-                return response;
-            }
-
-            @Override
-            protected void onPostExecute(String result) {
-                super.onPostExecute(result);
-                ServerCommunicator.getInstance().setChanged();
-                ServerCommunicator.getInstance().notifyObservers(result);
-                ServerCommunicator.getInstance().clearChanged();
-                isSubmitting = false;
-            };
-
-        };
-        
-        submitTask.execute(question);
+        new SubmitTask().execute(question);
     }
 
-	public boolean isFetchingQuestion() {
-		return isFetching;
-	}
+    public boolean isFetchingQuestion() {
+        return isFetching;
+    }
 
-	public boolean isSubmittingQuestion() {
-		return isSubmitting;
-	}
+    public boolean isSubmittingQuestion() {
+        return isSubmitting;
+    }
+
+    /**
+     * 
+     * Asynchronous task used to submit questions to the server.
+     * 
+     * @author Philemon Favrod (philemon.favrod@epfl.ch) & Jeremy Rabasco
+     *         (jeremy.rabasco@epfl.ch)
+     * 
+     */
+    private final class SubmitTask extends
+            AsyncTask<QuizQuestion, Void, String> {
+        @Override
+        protected String doInBackground(QuizQuestion... params) {
+            HttpPost post = new HttpPost(SERVER_URL + "/quizquestions/");
+            String response = "";
+            try {
+                post.setEntity(new StringEntity(params[0].toJSON()));
+                post.setHeader("Content-type", "application/json");
+                ResponseHandler<String> handler = new BasicResponseHandler();
+
+                response = SwengHttpClientFactory.getInstance().execute(post,
+                        handler);
+            } catch (ClientProtocolException e) {
+                response = null;
+            } catch (IOException e) {
+                response = null;
+            }
+            return response;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            ServerCommunicator.getInstance().setChanged();
+            ServerCommunicator.getInstance().notifyObservers(result);
+            ServerCommunicator.getInstance().clearChanged();
+            isSubmitting = false;
+        }
+    }
+
+    /**
+     * 
+     * Asynchronous task used to fetch questions from the server.
+     * 
+     * @author Philemon Favrod (philemon.favrod@epfl.ch) & Jeremy Rabasco
+     *         (jeremy.rabasco@epfl.ch)
+     * 
+     */
+    private final class FetchTask extends AsyncTask<Void, Void, QuizQuestion> {
+        @Override
+        protected QuizQuestion doInBackground(Void... params) {
+
+            // Construct the request
+            HttpGet questionFetchRequest = new HttpGet(SERVER_URL
+                    + "/quizquestions/random");
+            ResponseHandler<String> questionFetchHandler = new BasicResponseHandler();
+
+            String strRandomQuestion;
+            try {
+                strRandomQuestion = SwengHttpClientFactory.getInstance()
+                        .execute(questionFetchRequest, questionFetchHandler);
+                JSONObject jsonModel = new JSONObject(strRandomQuestion);
+                return new QuizQuestion(jsonModel);
+            } catch (ClientProtocolException e) {
+                return null;
+            } catch (IOException e) {
+                return null;
+            } catch (JSONException e) {
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(QuizQuestion result) {
+            super.onPostExecute(result);
+            ServerCommunicator.getInstance().setChanged();
+            ServerCommunicator.getInstance().notifyObservers(result);
+            ServerCommunicator.getInstance().clearChanged();
+            isFetching = false;
+        }
+    }
 }
