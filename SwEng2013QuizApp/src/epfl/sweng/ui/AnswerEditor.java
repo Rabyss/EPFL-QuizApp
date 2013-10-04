@@ -92,7 +92,9 @@ public class AnswerEditor {
 			}
 		});
 		
-		TestingTransactions.check(TTChecks.QUESTION_EDITED);
+		if (!first) {
+			TestingTransactions.check(TTChecks.QUESTION_EDITED);
+		}
 	}
 
 	public String getContent() {

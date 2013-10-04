@@ -128,8 +128,8 @@ public class EditQuestionActivity extends QuestionActivity {
 		resettingUI = true;
 		((EditText) findViewById(R.id.editQuestionText)).setText("");
 		((EditText) findViewById(R.id.editTags)).setText(""); 
-		for (int i = 1; i < answers.size(); i++) {
-			answers.get(i).remove();
+		while (answers.size() > 1) {
+			answers.get(answers.size()-1).remove();
 		}
 		answers.get(0).resetContent();
 		resettingUI = false;
