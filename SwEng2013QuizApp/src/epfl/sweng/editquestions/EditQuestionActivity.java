@@ -2,8 +2,9 @@ package epfl.sweng.editquestions;
 
 import java.util.ArrayList;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,7 @@ public class EditQuestionActivity extends QuestionActivity {
 	private ArrayList<AnswerEditor> answers;
 
 	private final int kToastDisplayTime = 2000;
+	private boolean resettingUI = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +43,8 @@ public class EditQuestionActivity extends QuestionActivity {
 				(ViewGroup) findViewById(R.id.linearLayoutAnswers), true));
 
 		findViewById(R.id.editQuestionText).requestFocus();
+		((EditText) findViewById(R.id.editQuestionText)).addTextChangedListener(new EditTextWatcher());
+		((EditText) findViewById(R.id.editTags)).addTextChangedListener(new EditTextWatcher());
 
 		// let the testing infrastructure know that edit question has been
 		// initialized
@@ -61,6 +65,10 @@ public class EditQuestionActivity extends QuestionActivity {
 
 	public ArrayList<AnswerEditor> getAnswers() {
 		return answers;
+	}
+	
+	public boolean isResettingUI() {
+		return resettingUI;
 	}
 
 	public void submitQuestion(View view) {
@@ -85,35 +93,73 @@ public class EditQuestionActivity extends QuestionActivity {
 
 		String tagsText = ((EditText) findViewById(R.id.editTags)).getText()
 				.toString();
-		String[] tags = (tagsText.trim().isEmpty()) ? null:tagsText.split("\\W+");
+		String[] tags = (tagsText.trim().isEmpty()) ? null : tagsText
+				.split("\\W+");
 
 		QuizQuestion quizQuestion = new QuizQuestion(null, question,
 				answersText.toArray(new String[answers.size()]), solutionIndex,
 				tags, null);
-		
-		try {
-		    quizQuestion.audit();
-		    ServerCommunicator.getInstance().submitQuizQuestion(quizQuestion, this);
 
-		    showProgressDialog();
-		
+		try {
+			quizQuestion.audit();
+			ServerCommunicator.getInstance().submitQuizQuestion(quizQuestion,
+					this);
+
+			showProgressDialog();
+
 		} catch (IllegalArgumentException e) {
-		    Toast.makeText(this, e.getMessage(), kToastDisplayTime).show();
+			Toast.makeText(this, e.getMessage(), kToastDisplayTime).show();
 		}
 
 	}
 
-    @Override
-    protected boolean mustTakeAccountOfUpdate() {
-        return ServerCommunicator.getInstance().isSubmittingQuestion();
-    }
+	@Override
+	protected boolean mustTakeAccountOfUpdate() {
+		return ServerCommunicator.getInstance().isSubmittingQuestion();
+	}
 
-    @Override
-    protected void processDownloadedData(Object data) {
-        Toast.makeText(this, R.string.successful_submit, kToastDisplayTime).show();
-        Intent displayActivityIntent = new Intent(this,
-                EditQuestionActivity.class);
-        startActivity(displayActivityIntent);
-    }
+	@Override
+	protected void processDownloadedData(Object data) {
+		Toast.makeText(this, R.string.successful_submit, kToastDisplayTime)
+				.show();
+		TestingTransactions.check(TTChecks.NEW_QUESTION_SUBMITTED);
+		
+		// Reset UI
+		resettingUI = true;
+		((EditText) findViewById(R.id.editQuestionText)).setText("");
+		((EditText) findViewById(R.id.editTags)).setText(""); 
+		for (int i = 1; i < answers.size(); i++) {
+			answers.get(i).remove();
+		}
+		answers.get(0).resetContent();
+		resettingUI = false;
+		TestingTransactions.check(TTChecks.EDIT_QUESTIONS_SHOWN);
+	}
+
+	/**
+	 * Test when texts change
+	 */
+	private final class EditTextWatcher implements TextWatcher {
+		@Override
+		public void onTextChanged(CharSequence s, int start, int before, int count) {
+			// TODO Auto-generated method stub
+			
+		}
+	
+		@Override
+		public void beforeTextChanged(CharSequence s, int start, int count,
+				int after) {
+			// TODO Auto-generated method stub
+			
+		}
+	
+		@Override
+		public void afterTextChanged(Editable s) {
+			if (!resettingUI) {
+				TestingTransactions.check(TTChecks.QUESTION_EDITED);
+			}
+			
+		}
+	}
 
 }
