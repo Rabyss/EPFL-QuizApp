@@ -21,8 +21,8 @@ import epfl.sweng.ui.QuestionActivity;
  */
 public class ShowQuestionsActivity extends QuestionActivity {
 
-	private final int kPaddingRight = 23;
-	private final int kPadding = 0;
+	private final static int PADDING_RIGHT = 23;
+	private final static int PADDING = 0;
 
 	private QuizQuestion mRandomQuestion;
 	private Button[] mAnswer;
@@ -150,7 +150,7 @@ public class ShowQuestionsActivity extends QuestionActivity {
 		for (int i = 0; i < totalTags; i++) {
 			TextView tagText = new TextView(this);
 			tagText.setText(mRandomQuestion.getTags()[i]);
-			tagText.setPadding(kPadding, kPadding, kPaddingRight, kPadding);
+			tagText.setPadding(PADDING, PADDING, PADDING_RIGHT, PADDING);
 			tagText.setTextColor(Color.GRAY);
 			tagLayout.addView(tagText);
 		}
