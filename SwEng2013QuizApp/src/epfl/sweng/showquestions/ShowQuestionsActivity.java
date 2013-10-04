@@ -17,17 +17,17 @@ import epfl.sweng.testing.TestingTransactions.TTChecks;
 import epfl.sweng.ui.QuestionActivity;
 
 /**
- * Uploads a new question and displays it
- * 
+ * Activity to download a question and display it
  */
 public class ShowQuestionsActivity extends QuestionActivity {
-	private final int kPaddingRight=23;
-	private final int kPadding=0;
-	private QuizQuestion mRandomQuestion = null;
+
+	private final int kPaddingRight = 23;
+	private final int kPadding = 0;
+
+	private QuizQuestion mRandomQuestion;
 	private Button[] mAnswer;
 	private Button mNextQuestion;
 	private TextView[] mCorrectness;
-	private int mIndexButton;
 	private LinearLayout mLinearLayout;
 
 	@Override
@@ -45,7 +45,7 @@ public class ShowQuestionsActivity extends QuestionActivity {
 	}
 
 	/**
-	 * Updates and displays a new random question
+	 * Downloads and displays a new random question
 	 */
 	public void getQuestion() {
 		// creates the main layout
@@ -53,21 +53,37 @@ public class ShowQuestionsActivity extends QuestionActivity {
 		mLinearLayout.setOrientation(LinearLayout.VERTICAL);
 		mLinearLayout.setLayoutParams(new LayoutParams(
 				LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-		// uploads a random question from the server
+		// downloads a random question from the server
 		ServerCommunicator.getInstance().getRandomQuestion();
-		
+		// show a progress dialog while waiting for question
 		showProgressDialog();
 	}
 
+	@Override
+	protected boolean mustTakeAccountOfUpdate() {
+		return ServerCommunicator.getInstance().isFetchingQuestion();
+	}
+
+	@Override
+	protected void processDownloadedData(Object data) {
+		mRandomQuestion = (QuizQuestion) data;
+		showQuestion();
+	}
+
 	public void showQuestion() {
-		// initializes the title of the question
+		// Display the text of the question
 		TextView question = new TextView(this);
 		question.setText(mRandomQuestion.getQuestion());
 		mLinearLayout.addView(question);
+
+		// display the answers
+		displayAnswers();
+
 		// initializes the button nextQuestion
 		mNextQuestion = new Button(this);
 		mNextQuestion.setText("Next Question");
 		mNextQuestion.setEnabled(false);
+		mLinearLayout.addView(mNextQuestion);
 		mNextQuestion.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -76,77 +92,61 @@ public class ShowQuestionsActivity extends QuestionActivity {
 			}
 		});
 
-		displayAnswer();
-
-		mLinearLayout.addView(mNextQuestion);
+		// Display the tags
 		displayTags();
+
+		// Debug: Display the solution 
 		//displaySolutionIndex();
+		 
+
 		setContentView(mLinearLayout);
 		TestingTransactions.check(TTChecks.QUESTION_SHOWN);
 	}
 
-	public void displayAnswer() {
+	public void displayAnswers() {
+		// Initialize the arrays of answers and correctness sign
 		int totalAnswer = mRandomQuestion.getAnswers().length;
 		mAnswer = new Button[totalAnswer];
 		mCorrectness = new TextView[totalAnswer];
+
 		// initializes all the buttons of answer
-		for (mIndexButton = 0; mIndexButton < totalAnswer; mIndexButton++) {
-			LinearLayout answerLayout = new LinearLayout(this);
-			answerLayout.setOrientation(LinearLayout.HORIZONTAL);
-			answerLayout.setLayoutParams(new LayoutParams(
-					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-
-			mCorrectness[mIndexButton] = new TextView(this);
-			if (mRandomQuestion.isSolution(mIndexButton)) {
-				mCorrectness[mIndexButton].setText("\u2714");
-			} else {
-				mCorrectness[mIndexButton].setText("\u2718");
-			}
-			mCorrectness[mIndexButton].setVisibility(View.INVISIBLE);
-			mAnswer[mIndexButton] = new Button(this);
-			mAnswer[mIndexButton].setClickable(true);
-			mAnswer[mIndexButton]
-					.setText(mRandomQuestion.getAnswers()[mIndexButton]);
-			mAnswer[mIndexButton]
-					.setOnClickListener(new View.OnClickListener() {
-
-						@Override
-						public void onClick(View v) {
-
-							int actualAnswer = 0;
-							for (int i = 0; i < mRandomQuestion.getAnswers().length; i++) {
-								if (v == mAnswer[i]) {
-									actualAnswer = i;
-								}
-							}
-							mCorrectness[actualAnswer]
-									.setVisibility(View.VISIBLE);
-							if (mRandomQuestion.isSolution(actualAnswer)) {
-								mNextQuestion.setEnabled(true);
-								for (int i = 0; i < mRandomQuestion
-										.getAnswers().length; i++) {
-									mAnswer[i].setEnabled(false);
-									if (i != actualAnswer) {
-										mCorrectness[i]
-												.setVisibility(View.INVISIBLE);
-									}
-								}
-							}
-							TestingTransactions.check(TTChecks.ANSWER_SELECTED);
-						}
-					});
-			answerLayout.addView(mAnswer[mIndexButton]);
-			answerLayout.addView(mCorrectness[mIndexButton]);
-			mLinearLayout.addView(answerLayout);
+		for (int indexAnswer = 0; indexAnswer < totalAnswer; indexAnswer++) {
+			displayAnswer(indexAnswer);
 		}
+	}
+
+	private void displayAnswer(int indexAnswer) {
+		// New Layout for containing answer button and correctness sign
+		LinearLayout answerLayout = new LinearLayout(this);
+		answerLayout.setOrientation(LinearLayout.HORIZONTAL);
+		answerLayout.setLayoutParams(new LayoutParams(
+				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+
+		// Initialize correctness sign (hidden for now)
+		mCorrectness[indexAnswer] = new TextView(this);
+		if (mRandomQuestion.isSolution(indexAnswer)) {
+			mCorrectness[indexAnswer].setText("\u2714");
+		} else {
+			mCorrectness[indexAnswer].setText("\u2718");
+		}
+		mCorrectness[indexAnswer].setVisibility(View.INVISIBLE);
+
+		// Initialize answer button
+		mAnswer[indexAnswer] = new Button(this);
+		mAnswer[indexAnswer].setClickable(true);
+		mAnswer[indexAnswer].setText(mRandomQuestion.getAnswers()[indexAnswer]);
+		mAnswer[indexAnswer].setOnClickListener(new AnswerOnClickListener());
+		answerLayout.addView(mAnswer[indexAnswer]);
+		answerLayout.addView(mCorrectness[indexAnswer]);
+		mLinearLayout.addView(answerLayout);
 	}
 
 	public void displayTags() {
 		int totalTags = mRandomQuestion.getTags().length;
-		LinearLayout tagLayout= new LinearLayout(this);
+		LinearLayout tagLayout = new LinearLayout(this);
 		tagLayout.setOrientation(LinearLayout.HORIZONTAL);
-		tagLayout.setLayoutParams(new LayoutParams(
-				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+		tagLayout.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,
+				LayoutParams.WRAP_CONTENT));
 		for (int i = 0; i < totalTags; i++) {
 			TextView tagText = new TextView(this);
 			tagText.setText(mRandomQuestion.getTags()[i]);
@@ -158,23 +158,46 @@ public class ShowQuestionsActivity extends QuestionActivity {
 
 	}
 
-	/*public void displaySolutionIndex() {
+	public void displaySolutionIndex() {
 		TextView solutionIndex = new TextView(this);
 		int index = mRandomQuestion.getSolutionIndex();
 		String solutionText = String.valueOf(index);
 		solutionIndex.setText(solutionText);
 		mLinearLayout.addView(solutionIndex);
-	}*/
+	}
 	
+	/**
+	 * Private class for handling click on answer buttons
+	 */
+	private final class AnswerOnClickListener implements OnClickListener {
+		@Override
+		public void onClick(View v) {
 
-    @Override
-    protected boolean mustTakeAccountOfUpdate() {
-        return ServerCommunicator.getInstance().isFetchingQuestion();
-    }
+			// Find index of actual answer that was clicked on
+			int actualAnswer = 0;
+			for (int i = 0; i < mRandomQuestion.getAnswers().length; i++) {
+				if (v == mAnswer[i]) {
+					actualAnswer = i;
+				}
+			}
+			
+			// Set correctness sign visible
+			mCorrectness[actualAnswer].setVisibility(View.VISIBLE);
+			
+			// If it's the right answer then disable all other answers and
+			// enable "next question" button
+			if (mRandomQuestion.isSolution(actualAnswer)) {
+				mNextQuestion.setEnabled(true);
+				for (int i = 0; i < mRandomQuestion.getAnswers().length; i++) {
+					mAnswer[i].setEnabled(false);
+					if (i != actualAnswer) {
+						mCorrectness[i].setVisibility(View.INVISIBLE);
+					}
+				}
+			}
+			
+			TestingTransactions.check(TTChecks.ANSWER_SELECTED);
+		}
+	}
 
-    @Override
-    protected void processDownloadedData(Object data) {
-        mRandomQuestion = (QuizQuestion) data;
-        showQuestion();
-    }
 }
