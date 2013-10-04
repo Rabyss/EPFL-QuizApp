@@ -8,9 +8,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
+ * 
  * Represents a question of the quiz.
  * 
- * @author Philemon Favrod (philemon.favrod@epfl.ch)
  */
 public class QuizQuestion {
     // Uses Integer instead of int to allow them to be nullable.

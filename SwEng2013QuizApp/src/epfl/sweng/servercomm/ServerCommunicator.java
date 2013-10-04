@@ -19,9 +19,7 @@ import epfl.sweng.QuizQuestion;
 /**
  * 
  * Handles communication with the server.
- * 
- * @author Jeremy Rabasco (jeremy.rabasco@epfl.ch), Philemon Favrod
- *         (philemon.favrod@epfl.ch)
+ *
  */
 public final class ServerCommunicator extends Observable {
 
@@ -70,9 +68,6 @@ public final class ServerCommunicator extends Observable {
      * 
      * Asynchronous task used to submit questions to the server.
      * 
-     * @author Philemon Favrod (philemon.favrod@epfl.ch) & Jeremy Rabasco
-     *         (jeremy.rabasco@epfl.ch)
-     * 
      */
     private final class SubmitTask extends
             AsyncTask<QuizQuestion, Void, String> {
@@ -109,9 +104,6 @@ public final class ServerCommunicator extends Observable {
     /**
      * 
      * Asynchronous task used to fetch questions from the server.
-     * 
-     * @author Philemon Favrod (philemon.favrod@epfl.ch) & Jeremy Rabasco
-     *         (jeremy.rabasco@epfl.ch)
      * 
      */
     private final class FetchTask extends AsyncTask<Void, Void, QuizQuestion> {
