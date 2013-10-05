@@ -88,11 +88,13 @@ public class AnswerEditor {
 			@Override
 			public void onClick(View v) {
 				remove();
+				mActivity.tryAudit();
 				TestingTransactions.check(TTChecks.QUESTION_EDITED);
 			}
 		});
 		
 		if (!first) {
+		    mActivity.tryAudit();
 			TestingTransactions.check(TTChecks.QUESTION_EDITED);
 		}
 	}
@@ -115,7 +117,7 @@ public class AnswerEditor {
 			mCorrectButton.setEnabled(true);
 			mCorrect = false;
 		}
-		
+		mActivity.tryAudit();
 		TestingTransactions.check(TTChecks.QUESTION_EDITED);
 	}
 
@@ -162,6 +164,7 @@ public class AnswerEditor {
 		@Override
 		public void afterTextChanged(Editable s) {
 			if (!mActivity.isResettingUI()) {
+			    mActivity.tryAudit();
 				TestingTransactions.check(TTChecks.QUESTION_EDITED);
 			}
 		}

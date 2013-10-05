@@ -46,6 +46,7 @@ public class EditQuestionActivity extends QuestionActivity {
 		findViewById(R.id.editQuestionText).requestFocus();
 		((EditText) findViewById(R.id.editQuestionText)).addTextChangedListener(new EditTextWatcher());
 		((EditText) findViewById(R.id.editTags)).addTextChangedListener(new EditTextWatcher());
+		((Button) findViewById(R.id.butttonSubmitQuestion)).setEnabled(false);
 
 		// let the testing infrastructure know that edit question has been
 		// initialized
@@ -153,6 +154,7 @@ public class EditQuestionActivity extends QuestionActivity {
 		resettingUI = true;
 		((EditText) findViewById(R.id.editQuestionText)).setText("");
 		((EditText) findViewById(R.id.editTags)).setText(""); 
+		((Button) findViewById(R.id.butttonSubmitQuestion)).setEnabled(false);
 		while (answers.size() > 1) {
 			answers.get(answers.size()-1).remove();
 		}
@@ -181,6 +183,7 @@ public class EditQuestionActivity extends QuestionActivity {
 		@Override
 		public void afterTextChanged(Editable s) {
 			if (!resettingUI) {
+			    tryAudit();
 				TestingTransactions.check(TTChecks.QUESTION_EDITED);
 			}
 			
