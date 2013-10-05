@@ -10,9 +10,9 @@
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_show_answer">ShowAnswer</string>
     <string name="title_activity_edit_question">EditQuestionActivity</string>
-    <string name="hint_question_text">Type in the question's text body</string>
+    <string name="hint_question_text">Type in the question\'s text body</string>
     <string name="button_add_answer">+</string>
-    <string name="edit_tags">Type in the question's tags</string>
+    <string name="edit_tags">Type in the question\'s tags</string>
     <string name="button_submit_question">Submit</string>
     <string name="edit_answer_text">Type in the answer</string>
     <string name="button_cross">\u2718</string>
