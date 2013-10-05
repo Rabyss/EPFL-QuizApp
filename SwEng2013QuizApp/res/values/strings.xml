@@ -15,13 +15,13 @@
     <string name="edit_tags">Type in the question’s tags</string>
     <string name="button_submit_question">Submit.</string>
     <string name="edit_answer_text">Type in the answer.</string>
-    <string name="button_cross">✘</string>
-    <string name="button_check">✔</string>
+    <string name="button_cross">\u2714</string>
+    <string name="button_check">\u2718</string>
     <string name="button_remove">-</string>
     <string name="successful_submit">Successful submit</string>
     <string name="error_server_comm">Server is unreachable.</string>
     <string name="error_failure">Failure</string>
-    <string name="next_question">Next Question</string>
+    <string name="next_question">Next question</string>
     
 
 </resources>
