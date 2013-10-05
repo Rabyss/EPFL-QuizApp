@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import epfl.sweng.QuizQuestion;
@@ -78,6 +79,32 @@ public class EditQuestionActivity extends QuestionActivity {
 				getCurrentFocus().getWindowToken(),
 				InputMethodManager.HIDE_NOT_ALWAYS);
 
+		QuizQuestion quizQuestion = extractQuizQuestion();
+
+		try {
+			quizQuestion.audit();
+			ServerCommunicator.getInstance().submitQuizQuestion(quizQuestion,
+					this);
+
+			showProgressDialog();
+
+		} catch (IllegalArgumentException e) {
+			Toast.makeText(this, e.getMessage(), TOAST_DISPLAY_TIME).show();
+		}
+
+	}
+	
+	public void tryAudit() {
+		QuizQuestion quizQuestion = extractQuizQuestion();
+		try {
+			quizQuestion.audit();
+			((Button) findViewById(R.id.butttonSubmitQuestion)).setEnabled(true);
+		} catch (IllegalArgumentException e) {
+			((Button) findViewById(R.id.butttonSubmitQuestion)).setEnabled(false);
+		}
+	}
+
+	private QuizQuestion extractQuizQuestion() {
 		String question = ((EditText) findViewById(R.id.editQuestionText))
 				.getText().toString();
 
@@ -99,18 +126,7 @@ public class EditQuestionActivity extends QuestionActivity {
 		QuizQuestion quizQuestion = new QuizQuestion(null, question,
 				answersText.toArray(new String[answers.size()]), solutionIndex,
 				tags, null);
-
-		try {
-			quizQuestion.audit();
-			ServerCommunicator.getInstance().submitQuizQuestion(quizQuestion,
-					this);
-
-			showProgressDialog();
-
-		} catch (IllegalArgumentException e) {
-			Toast.makeText(this, e.getMessage(), TOAST_DISPLAY_TIME).show();
-		}
-
+		return quizQuestion;
 	}
 	private String[] cleanUp(String[] strArray) {
 		ArrayList<String> result = new ArrayList<String>();
