@@ -27,7 +27,8 @@
         </activity>
         <activity
             android:name="epfl.sweng.showquestions.ShowQuestionsActivity"
-            android:label="@string/title_activity_show_questions" >
+            android:label="@string/title_activity_show_questions"
+            android:configChanges="orientation|keyboardHidden|screenSize" >
         </activity>
         <activity
             android:name="epfl.sweng.editquestions.EditQuestionActivity"
