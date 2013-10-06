@@ -63,6 +63,7 @@ public class EditQuestionActivity extends QuestionActivity {
 	public void addAnswer(View view) {
 		ViewGroup linearLayout = (ViewGroup) findViewById(R.id.linearLayoutAnswers);
 		answers.add(new AnswerEditor(this, linearLayout, false));
+		tryAudit();
 	}
 
 	public ArrayList<AnswerEditor> getAnswers() {
@@ -110,7 +111,7 @@ public class EditQuestionActivity extends QuestionActivity {
 				.getText().toString();
 
 		ArrayList<String> answersText = new ArrayList<String>();
-		int solutionIndex = 0;
+		int solutionIndex = -1;
 
 		for (AnswerEditor answer : answers) {
 			answersText.add(answer.getContent());

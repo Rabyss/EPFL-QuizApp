@@ -47,14 +47,10 @@ public class AnswerEditor {
 
 		// Create Button Correct
 		mCorrectButton = new Button(activity);
-		if (first) {
-			mCorrectButton.setText(R.string.button_check);
-			mCorrectButton.setEnabled(false);
-			mCorrect = true;
-		} else {
-			mCorrectButton.setText(R.string.button_cross);
-			mCorrect = false;
-		}
+
+		mCorrectButton.setText(R.string.button_cross);
+		mCorrect = false;
+
 		mCorrectButton.setLayoutParams(new LayoutParams(
 				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 		linearLayout.addView(mCorrectButton);
@@ -78,12 +74,6 @@ public class AnswerEditor {
 		mRemoveButton.setText(R.string.button_remove);
 		linearLayout.addView(mRemoveButton);
 
-		if (first) {
-			mRemoveButton.setEnabled(false);
-		} else {
-			activity.getAnswers().get(0).mRemoveButton.setEnabled(true);
-		}
-
 		mRemoveButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -92,11 +82,12 @@ public class AnswerEditor {
 				TestingTransactions.check(TTChecks.QUESTION_EDITED);
 			}
 		});
-		
+
 		if (!first) {
-		    mActivity.tryAudit();
 			TestingTransactions.check(TTChecks.QUESTION_EDITED);
 		}
+		
+		mActivity.tryAudit();
 	}
 
 	public String getContent() {
@@ -110,11 +101,9 @@ public class AnswerEditor {
 	public void setCorrect(Boolean correct) {
 		if (correct) {
 			mCorrectButton.setText(R.string.button_check);
-			mCorrectButton.setEnabled(false);
 			mCorrect = true;
 		} else {
 			mCorrectButton.setText(R.string.button_cross);
-			mCorrectButton.setEnabled(true);
 			mCorrect = false;
 		}
 		mActivity.tryAudit();
@@ -129,42 +118,37 @@ public class AnswerEditor {
 		ArrayList<AnswerEditor> answers = mActivity.getAnswers();
 		answers.remove(this);
 
-		if (this.isCorrect()) {
-			answers.get(0).setCorrect(true);
-		}
-
-		if (answers.size() == 1) {
-			answers.get(0).mRemoveButton.setEnabled(false);
-		}
 		((ViewGroup) linearLayout.getParent()).removeView(linearLayout);
-		
+
 	}
 
 	public void resetContent() {
 		mContent.setText("");
-		
+
 	}
-/**
- *Test when the text of an answer change
- */
+
+	/**
+	 * Test when the text of an answer change
+	 */
 	private final class AnswerTextWatcher implements TextWatcher {
 		@Override
-		public void onTextChanged(CharSequence s, int start, int before, int count) {
+		public void onTextChanged(CharSequence s, int start, int before,
+				int count) {
 			// TODO Auto-generated method stub
-			
+
 		}
-	
+
 		@Override
 		public void beforeTextChanged(CharSequence s, int start, int count,
 				int after) {
 			// TODO Auto-generated method stub
-			
+
 		}
-	
+
 		@Override
 		public void afterTextChanged(Editable s) {
 			if (!mActivity.isResettingUI()) {
-			    mActivity.tryAudit();
+				mActivity.tryAudit();
 				TestingTransactions.check(TTChecks.QUESTION_EDITED);
 			}
 		}
