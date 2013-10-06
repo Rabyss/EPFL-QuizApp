@@ -149,7 +149,6 @@ public class EditQuestionActivity extends QuestionActivity {
 	protected void processDownloadedData(Object data) {
 		Toast.makeText(this, R.string.successful_submit, TOAST_DISPLAY_TIME)
 				.show();
-		TestingTransactions.check(TTChecks.NEW_QUESTION_SUBMITTED);
 		
 		// Reset UI
 		resettingUI = true;
@@ -162,7 +161,7 @@ public class EditQuestionActivity extends QuestionActivity {
 		answers.get(0).resetContent();
 		answers.get(0).setCorrect(false);
 		resettingUI = false;
-		TestingTransactions.check(TTChecks.EDIT_QUESTIONS_SHOWN);
+		TestingTransactions.check(TTChecks.NEW_QUESTION_SUBMITTED);
 	}
 
 	/**
