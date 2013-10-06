@@ -61,7 +61,7 @@ public class AnswerEditor {
 			public void onClick(View v) {
 				ArrayList<AnswerEditor> answers = activity.getAnswers();
 
-				if (isCorrect()) {
+				if (!isCorrect()) {
 					for (AnswerEditor a : answers) {
 						if (a.isCorrect()) {
 							a.setCorrect(false);
