@@ -1,23 +1,20 @@
 package epfl.sweng.showquestions;
 
-import java.util.HashMap;
 
-import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.ListView;
-import android.widget.Toast;
+import android.widget.TextView;
 import epfl.sweng.QuizQuestion;
 import epfl.sweng.R;
 import epfl.sweng.servercomm.ServerCommunicator;
@@ -31,7 +28,10 @@ import epfl.sweng.ui.QuestionActivity;
 public class ShowQuestionsActivity extends QuestionActivity {
 
 	private final static int PADDING_RIGHT = 23;
-	private final static int PADDING = 0;
+	private final static int PADDING_ZERO = 0;
+	private final static int PADDING_FIVE = 5;
+	private final static int PADDING_TEN=10;
+	private final static int PADDING_TWENTY= 20;
 
 	private ShowQuestionsActivity mSelf;
 	private QuizQuestion mRandomQuestion;
@@ -92,7 +92,7 @@ public class ShowQuestionsActivity extends QuestionActivity {
 		
 		mCorrectness = new TextView(this);
 		mCorrectness.setText("Wait for an answer...");
-		mCorrectness.setPadding(10, 20, 0, 0);
+		mCorrectness.setPadding(PADDING_TEN, PADDING_TWENTY, PADDING_ZERO, PADDING_ZERO);
 		mLinearLayout.addView(mCorrectness);
 		
 		// initializes the button nextQuestion
@@ -121,11 +121,10 @@ public class ShowQuestionsActivity extends QuestionActivity {
 
 	public void displayAnswers() {
 		// Initialize the arrays of answers and correctness sign
-		int totalAnswer = mRandomQuestion.getAnswers().length;
-		
+			
 
 		mAnswersList = new ListView(this);
-		mAnswersList.setPadding(10, 20, 0, 0);
+		mAnswersList.setPadding(PADDING_TEN, PADDING_TWENTY, PADDING_ZERO, PADDING_ZERO);
 		
 		mAnswersList.setOnItemClickListener(new AnswerOnClickListener());
 		mAnswersList.setAdapter(new AnswerListAdapter());
@@ -143,7 +142,7 @@ public class ShowQuestionsActivity extends QuestionActivity {
 		for (int i = 0; i < totalTags; i++) {
 			TextView tagText = new TextView(this);
 			tagText.setText(mRandomQuestion.getTags()[i]);
-			tagText.setPadding(PADDING, PADDING, PADDING_RIGHT, PADDING);
+			tagText.setPadding(PADDING_ZERO, PADDING_ZERO, PADDING_RIGHT, PADDING_ZERO);
 			tagText.setTextColor(Color.GRAY);
 			tagLayout.addView(tagText);
 		}
@@ -180,6 +179,9 @@ public class ShowQuestionsActivity extends QuestionActivity {
 		}
 	}
 
+	/**
+	 * Adapter for the list view of the answer
+	 */
 	private class AnswerListAdapter extends ArrayAdapter<String> {
 
 		public AnswerListAdapter() {
@@ -189,7 +191,7 @@ public class ShowQuestionsActivity extends QuestionActivity {
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			TextView answerText = new TextView(mSelf);
-			answerText.setPadding(5, 20, 0, 20);
+			answerText.setPadding(PADDING_FIVE, PADDING_TWENTY, PADDING_ZERO, PADDING_TWENTY);
 			answerText.setText(mRandomQuestion.getAnswers()[position]);
 			return answerText;
 		}
