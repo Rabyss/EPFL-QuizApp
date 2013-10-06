@@ -1,14 +1,23 @@
 package epfl.sweng.showquestions;
 
+import java.util.HashMap;
+
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.ListView;
+import android.widget.Toast;
 import epfl.sweng.QuizQuestion;
 import epfl.sweng.R;
 import epfl.sweng.servercomm.ServerCommunicator;
@@ -24,16 +33,18 @@ public class ShowQuestionsActivity extends QuestionActivity {
 	private final static int PADDING_RIGHT = 23;
 	private final static int PADDING = 0;
 
+	private ShowQuestionsActivity mSelf;
 	private QuizQuestion mRandomQuestion;
-	private Button[] mAnswer;
 	private Button mNextQuestion;
-	private TextView[] mCorrectness;
+	private TextView mCorrectness;
 	private LinearLayout mLinearLayout;
-
+	private ListView mAnswersList;
+    
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		ServerCommunicator.getInstance().addObserver(this);
+		mSelf = this;
 		getQuestion();
 	}
 
@@ -78,12 +89,16 @@ public class ShowQuestionsActivity extends QuestionActivity {
 
 		// display the answers
 		displayAnswers();
-
+		
+		mCorrectness = new TextView(this);
+		mCorrectness.setText("Wait for an answer...");
+		mCorrectness.setPadding(10, 20, 0, 0);
+		mLinearLayout.addView(mCorrectness);
+		
 		// initializes the button nextQuestion
 		mNextQuestion = new Button(this);
 		mNextQuestion.setText(R.string.next_question);
 		mNextQuestion.setEnabled(false);
-		mLinearLayout.addView(mNextQuestion);
 		mNextQuestion.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -91,6 +106,7 @@ public class ShowQuestionsActivity extends QuestionActivity {
 				getQuestion();
 			}
 		});
+		mLinearLayout.addView(mNextQuestion);
 
 		// Display the tags
 		displayTags();
@@ -106,40 +122,17 @@ public class ShowQuestionsActivity extends QuestionActivity {
 	public void displayAnswers() {
 		// Initialize the arrays of answers and correctness sign
 		int totalAnswer = mRandomQuestion.getAnswers().length;
-		mAnswer = new Button[totalAnswer];
-		mCorrectness = new TextView[totalAnswer];
+		
 
-		// initializes all the buttons of answer
-		for (int indexAnswer = 0; indexAnswer < totalAnswer; indexAnswer++) {
-			displayAnswer(indexAnswer);
-		}
+		mAnswersList = new ListView(this);
+		mAnswersList.setPadding(10, 20, 0, 0);
+		
+		mAnswersList.setOnItemClickListener(new AnswerOnClickListener());
+		mAnswersList.setAdapter(new AnswerListAdapter());
+		
+		mLinearLayout.addView(mAnswersList);
 	}
 
-	private void displayAnswer(int indexAnswer) {
-		// New Layout for containing answer button and correctness sign
-		LinearLayout answerLayout = new LinearLayout(this);
-		answerLayout.setOrientation(LinearLayout.HORIZONTAL);
-		answerLayout.setLayoutParams(new LayoutParams(
-				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-
-		// Initialize correctness sign (hidden for now)
-		mCorrectness[indexAnswer] = new TextView(this);
-		if (mRandomQuestion.isSolution(indexAnswer)) {
-			mCorrectness[indexAnswer].setText("\u2714");
-		} else {
-			mCorrectness[indexAnswer].setText("\u2718");
-		}
-		mCorrectness[indexAnswer].setVisibility(View.INVISIBLE);
-
-		// Initialize answer button
-		mAnswer[indexAnswer] = new Button(this);
-		mAnswer[indexAnswer].setClickable(true);
-		mAnswer[indexAnswer].setText(mRandomQuestion.getAnswers()[indexAnswer]);
-		mAnswer[indexAnswer].setOnClickListener(new AnswerOnClickListener());
-		answerLayout.addView(mAnswer[indexAnswer]);
-		answerLayout.addView(mCorrectness[indexAnswer]);
-		mLinearLayout.addView(answerLayout);
-	}
 
 	public void displayTags() {
 		int totalTags = mRandomQuestion.getTags().length;
@@ -169,35 +162,37 @@ public class ShowQuestionsActivity extends QuestionActivity {
 	/**
 	 * Private class for handling click on answer buttons
 	 */
-	private final class AnswerOnClickListener implements OnClickListener {
-		@Override
-		public void onClick(View v) {
+	private final class AnswerOnClickListener implements OnItemClickListener {
 
-			// Find index of actual answer that was clicked on
-			int actualAnswer = 0;
-			for (int i = 0; i < mRandomQuestion.getAnswers().length; i++) {
-				if (v == mAnswer[i]) {
-					actualAnswer = i;
-				}
-			}
+		@Override
+		public void onItemClick(AdapterView<?> listView, View view, int position,
+				long id) {
 			
-			// Set correctness sign visible
-			mCorrectness[actualAnswer].setVisibility(View.VISIBLE);
-			
-			// If it's the right answer then disable all other answers and
-			// enable "next question" button
-			if (mRandomQuestion.isSolution(actualAnswer)) {
+			if (mRandomQuestion.isSolution(position)) {
+				mCorrectness.setText(getString(R.string.button_check));
 				mNextQuestion.setEnabled(true);
-				for (int i = 0; i < mRandomQuestion.getAnswers().length; i++) {
-					mAnswer[i].setEnabled(false);
-					if (i != actualAnswer) {
-						mCorrectness[i].setVisibility(View.INVISIBLE);
-					}
-				}
+				mAnswersList.setEnabled(false);
+			} else {
+				mCorrectness.setText(getString(R.string.button_cross));
 			}
 			
 			TestingTransactions.check(TTChecks.ANSWER_SELECTED);
 		}
 	}
 
+	private class AnswerListAdapter extends ArrayAdapter<String> {
+
+		public AnswerListAdapter() {
+			super(mSelf, 0, mRandomQuestion.getAnswers());
+		}
+		
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			TextView answerText = new TextView(mSelf);
+			answerText.setPadding(5, 20, 0, 20);
+			answerText.setText(mRandomQuestion.getAnswers()[position]);
+			return answerText;
+		}
+	
+	}
 }
