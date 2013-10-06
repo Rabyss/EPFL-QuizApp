@@ -60,12 +60,20 @@ public class AnswerEditor {
 			@Override
 			public void onClick(View v) {
 				ArrayList<AnswerEditor> answers = activity.getAnswers();
-				for (AnswerEditor a : answers) {
-					if (a.isCorrect()) {
-						a.setCorrect(false);
+
+				if (isCorrect()) {
+					for (AnswerEditor a : answers) {
+						if (a.isCorrect()) {
+							a.setCorrect(false);
+						}
 					}
+					setCorrect(true);
+				} else {
+					setCorrect(false);
 				}
-				setCorrect(true);
+				
+				TestingTransactions.check(TTChecks.QUESTION_EDITED);
+
 			}
 		});
 
@@ -86,7 +94,7 @@ public class AnswerEditor {
 		if (!first) {
 			TestingTransactions.check(TTChecks.QUESTION_EDITED);
 		}
-		
+
 		mActivity.tryAudit();
 	}
 
@@ -107,7 +115,6 @@ public class AnswerEditor {
 			mCorrect = false;
 		}
 		mActivity.tryAudit();
-		TestingTransactions.check(TTChecks.QUESTION_EDITED);
 	}
 
 	public Button getRemoveButton() {
