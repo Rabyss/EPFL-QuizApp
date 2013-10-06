@@ -14,7 +14,6 @@ import epfl.sweng.entry.MainActivity;
 
 /**
  * Contains common treatments of activities dealing with quiz questions. 
- * @author Philémon Favrod (philemon.favrod@epfl.ch)
  *
  */
 public abstract class QuestionActivity extends Activity implements Observer {
@@ -75,7 +74,7 @@ public abstract class QuestionActivity extends Activity implements Observer {
     
     /**
      * Process the data after download.
-     * @param the data
+     * @param data the data
      */
     protected abstract void processDownloadedData(Object data);
     
