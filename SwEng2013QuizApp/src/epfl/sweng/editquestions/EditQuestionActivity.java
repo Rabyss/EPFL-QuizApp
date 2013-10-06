@@ -160,6 +160,7 @@ public class EditQuestionActivity extends QuestionActivity {
 			answers.get(answers.size()-1).remove();
 		}
 		answers.get(0).resetContent();
+		answers.get(0).setCorrect(false);
 		resettingUI = false;
 		TestingTransactions.check(TTChecks.EDIT_QUESTIONS_SHOWN);
 	}
