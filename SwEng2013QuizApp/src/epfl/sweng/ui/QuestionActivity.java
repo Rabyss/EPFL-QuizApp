@@ -21,16 +21,6 @@ public abstract class QuestionActivity extends Activity implements Observer {
     private ProgressDialog progressDialog;
     
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Loading...");
-        progressDialog.setIndeterminate(false);
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        progressDialog.setCancelable(true);
-    }
-    
-    @Override
     public void onBackPressed() {
         Intent displayActivitxIntent = new Intent(this, MainActivity.class);
         startActivity(displayActivitxIntent);
@@ -64,6 +54,16 @@ public abstract class QuestionActivity extends Activity implements Observer {
                         });
             }
         }
+    }
+    
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Loading...");
+        progressDialog.setIndeterminate(false);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setCancelable(true);
     }
     
     /**
