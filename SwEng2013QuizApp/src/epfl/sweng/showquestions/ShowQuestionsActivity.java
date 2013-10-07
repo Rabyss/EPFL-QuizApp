@@ -39,14 +39,6 @@ public class ShowQuestionsActivity extends QuestionActivity {
 	private TextView mCorrectness;
 	private LinearLayout mLinearLayout;
 	private ListView mAnswersList;
-    
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		ServerCommunicator.getInstance().addObserver(this);
-		mSelf = this;
-		getQuestion();
-	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -55,21 +47,14 @@ public class ShowQuestionsActivity extends QuestionActivity {
 		return true;
 	}
 
-	/**
-	 * Downloads and displays a new random question
-	 */
-	public void getQuestion() {
-		// creates the main layout
-		mLinearLayout = new LinearLayout(this);
-		mLinearLayout.setOrientation(LinearLayout.VERTICAL);
-		mLinearLayout.setLayoutParams(new LayoutParams(
-				LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-		// downloads a random question from the server
-		ServerCommunicator.getInstance().getRandomQuestion();
-		// show a progress dialog while waiting for question
-		showProgressDialog();
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		ServerCommunicator.getInstance().addObserver(this);
+		mSelf = this;
+		getQuestion();
 	}
-
+	
 	@Override
 	protected boolean mustTakeAccountOfUpdate() {
 		return ServerCommunicator.getInstance().isFetchingQuestion();
@@ -81,7 +66,19 @@ public class ShowQuestionsActivity extends QuestionActivity {
 		showQuestion();
 	}
 
-	public void showQuestion() {
+	private void getQuestion() {
+		// creates the main layout
+		mLinearLayout = new LinearLayout(this);
+		mLinearLayout.setOrientation(LinearLayout.VERTICAL);
+		mLinearLayout.setLayoutParams(new LayoutParams(
+				LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+		// downloads a random question from the server
+		ServerCommunicator.getInstance().getRandomQuestion();
+		// show a progress dialog while waiting for question
+		showProgressDialog();
+	}
+
+	private void showQuestion() {
 		// Display the text of the question
 		TextView question = new TextView(this);
 		question.setText(mRandomQuestion.getQuestion());
@@ -119,7 +116,7 @@ public class ShowQuestionsActivity extends QuestionActivity {
 		TestingTransactions.check(TTChecks.QUESTION_SHOWN);
 	}
 
-	public void displayAnswers() {
+	private void displayAnswers() {
 		// Initialize the arrays of answers and correctness sign
 			
 
@@ -133,7 +130,7 @@ public class ShowQuestionsActivity extends QuestionActivity {
 	}
 
 
-	public void displayTags() {
+	private void displayTags() {
 		int totalTags = mRandomQuestion.getTags().length;
 		LinearLayout tagLayout = new LinearLayout(this);
 		tagLayout.setOrientation(LinearLayout.HORIZONTAL);
@@ -148,14 +145,6 @@ public class ShowQuestionsActivity extends QuestionActivity {
 		}
 		mLinearLayout.addView(tagLayout);
 
-	}
-
-	public void displaySolutionIndex() {
-		TextView solutionIndex = new TextView(this);
-		int index = mRandomQuestion.getSolutionIndex();
-		String solutionText = String.valueOf(index);
-		solutionIndex.setText(solutionText);
-		mLinearLayout.addView(solutionIndex);
 	}
 	
 	/**
