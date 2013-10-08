@@ -33,6 +33,27 @@ public class EditQuestionActivity extends QuestionActivity {
 	private boolean resettingUI = false;
 
 	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_edit_question);
+
+		ServerCommunicator.getInstance().addObserver(this);
+
+		answers = new ArrayList<AnswerEditor>();
+		answers.add(new AnswerEditor(this,
+				(ViewGroup) findViewById(R.id.linearLayoutAnswers), true));
+
+		findViewById(R.id.editQuestionText).requestFocus();
+		((EditText) findViewById(R.id.editQuestionText)).addTextChangedListener(new EditTextWatcher());
+		((EditText) findViewById(R.id.editTags)).addTextChangedListener(new EditTextWatcher());
+		((Button) findViewById(R.id.butttonSubmitQuestion)).setEnabled(false);
+
+		// let the testing infrastructure know that edit question has been
+		// initialized
+		TestingTransactions.check(TTChecks.EDIT_QUESTIONS_SHOWN);
+	}
+
+	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.edit_question, menu);
@@ -84,51 +105,6 @@ public class EditQuestionActivity extends QuestionActivity {
 			((Button) findViewById(R.id.butttonSubmitQuestion)).setEnabled(false);
 		}
 	}
-	
-	@Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit_question);
-
-        ServerCommunicator.getInstance().addObserver(this);
-
-        answers = new ArrayList<AnswerEditor>();
-        answers.add(new AnswerEditor(this,
-                (ViewGroup) findViewById(R.id.linearLayoutAnswers), true));
-
-        findViewById(R.id.editQuestionText).requestFocus();
-        ((EditText) findViewById(R.id.editQuestionText)).addTextChangedListener(new EditTextWatcher());
-        ((EditText) findViewById(R.id.editTags)).addTextChangedListener(new EditTextWatcher());
-        ((Button) findViewById(R.id.butttonSubmitQuestion)).setEnabled(false);
-
-        // let the testing infrastructure know that edit question has been
-        // initialized
-        TestingTransactions.check(TTChecks.EDIT_QUESTIONS_SHOWN);
-    }
-
-    @Override
-    protected boolean mustTakeAccountOfUpdate() {
-        return ServerCommunicator.getInstance().isSubmittingQuestion();
-    }
-
-    @Override
-    protected void processDownloadedData(Object data) {
-        Toast.makeText(this, R.string.successful_submit, TOAST_DISPLAY_TIME)
-                .show();
-        
-        // Reset UI
-        resettingUI = true;
-        ((EditText) findViewById(R.id.editQuestionText)).setText("");
-        ((EditText) findViewById(R.id.editTags)).setText(""); 
-        ((Button) findViewById(R.id.butttonSubmitQuestion)).setEnabled(false);
-        while (answers.size() > 1) {
-            answers.get(answers.size()-1).remove();
-        }
-        answers.get(0).resetContent();
-        answers.get(0).setCorrect(false);
-        resettingUI = false;
-        TestingTransactions.check(TTChecks.NEW_QUESTION_SUBMITTED);
-    }
 
 	private QuizQuestion extractQuizQuestion() {
 		String question = ((EditText) findViewById(R.id.editQuestionText))
@@ -154,7 +130,6 @@ public class EditQuestionActivity extends QuestionActivity {
 				tags, null);
 		return quizQuestion;
 	}
-	
 	private String[] cleanUp(String[] strArray) {
 		ArrayList<String> result = new ArrayList<String>();
 		for (int i = 0; i < strArray.length; i++) {
@@ -165,7 +140,30 @@ public class EditQuestionActivity extends QuestionActivity {
 		
 		return result.toArray(new String[result.size()]);
 	}
-	
+	@Override
+	protected boolean mustTakeAccountOfUpdate() {
+		return ServerCommunicator.getInstance().isSubmittingQuestion();
+	}
+
+	@Override
+	protected void processDownloadedData(Object data) {
+		Toast.makeText(this, R.string.successful_submit, TOAST_DISPLAY_TIME)
+				.show();
+		
+		// Reset UI
+		resettingUI = true;
+		((EditText) findViewById(R.id.editQuestionText)).setText("");
+		((EditText) findViewById(R.id.editTags)).setText(""); 
+		((Button) findViewById(R.id.butttonSubmitQuestion)).setEnabled(false);
+		while (answers.size() > 1) {
+			answers.get(answers.size()-1).remove();
+		}
+		answers.get(0).resetContent();
+		answers.get(0).setCorrect(false);
+		resettingUI = false;
+		TestingTransactions.check(TTChecks.NEW_QUESTION_SUBMITTED);
+	}
+
 	/**
 	 * Test when texts change
 	 */
