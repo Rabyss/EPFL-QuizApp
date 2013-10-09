@@ -44,8 +44,10 @@ public class EditQuestionActivity extends QuestionActivity {
 				(ViewGroup) findViewById(R.id.linearLayoutAnswers), true));
 
 		findViewById(R.id.editQuestionText).requestFocus();
-		((EditText) findViewById(R.id.editQuestionText)).addTextChangedListener(new EditTextWatcher());
-		((EditText) findViewById(R.id.editTags)).addTextChangedListener(new EditTextWatcher());
+		((EditText) findViewById(R.id.editQuestionText))
+				.addTextChangedListener(new EditTextWatcher());
+		((EditText) findViewById(R.id.editTags))
+				.addTextChangedListener(new EditTextWatcher());
 		((Button) findViewById(R.id.butttonSubmitQuestion)).setEnabled(false);
 
 		// let the testing infrastructure know that edit question has been
@@ -69,7 +71,7 @@ public class EditQuestionActivity extends QuestionActivity {
 	public ArrayList<AnswerEditor> getAnswers() {
 		return answers;
 	}
-	
+
 	public boolean isResettingUI() {
 		return resettingUI;
 	}
@@ -84,7 +86,6 @@ public class EditQuestionActivity extends QuestionActivity {
 		QuizQuestion quizQuestion = extractQuizQuestion();
 
 		try {
-			quizQuestion.audit();
 			ServerCommunicator.getInstance().submitQuizQuestion(quizQuestion,
 					this);
 
@@ -95,14 +96,15 @@ public class EditQuestionActivity extends QuestionActivity {
 		}
 
 	}
-	
+
 	public void tryAudit() {
 		QuizQuestion quizQuestion = extractQuizQuestion();
-		try {
-			quizQuestion.audit();
-			((Button) findViewById(R.id.butttonSubmitQuestion)).setEnabled(true);
-		} catch (IllegalArgumentException e) {
-			((Button) findViewById(R.id.butttonSubmitQuestion)).setEnabled(false);
+		if (quizQuestion.audit() == 0) {
+			((Button) findViewById(R.id.butttonSubmitQuestion))
+					.setEnabled(true);
+		} else {
+			((Button) findViewById(R.id.butttonSubmitQuestion))
+					.setEnabled(false);
 		}
 	}
 
@@ -122,14 +124,15 @@ public class EditQuestionActivity extends QuestionActivity {
 
 		String tagsText = ((EditText) findViewById(R.id.editTags)).getText()
 				.toString();
-		String[] tags = (tagsText.trim().isEmpty()) ? null : cleanUp(tagsText.trim()
-				.split("\\W+"));
+		String[] tags = (tagsText.trim().isEmpty()) ? null : cleanUp(tagsText
+				.trim().split("\\W+"));
 
 		QuizQuestion quizQuestion = new QuizQuestion(null, question,
 				answersText.toArray(new String[answers.size()]), solutionIndex,
 				tags, null);
 		return quizQuestion;
 	}
+
 	private String[] cleanUp(String[] strArray) {
 		ArrayList<String> result = new ArrayList<String>();
 		for (int i = 0; i < strArray.length; i++) {
@@ -137,9 +140,10 @@ public class EditQuestionActivity extends QuestionActivity {
 				result.add(strArray[i]);
 			}
 		}
-		
+
 		return result.toArray(new String[result.size()]);
 	}
+
 	@Override
 	protected boolean mustTakeAccountOfUpdate() {
 		return ServerCommunicator.getInstance().isSubmittingQuestion();
@@ -149,14 +153,14 @@ public class EditQuestionActivity extends QuestionActivity {
 	protected void processDownloadedData(Object data) {
 		Toast.makeText(this, R.string.successful_submit, TOAST_DISPLAY_TIME)
 				.show();
-		
+
 		// Reset UI
 		resettingUI = true;
 		((EditText) findViewById(R.id.editQuestionText)).setText("");
-		((EditText) findViewById(R.id.editTags)).setText(""); 
+		((EditText) findViewById(R.id.editTags)).setText("");
 		((Button) findViewById(R.id.butttonSubmitQuestion)).setEnabled(false);
 		while (answers.size() > 1) {
-			answers.get(answers.size()-1).remove();
+			answers.get(answers.size() - 1).remove();
 		}
 		answers.get(0).resetContent();
 		answers.get(0).setCorrect(false);
@@ -169,25 +173,26 @@ public class EditQuestionActivity extends QuestionActivity {
 	 */
 	private final class EditTextWatcher implements TextWatcher {
 		@Override
-		public void onTextChanged(CharSequence s, int start, int before, int count) {
+		public void onTextChanged(CharSequence s, int start, int before,
+				int count) {
 			// TODO Auto-generated method stub
-			
+
 		}
-	
+
 		@Override
 		public void beforeTextChanged(CharSequence s, int start, int count,
 				int after) {
 			// TODO Auto-generated method stub
-			
+
 		}
-	
+
 		@Override
 		public void afterTextChanged(Editable s) {
 			if (!resettingUI) {
-			    tryAudit();
+				tryAudit();
 				TestingTransactions.check(TTChecks.QUESTION_EDITED);
 			}
-			
+
 		}
 	}
 

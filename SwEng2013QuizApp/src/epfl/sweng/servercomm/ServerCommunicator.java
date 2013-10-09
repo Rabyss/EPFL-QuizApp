@@ -15,6 +15,7 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.os.AsyncTask;
 import epfl.sweng.QuizQuestion;
+import epfl.sweng.utils.MalformedQuestionException;
 
 /**
  * 
@@ -87,7 +88,9 @@ public final class ServerCommunicator extends Observable {
                 response = null;
             } catch (IOException e) {
                 response = null;
-            }
+            } catch (MalformedQuestionException e) {
+				response = null;
+			}
             return response;
         }
 
