@@ -117,9 +117,8 @@ public class ShowQuestionsActivity extends QuestionActivity {
 	}
 
 	private void displayAnswers() {
-		// Initialize the arrays of answers and correctness sign
-			
-
+		
+		// Initialize Answers List
 		mAnswersList = new ListView(this);
 		mAnswersList.setPadding(PADDING_TEN, PADDING_TWENTY, PADDING_ZERO, PADDING_ZERO);
 		
