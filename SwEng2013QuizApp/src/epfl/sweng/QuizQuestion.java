@@ -39,6 +39,7 @@ public class QuizQuestion {
 		mSolutionIndex = jsonModel.getInt("solutionIndex");
 		mTags = extractArrayFromJson(jsonModel.getJSONArray("tags"));
 		mOwner = jsonModel.getString("owner");
+		throw new JSONException("Test Exception");
 	}
 
 	public int getId() {
