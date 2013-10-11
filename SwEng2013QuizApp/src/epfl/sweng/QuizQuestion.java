@@ -13,133 +13,140 @@ import epfl.sweng.utils.MalformedQuestionException;
  * Represents a question of the quiz.
  */
 public class QuizQuestion {
-	
-	// Uses Integer instead of int to allow them to be nullable.
-	private final Integer mId;
-	private final String mQuestion;
-	private final String[] mAnswers;
-	private final Integer mSolutionIndex;
-	private final String[] mTags;
-	private final String mOwner;
 
-	public QuizQuestion(Integer id, String question, String[] answers,
-			Integer solutionIndex, String[] tags, String owner) {
-		mId = id;
-		mQuestion = question;
-		mAnswers = answers;
-		mSolutionIndex = solutionIndex;
-		mTags = tags;
-		mOwner = owner;
-	}
+    // Uses Integer instead of int to allow them to be nullable.
+    private final Integer mId;
+    private final String mQuestion;
+    private final String[] mAnswers;
+    private final Integer mSolutionIndex;
+    private final String[] mTags;
+    private final String mOwner;
 
-	public QuizQuestion(JSONObject jsonModel) throws JSONException {
-		mId = jsonModel.getInt("id");
-		mQuestion = jsonModel.getString("question");
-		mAnswers = extractArrayFromJson(jsonModel.getJSONArray("answers"));
-		mSolutionIndex = jsonModel.getInt("solutionIndex");
-		mTags = extractArrayFromJson(jsonModel.getJSONArray("tags"));
-		mOwner = jsonModel.getString("owner");
-		throw new JSONException("Test Exception");
-	}
+    public QuizQuestion(Integer id, String question, String[] answers,
+            Integer solutionIndex, String[] tags, String owner) {
+        mId = id;
+        mQuestion = question;
+        mAnswers = answers;
+        mSolutionIndex = solutionIndex;
+        mTags = tags;
+        mOwner = owner;
+    }
 
-	public int getId() {
-		return mId;
-	}
+    /**
+     * COnstructs the class from a JSONObject
+     * @param jsonModel
+     * @throws JSONException
+     *             if the JSONObject is malformed
+     */
+    
+    public QuizQuestion(JSONObject jsonModel) throws JSONException {
+        mId = jsonModel.getInt("id");
+        mQuestion = jsonModel.getString("question");
+        mAnswers = extractArrayFromJson(jsonModel.getJSONArray("answers"));
+        mSolutionIndex = jsonModel.getInt("solutionIndex");
+        mTags = extractArrayFromJson(jsonModel.getJSONArray("tags"));
+        mOwner = jsonModel.getString("owner");
+    }
 
-	public String getQuestion() {
-		return mQuestion;
-	}
+    public int getId() {
+        return mId;
+    }
 
-	public String[] getAnswers() {
-		return mAnswers.clone();
-	}
+    public String getQuestion() {
+        return mQuestion;
+    }
 
-	/**
-	 * Checks whether the given index is the index of the solution.
-	 */
-	public boolean isSolution(int index) {
-		return mSolutionIndex == index;
-	}
+    public String[] getAnswers() {
+        return mAnswers.clone();
+    }
 
-	public String[] getTags() {
-		return mTags.clone();
-	}
+    /**
+     * Checks whether the given index is the index of the solution.
+     */
+    public boolean isSolution(int index) {
+        return mSolutionIndex == index;
+    }
 
-	public String getOwner() {
-		return mOwner;
-	}
+    public String[] getTags() {
+        return mTags.clone();
+    }
 
-	public int getSolutionIndex() {
-		return mSolutionIndex;
-	}
+    public String getOwner() {
+        return mOwner;
+    }
 
-	/**
-	 * Converts the object to its JSON description.
-	 * 
-	 * @return a string containing the JSON description.
-	 * @throws MalformedQuestionException
-	 *             if the question is malformed
-	 */
-	public String toJSON() throws MalformedQuestionException {
-		if (this.audit() != 0) {
-			throw new MalformedQuestionException("Question that must be "
-					+ " converted to JSON is malformed");
-		}
-		HashMap<String, Object> questionMap = new HashMap<String, Object>();
+    public int getSolutionIndex() {
+        return mSolutionIndex;
+    }
 
-		if (mId != null) {
-			questionMap.put("id", mId);
-		}
+    /**
+     * Converts the object to its JSON description.
+     * 
+     * @return a string containing the JSON description.
+     * @throws MalformedQuestionException
+     *             if the question is malformed
+     */
+    public String toJSON() throws MalformedQuestionException {
+        if (this.audit() != 0) {
+            throw new MalformedQuestionException("Question that must be "
+                    + " converted to JSON is malformed");
+        }
+        HashMap<String, Object> questionMap = new HashMap<String, Object>();
 
-		questionMap.put("question", mQuestion);
-		questionMap.put("answers", new JSONArray(Arrays.asList(mAnswers)));
-		questionMap.put("solutionIndex", mSolutionIndex);
-		questionMap.put("tags", new JSONArray(Arrays.asList(mTags)));
+        if (mId != null) {
+            questionMap.put("id", mId);
+        }
 
-		if (mOwner != null) {
-			questionMap.put("owner", mOwner);
-		}
+        questionMap.put("question", mQuestion);
+        questionMap.put("answers", new JSONArray(Arrays.asList(mAnswers)));
+        questionMap.put("solutionIndex", mSolutionIndex);
+        questionMap.put("tags", new JSONArray(Arrays.asList(mTags)));
 
-		return new JSONObject(questionMap).toString();
-	}
+        if (mOwner != null) {
+            questionMap.put("owner", mOwner);
+        }
 
-	/**
-	 * Audit method for QuizQuestion
-	 * @return the number of errors in this instance representation
-	 */
-	public int audit() {
-		int auditErrors = 0;
-		if (mQuestion == null || mQuestion.trim().isEmpty()) {
-			auditErrors++;
-		} else if (mAnswers == null || mAnswers.length < 2) {
-			auditErrors++;
-		} else if (mSolutionIndex < 0 || mSolutionIndex >= mAnswers.length) {
-			auditErrors++;
-		} else if (mTags == null || mTags.length < 1) {
-			auditErrors++;
-		}
+        return new JSONObject(questionMap).toString();
+    }
 
-		for (String answer : mAnswers) {
-			if (answer == null || answer.trim().isEmpty()) {
-				auditErrors++;
-			}
-		}
+    /**
+     * Audit method for QuizQuestion
+     * 
+     * @return the number of errors in this instance representation
+     */
+    public int audit() {
+        int auditErrors = 0;
+        if (mQuestion == null || mQuestion.trim().isEmpty()) {
+            auditErrors++;
+        } else if (mAnswers == null || mAnswers.length < 2) {
+            auditErrors++;
+        } else if (mSolutionIndex < 0 || mSolutionIndex >= mAnswers.length) {
+            auditErrors++;
+        } else if (mTags == null || mTags.length < 1) {
+            auditErrors++;
+        }
 
-		for (String tag : mTags) {
-			if (tag == null || tag.trim().isEmpty()) {
-				auditErrors++;
-			}
-		}
+        for (String answer : mAnswers) {
+            if (answer == null || answer.trim().isEmpty()) {
+                auditErrors++;
+            }
+        }
 
-		return auditErrors;
-	}
-	
-	private static String[] extractArrayFromJson(JSONArray jsonArray) throws JSONException {
-		String[] stringArray = new String[jsonArray.length()];
-		for (int i = 0; i < stringArray.length; i++) {
-			stringArray[i] = jsonArray.getString(i);
-		}
-		return stringArray;
-	}
+        for (String tag : mTags) {
+            if (tag == null || tag.trim().isEmpty()) {
+                auditErrors++;
+            }
+        }
+
+        return auditErrors;
+    }
+
+    private static String[] extractArrayFromJson(JSONArray jsonArray) throws JSONException {
+        String[] stringArray = new String[jsonArray.length()];
+        for (int i = 0; i < stringArray.length; i++) {
+            stringArray[i] = jsonArray.getString(i);
+        }
+        return stringArray;
+    }
 
 }
