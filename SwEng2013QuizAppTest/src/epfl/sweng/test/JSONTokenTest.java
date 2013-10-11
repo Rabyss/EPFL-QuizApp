@@ -1,15 +1,13 @@
 package epfl.sweng.test;
 
-import static org.junit.Assert.*;
-import junit.framework.TestSuite;
 
 import org.json.JSONException;
-import org.junit.Test;
+
+import android.test.AndroidTestCase;
 
 import epfl.sweng.authentication.JSONToken;
 
-public class JSONTokenTest extends TestSuite {
-	@Test
+public class JSONTokenTest extends AndroidTestCase {
 	public void testConstruction() {
 		String response = "{ message: \"Here's your authentication token.\", " +
 							"token: \"5jiju5n4edckf6264u6kd5w7gpx73zdb\" }";
@@ -21,7 +19,6 @@ public class JSONTokenTest extends TestSuite {
 		}
 	}
 	
-	@Test
 	public void testInvalidConstruction() {
 		String invalidResponse = "{ [} }";
 		try {
