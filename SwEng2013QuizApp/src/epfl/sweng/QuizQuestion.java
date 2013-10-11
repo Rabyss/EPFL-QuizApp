@@ -34,18 +34,25 @@ public class QuizQuestion {
 
     /**
      * COnstructs the class from a JSONObject
+     * 
      * @param jsonModel
-     * @throws JSONException
+     * @throws MalformedQuestionException
+     * @throws MalformedQuestionException
      *             if the JSONObject is malformed
      */
-    
-    public QuizQuestion(JSONObject jsonModel) throws JSONException {
-        mId = jsonModel.getInt("id");
-        mQuestion = jsonModel.getString("question");
-        mAnswers = extractArrayFromJson(jsonModel.getJSONArray("answers"));
-        mSolutionIndex = jsonModel.getInt("solutionIndex");
-        mTags = extractArrayFromJson(jsonModel.getJSONArray("tags"));
-        mOwner = jsonModel.getString("owner");
+
+    public QuizQuestion(JSONObject jsonModel) throws MalformedQuestionException {
+        try {
+            mId = jsonModel.getInt("id");
+            mQuestion = jsonModel.getString("question");
+            mAnswers = extractArrayFromJson(jsonModel.getJSONArray("answers"));
+            mSolutionIndex = jsonModel.getInt("solutionIndex");
+            mTags = extractArrayFromJson(jsonModel.getJSONArray("tags"));
+            mOwner = jsonModel.getString("owner");
+        } catch (JSONException e) {
+            throw new MalformedQuestionException(
+                    "Cannot create QuizQuestion : " + e.getMessage());
+        }
     }
 
     public int getId() {
@@ -116,25 +123,35 @@ public class QuizQuestion {
      */
     public int audit() {
         int auditErrors = 0;
+        boolean mustCheckAnswers = true;
+        boolean mustCheckTags = true;
         if (mQuestion == null || mQuestion.trim().isEmpty()) {
             auditErrors++;
-        } else if (mAnswers == null || mAnswers.length < 2) {
+        }
+        if (mAnswers == null || mAnswers.length < 2) {
+            mustCheckAnswers = false;
             auditErrors++;
-        } else if (mSolutionIndex < 0 || mSolutionIndex >= mAnswers.length) {
+        }
+        if (mSolutionIndex < 0 || mSolutionIndex >= mAnswers.length) {
             auditErrors++;
-        } else if (mTags == null || mTags.length < 1) {
+        }
+        if (mTags == null || mTags.length < 1) {
+            mustCheckTags = false;
             auditErrors++;
         }
 
-        for (String answer : mAnswers) {
-            if (answer == null || answer.trim().isEmpty()) {
-                auditErrors++;
+        if (mustCheckAnswers) {
+            for (String answer : mAnswers) {
+                if (answer == null || answer.trim().isEmpty()) {
+                    auditErrors++;
+                }
             }
         }
-
-        for (String tag : mTags) {
-            if (tag == null || tag.trim().isEmpty()) {
-                auditErrors++;
+        if (mustCheckTags) {
+            for (String tag : mTags) {
+                if (tag == null || tag.trim().isEmpty()) {
+                    auditErrors++;
+                }
             }
         }
 

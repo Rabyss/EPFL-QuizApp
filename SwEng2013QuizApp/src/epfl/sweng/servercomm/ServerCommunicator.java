@@ -1,33 +1,31 @@
 package epfl.sweng.servercomm;
 
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Observable;
 
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicResponseHandler;
-import org.json.JSONException;
-import org.json.JSONObject;
 
-import android.app.Activity;
 import android.os.AsyncTask;
-import epfl.sweng.QuizQuestion;
-import epfl.sweng.utils.MalformedQuestionException;
 
 /**
  * 
  * Handles communication with the server.
- *
+ * 
  */
 public final class ServerCommunicator extends Observable {
 
     private static ServerCommunicator sInstance = null;
-    private final static String SERVER_URL = "https://sweng-quiz.appspot.com";
-    private boolean isFetching;
-    private boolean isSubmitting;
+    public final static String SWENG_SERVER_URL = "https://sweng-quiz.appspot.com";
+    public final static String SWENG_SUBMIT_QUESTION_URL = SWENG_SERVER_URL
+            + "/quizquestions/";
+    public final static String SWENG_GET_RANDOM_QUESTION_URL = SWENG_SUBMIT_QUESTION_URL
+            + "random";
 
     private ServerCommunicator() {
 
@@ -40,58 +38,49 @@ public final class ServerCommunicator extends Observable {
         return sInstance;
     }
 
-    public void getRandomQuestion() {
-
-        isFetching = true;
-
-        // Creates an asynchronous task to fetch from the server.
-        // and fetch the question
-        new FetchTask().execute();
+    public void doHttpGet(RequestContext reqContext) {
+        assert !reqContext.getServerURL().equals("")
+                && reqContext.getServerURL() != null : "No URL found !";
+        // Creates an asynchronous task to send a GET request.
+        new GetTask().execute(reqContext);
     }
 
-    public void submitQuizQuestion(QuizQuestion question,
-            final Activity activity) {
-
-        isSubmitting = true;
-
-        new SubmitTask().execute(question);
-    }
-
-    public boolean isFetchingQuestion() {
-        return isFetching;
-    }
-
-    public boolean isSubmittingQuestion() {
-        return isSubmitting;
+    public void doHttpPost(RequestContext reqContext) {
+        assert !reqContext.getServerURL().equals("")
+                && reqContext.getServerURL() != null : "No URL found !";
+        assert reqContext.getEntity() != null : "No HttpEntity found !";
+        assert !reqContext.getHeaders().isEmpty() : "No Header found !";
+        // Creates an asynchronous task to send a POST request.
+        new PostTask().execute(reqContext);
     }
 
     /**
      * 
-     * Asynchronous task used to submit questions to the server.
+     * Asynchronous task used to send POST requests.
      * 
      */
-    private final class SubmitTask extends
-            AsyncTask<QuizQuestion, Void, String> {
+    private final class PostTask extends
+            AsyncTask<RequestContext, Void, String> {
         @Override
-        protected String doInBackground(QuizQuestion... params) {
-            HttpPost post = new HttpPost(SERVER_URL + "/quizquestions/");
-            //construction of the request
-            String response = "";
+        protected String doInBackground(RequestContext... params) {
+            RequestContext reqContext = params[0];
+            HttpPost post = new HttpPost(reqContext.getServerURL());
+            // Gets an iterator to iterate over each header
+            Iterator<Entry<String, String>> headersIterator = params[0]
+                    .getHeaders().entrySet().iterator();
+            while (headersIterator.hasNext()) {
+                Map.Entry<String, String> header = headersIterator.next();
+                post.setHeader(header.getKey(), header.getValue());
+                headersIterator.remove();
+            }
+            ResponseHandler<String> handler = new BasicResponseHandler();
             try {
-                post.setEntity(new StringEntity(params[0].toJSON()));
-                post.setHeader("Content-type", "application/json");
-                ResponseHandler<String> handler = new BasicResponseHandler();
-
-                response = SwengHttpClientFactory.getInstance().execute(post,
+                post.setEntity(reqContext.getEntity());
+                return SwengHttpClientFactory.getInstance().execute(post,
                         handler);
-            } catch (ClientProtocolException e) {
-                response = null;
             } catch (IOException e) {
-                response = null;
-            } catch (MalformedQuestionException e) {
-				response = null;
-			}
-            return response;
+                return null;
+            }
         }
 
         @Override
@@ -100,46 +89,37 @@ public final class ServerCommunicator extends Observable {
             ServerCommunicator.getInstance().setChanged();
             ServerCommunicator.getInstance().notifyObservers(result);
             ServerCommunicator.getInstance().clearChanged();
-            isSubmitting = false;
         }
     }
 
     /**
      * 
-     * Asynchronous task used to fetch questions from the server.
+     * Asynchronous task used to send GET requests.
      * 
      */
-    private final class FetchTask extends AsyncTask<Void, Void, QuizQuestion> {
+    private final class GetTask extends AsyncTask<RequestContext, Void, String> {
         @Override
-        protected QuizQuestion doInBackground(Void... params) {
-
+        protected String doInBackground(RequestContext... params) {
+            RequestContext reqContext = params[0];
             // Construct the request
-            HttpGet questionFetchRequest = new HttpGet(SERVER_URL
-                    + "/quizquestions/random");
+            HttpGet questionFetchRequest = new HttpGet(
+                    reqContext.getServerURL());
             ResponseHandler<String> questionFetchHandler = new BasicResponseHandler();
 
-            String strRandomQuestion;
             try {
-                strRandomQuestion = SwengHttpClientFactory.getInstance()
-                        .execute(questionFetchRequest, questionFetchHandler);
-                JSONObject jsonModel = new JSONObject(strRandomQuestion);
-                return new QuizQuestion(jsonModel);
-            } catch (ClientProtocolException e) {
-                return null;
+                return SwengHttpClientFactory.getInstance().execute(
+                        questionFetchRequest, questionFetchHandler);
             } catch (IOException e) {
-                return null;
-            } catch (JSONException e) {
                 return null;
             }
         }
 
         @Override
-        protected void onPostExecute(QuizQuestion result) {
+        protected void onPostExecute(String result) {
             super.onPostExecute(result);
             ServerCommunicator.getInstance().setChanged();
             ServerCommunicator.getInstance().notifyObservers(result);
             ServerCommunicator.getInstance().clearChanged();
-            isFetching = false;
         }
     }
 }

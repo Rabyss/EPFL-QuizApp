@@ -1,6 +1,10 @@
 package epfl.sweng.editquestions;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+
+import org.apache.http.entity.StringEntity;
+
 import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
@@ -14,11 +18,13 @@ import android.widget.EditText;
 import android.widget.Toast;
 import epfl.sweng.QuizQuestion;
 import epfl.sweng.R;
+import epfl.sweng.servercomm.RequestContext;
 import epfl.sweng.servercomm.ServerCommunicator;
 import epfl.sweng.testing.TestingTransactions;
 import epfl.sweng.testing.TestingTransactions.TTChecks;
 import epfl.sweng.ui.AnswerEditor;
 import epfl.sweng.ui.QuestionActivity;
+import epfl.sweng.utils.MalformedQuestionException;
 
 /**
  * 
@@ -27,173 +33,171 @@ import epfl.sweng.ui.QuestionActivity;
  */
 public class EditQuestionActivity extends QuestionActivity {
 
-	private ArrayList<AnswerEditor> answers;
+    private ArrayList<AnswerEditor> answers;
 
-	private final static int TOAST_DISPLAY_TIME = 2000;
-	private boolean resettingUI = false;
+    private boolean resettingUI = false;
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_edit_question);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_edit_question);
 
-		ServerCommunicator.getInstance().addObserver(this);
+        answers = new ArrayList<AnswerEditor>();
+        answers.add(new AnswerEditor(this,
+                (ViewGroup) findViewById(R.id.linearLayoutAnswers), true));
 
-		answers = new ArrayList<AnswerEditor>();
-		answers.add(new AnswerEditor(this,
-				(ViewGroup) findViewById(R.id.linearLayoutAnswers), true));
+        findViewById(R.id.editQuestionText).requestFocus();
+        ((EditText) findViewById(R.id.editQuestionText))
+                .addTextChangedListener(new EditTextWatcher());
+        ((EditText) findViewById(R.id.editTags))
+                .addTextChangedListener(new EditTextWatcher());
+        ((Button) findViewById(R.id.butttonSubmitQuestion)).setEnabled(false);
 
-		findViewById(R.id.editQuestionText).requestFocus();
-		((EditText) findViewById(R.id.editQuestionText))
-				.addTextChangedListener(new EditTextWatcher());
-		((EditText) findViewById(R.id.editTags))
-				.addTextChangedListener(new EditTextWatcher());
-		((Button) findViewById(R.id.butttonSubmitQuestion)).setEnabled(false);
+        // let the testing infrastructure know that edit question has been
+        // initialized
+        TestingTransactions.check(TTChecks.EDIT_QUESTIONS_SHOWN);
+    }
 
-		// let the testing infrastructure know that edit question has been
-		// initialized
-		TestingTransactions.check(TTChecks.EDIT_QUESTIONS_SHOWN);
-	}
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.edit_question, menu);
+        return true;
+    }
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.edit_question, menu);
-		return true;
-	}
+    public void addAnswer(View view) {
+        ViewGroup linearLayout = (ViewGroup) findViewById(R.id.linearLayoutAnswers);
+        answers.add(new AnswerEditor(this, linearLayout, false));
+        tryAudit();
+    }
 
-	public void addAnswer(View view) {
-		ViewGroup linearLayout = (ViewGroup) findViewById(R.id.linearLayoutAnswers);
-		answers.add(new AnswerEditor(this, linearLayout, false));
-		tryAudit();
-	}
+    public ArrayList<AnswerEditor> getAnswers() {
+        return answers;
+    }
 
-	public ArrayList<AnswerEditor> getAnswers() {
-		return answers;
-	}
+    public boolean isResettingUI() {
+        return resettingUI;
+    }
 
-	public boolean isResettingUI() {
-		return resettingUI;
-	}
+    public void submitQuestion(View view) {
+        InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 
-	public void submitQuestion(View view) {
-		InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputManager.hideSoftInputFromWindow(
+                getCurrentFocus().getWindowToken(),
+                InputMethodManager.HIDE_NOT_ALWAYS);
 
-		inputManager.hideSoftInputFromWindow(
-				getCurrentFocus().getWindowToken(),
-				InputMethodManager.HIDE_NOT_ALWAYS);
+        QuizQuestion quizQuestion = extractQuizQuestion();
+        RequestContext reqContext;
+        try {
+            reqContext = new RequestContext(
+                    ServerCommunicator.SWENG_SUBMIT_QUESTION_URL,
+                    new StringEntity(quizQuestion.toJSON()));
+            reqContext.addHeader("Content-type", "application/json");
+            ServerCommunicator.getInstance().doHttpPost(reqContext);
+        } catch (MalformedQuestionException e) {
+            Toast.makeText(this, e.getMessage(), TOAST_DISPLAY_TIME).show();
+        } catch (UnsupportedEncodingException e) {
+            Toast.makeText(this, e.getMessage(), TOAST_DISPLAY_TIME).show();
+        }
 
-		QuizQuestion quizQuestion = extractQuizQuestion();
+        showProgressDialog();
+        setWaiting(true);
 
-		try {
-			ServerCommunicator.getInstance().submitQuizQuestion(quizQuestion,
-					this);
+    }
 
-			showProgressDialog();
+    public void tryAudit() {
+        QuizQuestion quizQuestion = extractQuizQuestion();
+        if (quizQuestion.audit() == 0) {
+            ((Button) findViewById(R.id.butttonSubmitQuestion))
+                    .setEnabled(true);
+        } else {
+            ((Button) findViewById(R.id.butttonSubmitQuestion))
+                    .setEnabled(false);
+        }
+    }
 
-		} catch (IllegalArgumentException e) {
-			Toast.makeText(this, e.getMessage(), TOAST_DISPLAY_TIME).show();
-		}
+    private QuizQuestion extractQuizQuestion() {
+        String question = ((EditText) findViewById(R.id.editQuestionText))
+                .getText().toString();
 
-	}
+        ArrayList<String> answersText = new ArrayList<String>();
+        int solutionIndex = -1;
 
-	public void tryAudit() {
-		QuizQuestion quizQuestion = extractQuizQuestion();
-		if (quizQuestion.audit() == 0) {
-			((Button) findViewById(R.id.butttonSubmitQuestion))
-					.setEnabled(true);
-		} else {
-			((Button) findViewById(R.id.butttonSubmitQuestion))
-					.setEnabled(false);
-		}
-	}
+        for (AnswerEditor answer : answers) {
+            answersText.add(answer.getContent());
+            if (answer.isCorrect()) {
+                solutionIndex = answers.indexOf(answer);
+            }
+        }
 
-	private QuizQuestion extractQuizQuestion() {
-		String question = ((EditText) findViewById(R.id.editQuestionText))
-				.getText().toString();
+        String tagsText = ((EditText) findViewById(R.id.editTags)).getText()
+                .toString();
+        String[] tags = (tagsText.trim().isEmpty()) ? null : cleanUp(tagsText
+                .trim().split("\\W+"));
 
-		ArrayList<String> answersText = new ArrayList<String>();
-		int solutionIndex = -1;
+        QuizQuestion quizQuestion = new QuizQuestion(null, question,
+                answersText.toArray(new String[answers.size()]), solutionIndex,
+                tags, null);
+        return quizQuestion;
+    }
 
-		for (AnswerEditor answer : answers) {
-			answersText.add(answer.getContent());
-			if (answer.isCorrect()) {
-				solutionIndex = answers.indexOf(answer);
-			}
-		}
+    private String[] cleanUp(String[] strArray) {
+        ArrayList<String> result = new ArrayList<String>();
+        for (int i = 0; i < strArray.length; i++) {
+            if (strArray[i] != null && !strArray[i].equals("")) {
+                result.add(strArray[i]);
+            }
+        }
 
-		String tagsText = ((EditText) findViewById(R.id.editTags)).getText()
-				.toString();
-		String[] tags = (tagsText.trim().isEmpty()) ? null : cleanUp(tagsText
-				.trim().split("\\W+"));
+        return result.toArray(new String[result.size()]);
+    }
 
-		QuizQuestion quizQuestion = new QuizQuestion(null, question,
-				answersText.toArray(new String[answers.size()]), solutionIndex,
-				tags, null);
-		return quizQuestion;
-	}
 
-	private String[] cleanUp(String[] strArray) {
-		ArrayList<String> result = new ArrayList<String>();
-		for (int i = 0; i < strArray.length; i++) {
-			if (strArray[i] != null && !strArray[i].equals("")) {
-				result.add(strArray[i]);
-			}
-		}
+    @Override
+    protected void processDownloadedData(Object data) {
+        Toast.makeText(this, R.string.successful_submit, TOAST_DISPLAY_TIME)
+                .show();
 
-		return result.toArray(new String[result.size()]);
-	}
+        // Reset UI
+        resettingUI = true;
+        ((EditText) findViewById(R.id.editQuestionText)).setText("");
+        ((EditText) findViewById(R.id.editTags)).setText("");
+        ((Button) findViewById(R.id.butttonSubmitQuestion)).setEnabled(false);
+        while (answers.size() > 1) {
+            answers.get(answers.size() - 1).remove();
+        }
+        answers.get(0).resetContent();
+        answers.get(0).setCorrect(false);
+        resettingUI = false;
+        TestingTransactions.check(TTChecks.NEW_QUESTION_SUBMITTED);
+    }
 
-	@Override
-	protected boolean mustTakeAccountOfUpdate() {
-		return ServerCommunicator.getInstance().isSubmittingQuestion();
-	}
+    /**
+     * Test when texts change
+     */
+    private final class EditTextWatcher implements TextWatcher {
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before,
+                int count) {
+            // TODO Auto-generated method stub
 
-	@Override
-	protected void processDownloadedData(Object data) {
-		Toast.makeText(this, R.string.successful_submit, TOAST_DISPLAY_TIME)
-				.show();
+        }
 
-		// Reset UI
-		resettingUI = true;
-		((EditText) findViewById(R.id.editQuestionText)).setText("");
-		((EditText) findViewById(R.id.editTags)).setText("");
-		((Button) findViewById(R.id.butttonSubmitQuestion)).setEnabled(false);
-		while (answers.size() > 1) {
-			answers.get(answers.size() - 1).remove();
-		}
-		answers.get(0).resetContent();
-		answers.get(0).setCorrect(false);
-		resettingUI = false;
-		TestingTransactions.check(TTChecks.NEW_QUESTION_SUBMITTED);
-	}
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count,
+                int after) {
+            // TODO Auto-generated method stub
 
-	/**
-	 * Test when texts change
-	 */
-	private final class EditTextWatcher implements TextWatcher {
-		@Override
-		public void onTextChanged(CharSequence s, int start, int before,
-				int count) {
-			// TODO Auto-generated method stub
+        }
 
-		}
+        @Override
+        public void afterTextChanged(Editable s) {
+            if (!resettingUI) {
+                tryAudit();
+                TestingTransactions.check(TTChecks.QUESTION_EDITED);
+            }
 
-		@Override
-		public void beforeTextChanged(CharSequence s, int start, int count,
-				int after) {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public void afterTextChanged(Editable s) {
-			if (!resettingUI) {
-				tryAudit();
-				TestingTransactions.check(TTChecks.QUESTION_EDITED);
-			}
-
-		}
-	}
+        }
+    }
 
 }
