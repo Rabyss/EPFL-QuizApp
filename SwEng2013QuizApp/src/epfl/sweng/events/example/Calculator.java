@@ -1,4 +1,4 @@
-package epfl.sweng.events.tests;
+package epfl.sweng.events.example;
 
 import epfl.sweng.events.EventEmitter;
 
