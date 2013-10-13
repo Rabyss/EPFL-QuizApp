@@ -47,20 +47,6 @@ public class MockHttpClient extends DefaultHttpClient {
             this.responseBody = responseBody;
             this.contentType = contentType;
         }
-
-        @Override
-        public boolean equals(Object o) {
-            if (!(o instanceof CannedResponse)) {
-                return false;
-            }
-            CannedResponse _o = (CannedResponse) o;
-            return _o.pattern.pattern().equals(pattern.pattern());
-        }
-
-        @Override
-        public int hashCode() {
-            return pattern.pattern().hashCode();
-        }
     }
 
     private final List<CannedResponse> responses = new ArrayList<CannedResponse>();
@@ -77,12 +63,19 @@ public class MockHttpClient extends DefaultHttpClient {
     }
 
     @Override
-    protected RequestDirector createClientRequestDirector(final HttpRequestExecutor requestExec,
-            final ClientConnectionManager conman, final ConnectionReuseStrategy reustrat,
-            final ConnectionKeepAliveStrategy kastrat, final HttpRoutePlanner rouplan,
-            final HttpProcessor httpProcessor, final HttpRequestRetryHandler retryHandler,
-            final RedirectHandler redirectHandler, final AuthenticationHandler targetAuthHandler,
-            final AuthenticationHandler proxyAuthHandler, final UserTokenHandler stateHandler, final HttpParams params) {
+    protected RequestDirector createClientRequestDirector(
+            final HttpRequestExecutor requestExec,
+            final ClientConnectionManager conman,
+            final ConnectionReuseStrategy reustrat,
+            final ConnectionKeepAliveStrategy kastrat,
+            final HttpRoutePlanner rouplan,
+            final HttpProcessor httpProcessor,
+            final HttpRequestRetryHandler retryHandler,
+            final RedirectHandler redirectHandler,
+            final AuthenticationHandler targetAuthHandler,
+            final AuthenticationHandler proxyAuthHandler,
+            final UserTokenHandler stateHandler,
+            final HttpParams params) {
         return new MockRequestDirector(this);
     }
 
@@ -110,12 +103,12 @@ class MockRequestDirector implements RequestDirector {
     public MockRequestDirector(MockHttpClient httpClient) {
         this.httpClient = httpClient;
     }
-    
+
     @Override
     public HttpResponse execute(HttpHost target, HttpRequest request,
             HttpContext context) {
         Log.v("HTTP", request.getRequestLine().toString());
-        
+
         HttpResponse response = httpClient.processRequest(request);
         if (response == null) {
             throw new AssertionError("Request \"" + request.getRequestLine().toString()
@@ -135,7 +128,7 @@ class MockHttpResponse extends BasicHttpResponse {
                 statusCode,
                 EnglishReasonPhraseCatalog.INSTANCE.getReason(
                         statusCode, Locale.getDefault()));
-        
+
         if (responseBody != null) {
             try {
                 StringEntity responseBodyEntity = new StringEntity(responseBody);
@@ -149,4 +142,3 @@ class MockHttpResponse extends BasicHttpResponse {
         }
     }
 }
-
