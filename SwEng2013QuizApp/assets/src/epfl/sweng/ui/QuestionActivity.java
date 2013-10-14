@@ -11,19 +11,16 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import epfl.sweng.entry.MainActivity;
-import epfl.sweng.servercomm.ServerCommunicator;
 
 /**
- * Contains common treatments of activities dealing with quiz questions.
+ * Contains common treatments of activities dealing with quiz questions. 
+ * @author Philémon Favrod (philemon.favrod@epfl.ch)
+ *
  */
 public abstract class QuestionActivity extends Activity implements Observer {
 
     private ProgressDialog progressDialog;
     
-    private boolean waitingForServer = false;
-    
-    protected final static int TOAST_DISPLAY_TIME = 2000;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,10 +29,8 @@ public abstract class QuestionActivity extends Activity implements Observer {
         progressDialog.setIndeterminate(false);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progressDialog.setCancelable(true);
-        
-        ServerCommunicator.getInstance().addObserver(this);
     }
-
+    
     @Override
     public void onBackPressed() {
         Intent displayActivitxIntent = new Intent(this, MainActivity.class);
@@ -44,12 +39,12 @@ public abstract class QuestionActivity extends Activity implements Observer {
 
     @Override
     public void update(Observable observable, Object data) {
-
-        // Checks whether the update concern the currrent activity
+        
+        //Checks whether the update concern the currrent activity
         if (mustTakeAccountOfUpdate()) {
-            setWaiting(false);
+            
             hideProgressDialog();
-
+            
             if (data != null) {
                 processDownloadedData(data);
             } else {
@@ -71,40 +66,25 @@ public abstract class QuestionActivity extends Activity implements Observer {
             }
         }
     }
-
+    
     /**
-     * Checks whether the current activity is concerned by an update from
-     * Observable(s).
-     * 
+     * Checks whether the current activity is concerned by an update from Observable(s).
      * @return true if the current activity must take the update in account
      */
-    protected boolean mustTakeAccountOfUpdate() {
-        return waitingForServer;
-    }
-
-    /**
-     * Sets the waitingForServer boolean.
-     * 
-     * @param isWaiting
-     */
-    protected void setWaiting(boolean isWaiting) {
-        waitingForServer = isWaiting;
-    }
-
+    protected abstract boolean mustTakeAccountOfUpdate();
+    
     /**
      * Process the data after download.
-     * 
-     * @param data
-     *            the data
+     * @param the data
      */
     protected abstract void processDownloadedData(Object data);
-
+    
     protected void showProgressDialog() {
         progressDialog.show();
     }
-
+    
     protected void hideProgressDialog() {
         progressDialog.dismiss();
     }
-
+    
 }
