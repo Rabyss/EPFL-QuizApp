@@ -82,10 +82,14 @@ public class ShowQuestionsActivity extends QuestionActivity {
         // downloads a random question from the server
         RequestContext reqContext = new RequestContext(
                 ServerCommunicator.SWENG_GET_RANDOM_QUESTION_URL);
-        ServerCommunicator.getInstance().doHttpGet(reqContext);
+        ServerCommunicator.getInstance().doHttpGet(reqContext, new ReceivedQuestionEvent());
         // show a progress dialog while waiting for question
         setWaiting(true);
         showProgressDialog();
+    }
+    
+    public void on(ReceivedQuestionEvent event) {
+    	super.processEvent(event);
     }
 
     private void showQuestion() {

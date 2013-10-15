@@ -93,7 +93,7 @@ public class EditQuestionActivity extends QuestionActivity {
                     ServerCommunicator.SWENG_SUBMIT_QUESTION_URL,
                     new StringEntity(quizQuestion.toJSON()));
             reqContext.addHeader("Content-type", "application/json");
-            ServerCommunicator.getInstance().doHttpPost(reqContext);
+            ServerCommunicator.getInstance().doHttpPost(reqContext, new PostedQuestionEvent());
         } catch (MalformedQuestionException e) {
             Toast.makeText(this, e.getMessage(), TOAST_DISPLAY_TIME).show();
         } catch (UnsupportedEncodingException e) {
@@ -103,6 +103,10 @@ public class EditQuestionActivity extends QuestionActivity {
         showProgressDialog();
         setWaiting(true);
 
+    }
+    
+    public void on(PostedQuestionEvent event) {
+    	super.processEvent(event);
     }
 
     public void tryAudit() {

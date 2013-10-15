@@ -9,4 +9,8 @@ public class JSONToken {
 	public JSONToken(String json) throws JSONException {
 		this.jsonObject = new JSONObject(json);
 	}
+	
+	public String getToken() throws JSONException {
+		return jsonObject.getString("token");
+	}
 }

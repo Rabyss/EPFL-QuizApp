@@ -1,8 +1,5 @@
 package epfl.sweng.ui;
 
-import java.util.Observable;
-import java.util.Observer;
-
 import epfl.sweng.R;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -11,12 +8,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import epfl.sweng.entry.MainActivity;
+import epfl.sweng.events.EventListener;
 import epfl.sweng.servercomm.ServerCommunicator;
+import epfl.sweng.servercomm.ServerEvent;
 
 /**
  * Contains common treatments of activities dealing with quiz questions.
  */
-public abstract class QuestionActivity extends Activity implements Observer {
+public abstract class QuestionActivity extends Activity implements EventListener {
 
     private ProgressDialog progressDialog;
     
@@ -33,7 +32,7 @@ public abstract class QuestionActivity extends Activity implements Observer {
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progressDialog.setCancelable(true);
         
-        ServerCommunicator.getInstance().addObserver(this);
+        ServerCommunicator.getInstance().addListener(this);
     }
 
     @Override
@@ -42,8 +41,9 @@ public abstract class QuestionActivity extends Activity implements Observer {
         startActivity(displayActivitxIntent);
     }
 
-    @Override
-    public void update(Observable observable, Object data) {
+    public void processEvent(ServerEvent event) {
+    	
+    	String data = event.getResponse();
 
         // Checks whether the update concern the currrent activity
         if (mustTakeAccountOfUpdate()) {
