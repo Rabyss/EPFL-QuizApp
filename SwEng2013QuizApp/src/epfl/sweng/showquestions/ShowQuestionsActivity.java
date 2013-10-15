@@ -22,8 +22,8 @@ import epfl.sweng.QuizQuestion;
 import epfl.sweng.R;
 import epfl.sweng.servercomm.RequestContext;
 import epfl.sweng.servercomm.ServerCommunicator;
-import epfl.sweng.testing.TestingTransactions;
-import epfl.sweng.testing.TestingTransactions.TTChecks;
+import epfl.sweng.testing.TestCoordinator;
+import epfl.sweng.testing.TestCoordinator.TTChecks;
 import epfl.sweng.ui.QuestionActivity;
 import epfl.sweng.utils.MalformedQuestionException;
 
@@ -123,7 +123,7 @@ public class ShowQuestionsActivity extends QuestionActivity {
         // displaySolutionIndex();
 
         setContentView(mLinearLayout);
-        TestingTransactions.check(TTChecks.QUESTION_SHOWN);
+        TestCoordinator.check(TTChecks.QUESTION_SHOWN);
     }
 
     private void displayAnswers() {
@@ -174,7 +174,7 @@ public class ShowQuestionsActivity extends QuestionActivity {
                 mCorrectness.setText(getString(R.string.button_cross));
             }
 
-            TestingTransactions.check(TTChecks.ANSWER_SELECTED);
+            TestCoordinator.check(TTChecks.ANSWER_SELECTED);
         }
     }
 

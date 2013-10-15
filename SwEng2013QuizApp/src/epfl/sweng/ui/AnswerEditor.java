@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 import epfl.sweng.R;
 import epfl.sweng.editquestions.EditQuestionActivity;
-import epfl.sweng.testing.TestingTransactions;
-import epfl.sweng.testing.TestingTransactions.TTChecks;
+import epfl.sweng.testing.TestCoordinator;
+import epfl.sweng.testing.TestCoordinator.TTChecks;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -72,7 +72,7 @@ public class AnswerEditor {
 					setCorrect(false);
 				}
 				
-				TestingTransactions.check(TTChecks.QUESTION_EDITED);
+				TestCoordinator.check(TTChecks.QUESTION_EDITED);
 
 			}
 		});
@@ -87,12 +87,12 @@ public class AnswerEditor {
 			public void onClick(View v) {
 				remove();
 				mActivity.tryAudit();
-				TestingTransactions.check(TTChecks.QUESTION_EDITED);
+				TestCoordinator.check(TTChecks.QUESTION_EDITED);
 			}
 		});
 
 		if (!first) {
-			TestingTransactions.check(TTChecks.QUESTION_EDITED);
+			TestCoordinator.check(TTChecks.QUESTION_EDITED);
 		}
 
 		mActivity.tryAudit();
@@ -156,7 +156,7 @@ public class AnswerEditor {
 		public void afterTextChanged(Editable s) {
 			if (!mActivity.isResettingUI()) {
 				mActivity.tryAudit();
-				TestingTransactions.check(TTChecks.QUESTION_EDITED);
+				TestCoordinator.check(TTChecks.QUESTION_EDITED);
 			}
 		}
 	}

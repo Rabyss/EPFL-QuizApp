@@ -8,8 +8,8 @@ import android.view.View;
 import epfl.sweng.R;
 import epfl.sweng.editquestions.EditQuestionActivity;
 import epfl.sweng.showquestions.ShowQuestionsActivity;
-import epfl.sweng.testing.TestingTransactions;
-import epfl.sweng.testing.TestingTransactions.TTChecks;
+import epfl.sweng.testing.TestCoordinator;
+import epfl.sweng.testing.TestCoordinator.TTChecks;
 
 /**
  * Entry Point of the SwEng2013QuizApp
@@ -23,7 +23,7 @@ public class MainActivity extends Activity {
 
 		// let the testing infrastructure know that entry point has been
 		// initialized
-		TestingTransactions.check(TTChecks.MAIN_ACTIVITY_SHOWN);
+		TestCoordinator.check(TTChecks.MAIN_ACTIVITY_SHOWN);
 	}
 
 	@Override

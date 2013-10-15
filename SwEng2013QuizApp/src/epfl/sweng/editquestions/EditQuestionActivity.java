@@ -20,8 +20,8 @@ import epfl.sweng.QuizQuestion;
 import epfl.sweng.R;
 import epfl.sweng.servercomm.RequestContext;
 import epfl.sweng.servercomm.ServerCommunicator;
-import epfl.sweng.testing.TestingTransactions;
-import epfl.sweng.testing.TestingTransactions.TTChecks;
+import epfl.sweng.testing.TestCoordinator;
+import epfl.sweng.testing.TestCoordinator.TTChecks;
 import epfl.sweng.ui.AnswerEditor;
 import epfl.sweng.ui.QuestionActivity;
 import epfl.sweng.utils.MalformedQuestionException;
@@ -55,7 +55,7 @@ public class EditQuestionActivity extends QuestionActivity {
 
         // let the testing infrastructure know that edit question has been
         // initialized
-        TestingTransactions.check(TTChecks.EDIT_QUESTIONS_SHOWN);
+        TestCoordinator.check(TTChecks.EDIT_QUESTIONS_SHOWN);
     }
 
     @Override
@@ -169,7 +169,7 @@ public class EditQuestionActivity extends QuestionActivity {
         answers.get(0).resetContent();
         answers.get(0).setCorrect(false);
         resettingUI = false;
-        TestingTransactions.check(TTChecks.NEW_QUESTION_SUBMITTED);
+        TestCoordinator.check(TTChecks.NEW_QUESTION_SUBMITTED);
     }
 
     /**
@@ -194,7 +194,7 @@ public class EditQuestionActivity extends QuestionActivity {
         public void afterTextChanged(Editable s) {
             if (!resettingUI) {
                 tryAudit();
-                TestingTransactions.check(TTChecks.QUESTION_EDITED);
+                TestCoordinator.check(TTChecks.QUESTION_EDITED);
             }
 
         }
