@@ -101,8 +101,6 @@ public class EditQuestionActivity extends QuestionActivity {
         }
 
         showProgressDialog();
-        setWaiting(true);
-
     }
     
     public void on(PostedQuestionEvent event) {
