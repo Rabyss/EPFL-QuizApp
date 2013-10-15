@@ -1,7 +1,5 @@
 package epfl.sweng.test;
 
-import org.junit.Test;
-
 import com.jayway.android.robotium.solo.Solo;
 
 import epfl.sweng.editquestions.EditQuestionActivity;

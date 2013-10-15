@@ -1,7 +1,6 @@
 package epfl.sweng.test.minimalmock;
 
 import org.apache.http.HttpStatus;
-import org.junit.Assert;
 
 import android.test.ActivityInstrumentationTestCase2;
 

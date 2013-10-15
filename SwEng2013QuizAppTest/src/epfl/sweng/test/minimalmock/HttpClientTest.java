@@ -1,25 +1,19 @@
 package epfl.sweng.test.minimalmock;
 
-
-
-
-
-import org.apache.http.HttpStatus;
 import org.apache.http.entity.StringEntity;
-import org.junit.Assert;
-
-import com.jayway.android.robotium.solo.Solo;
 
 import android.test.ActivityInstrumentationTestCase2;
 
+import com.jayway.android.robotium.solo.Solo;
+
 import epfl.sweng.QuizQuestion;
 import epfl.sweng.editquestions.EditQuestionActivity;
+import epfl.sweng.editquestions.PostedQuestionEvent;
 import epfl.sweng.servercomm.RequestContext;
 import epfl.sweng.servercomm.ServerCommunicator;
-import epfl.sweng.servercomm.SwengHttpClientFactory;
 import epfl.sweng.testing.TestCoordinator;
-import epfl.sweng.testing.TestingTransaction;
 import epfl.sweng.testing.TestCoordinator.TTChecks;
+import epfl.sweng.testing.TestingTransaction;
 
 public class HttpClientTest extends ActivityInstrumentationTestCase2<EditQuestionActivity> { 
 	
@@ -44,7 +38,7 @@ public class HttpClientTest extends ActivityInstrumentationTestCase2<EditQuestio
 	    }
 	
     public void testSubmitAQuestion(){
-    	ServerCommunicator.getInstance().doHttpPost(rContext);
+    	ServerCommunicator.getInstance().doHttpPost(rContext, new PostedQuestionEvent());
     	getActivityAndWaitFor(TTChecks.EDIT_QUESTIONS_SHOWN);
     	getActivityAndWaitFor(TTChecks.NEW_QUESTION_SUBMITTED);
     }
