@@ -175,6 +175,12 @@ public class EditQuestionActivity extends QuestionActivity {
         resettingUI = false;
         TestCoordinator.check(TTChecks.NEW_QUESTION_SUBMITTED);
     }
+    @Override
+	protected void serverFailure() {
+		Toast.makeText(this, R.string.submit_server_failure, Toast.LENGTH_LONG).show();
+		TestCoordinator.check(TTChecks.NEW_QUESTION_SUBMITTED);
+		
+	}
 
     /**
      * Test when texts change
@@ -203,5 +209,7 @@ public class EditQuestionActivity extends QuestionActivity {
 
         }
     }
+    
+    
 
 }

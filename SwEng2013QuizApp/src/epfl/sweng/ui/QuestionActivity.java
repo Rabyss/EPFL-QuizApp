@@ -53,26 +53,14 @@ public abstract class QuestionActivity extends Activity implements EventListener
             if (data != null) {
                 processDownloadedData(data);
             } else {
-                AlertDialog.Builder dlgAlert = new AlertDialog.Builder(this);
-
-                dlgAlert.setMessage(R.string.error_server_comm);
-                dlgAlert.setTitle(R.string.error_failure);
-                dlgAlert.setPositiveButton("OK", null);
-                dlgAlert.setCancelable(true);
-                dlgAlert.create().show();
-
-                dlgAlert.setPositiveButton("Ok",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog,
-                                    int which) {
-
-                            }
-                        });
+                serverFailure();
             }
         }
     }
 
-    /**
+    protected abstract void serverFailure();		
+    
+	/**
      * Checks whether the current activity is concerned by an update from
      * Observable(s).
      * 
