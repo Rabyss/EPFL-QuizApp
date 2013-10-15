@@ -84,7 +84,6 @@ public class ShowQuestionsActivity extends QuestionActivity {
                 ServerCommunicator.SWENG_GET_RANDOM_QUESTION_URL);
         ServerCommunicator.getInstance().doHttpGet(reqContext, new ReceivedQuestionEvent());
         // show a progress dialog while waiting for question
-        setWaiting(true);
         showProgressDialog();
     }
     
