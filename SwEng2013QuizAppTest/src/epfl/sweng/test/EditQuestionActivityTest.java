@@ -1,9 +1,13 @@
 package epfl.sweng.test;
 
+import org.apache.http.HttpStatus;
+
 import com.jayway.android.robotium.solo.Solo;
 
 import epfl.sweng.editquestions.EditQuestionActivity;
+import epfl.sweng.test.minimalmock.MockHttpClient;
 import epfl.sweng.testing.TestCoordinator;
+import epfl.sweng.testing.TestCoordinator.TTChecks;
 import epfl.sweng.testing.TestingTransaction;
 import android.test.ActivityInstrumentationTestCase2;
 import android.widget.Button;
@@ -22,6 +26,7 @@ public class EditQuestionActivityTest
     private static final String TAGS_EDITOR_TEXT = "Type in the question's tags";
     private static final String FALSE_ANSWER_BUTTON = "\u2718";
     private static final String TRUE_ANSWER_BUTTON_TEXT = "\u2714";
+    private static final String FETCHING_ERROR_MESSAGE = "Could not upload the question to the server";
     private Solo solo;
 
     public EditQuestionActivityTest() {
@@ -30,9 +35,48 @@ public class EditQuestionActivityTest
     
     @Override
     protected void setUp() {
-        solo = new Solo(getInstrumentation(), getActivity());
+        getActivityAndWaitFor(TTChecks.EDIT_QUESTIONS_SHOWN);
+        solo = new Solo(getInstrumentation());
     }
 
+    public void testSubmitFail() {
+        final String questionBody = "Question body";
+        final String firstAnswerBody = "Answer A";
+        final String scdAnswerBody = "Answer B";
+        final String tags = "A B";
+        
+        fillQuestionBody(questionBody);
+        fillNextAnswerBody(firstAnswerBody);
+        
+        assertTrue("+ button cannot be found.", solo.searchButton(PLUS_BUTTON_TEXT));
+        solo.clickOnButton(PLUS_BUTTON_TEXT);
+        waitForChange();
+        
+        fillNextAnswerBody(scdAnswerBody);
+        
+        assertTrue(FALSE_ANSWER_BUTTON + " buttons cannot be found.", solo.searchButton(FALSE_ANSWER_BUTTON,2));
+        solo.clickOnButton(FALSE_ANSWER_BUTTON);
+        
+        assertTrue("Tags editor cannot be found.", solo.searchEditText(TAGS_EDITOR_TEXT));
+        EditText tagsEditor = solo.getEditText(TAGS_EDITOR_TEXT);
+        solo.typeText(tagsEditor, tags);
+        
+        MockHttpClient mockHttpClient = new MockHttpClient();
+        mockHttpClient.pushCannedResponse("*",  HttpStatus.SC_BAD_REQUEST, 
+                null, "application/json");
+        
+        assertTrue("Submit button not found.", solo.searchButton(SUBMIT_BUTTON_TEXT));
+        solo.clickOnButton(SUBMIT_BUTTON_TEXT);
+        getActivityAndWaitFor(TTChecks.NEW_QUESTION_SUBMITTED);
+        assertTrue("Error message not found.", solo.searchText(FETCHING_ERROR_MESSAGE));
+        
+        assertTrue("Question body has changed after bad submit.", solo.searchEditText(questionBody));
+        assertTrue("First answer body has changed after bad submit.", solo.searchEditText(firstAnswerBody));
+        assertTrue("Second answer body has changed after bad submit.", solo.searchEditText(scdAnswerBody));
+        assertTrue("Tags body has changed after bad submit.", solo.searchEditText(tags));
+        assertTrue("The checked answer does no longer exist after bad submit.", solo.searchButton(TRUE_ANSWER_BUTTON_TEXT));
+    }
+    
     public void testTags() {
         fillQuestionBody("Question body");
         fillNextAnswerBody("First answer");
