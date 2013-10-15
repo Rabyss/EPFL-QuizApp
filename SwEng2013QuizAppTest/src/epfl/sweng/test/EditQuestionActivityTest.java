@@ -5,6 +5,8 @@ import org.apache.http.HttpStatus;
 import com.jayway.android.robotium.solo.Solo;
 
 import epfl.sweng.editquestions.EditQuestionActivity;
+import epfl.sweng.servercomm.ServerCommunicator;
+import epfl.sweng.servercomm.SwengHttpClientFactory;
 import epfl.sweng.test.minimalmock.MockHttpClient;
 import epfl.sweng.testing.TestCoordinator;
 import epfl.sweng.testing.TestCoordinator.TTChecks;
@@ -28,6 +30,7 @@ public class EditQuestionActivityTest
     private static final String TRUE_ANSWER_BUTTON_TEXT = "\u2714";
     private static final String FETCHING_ERROR_MESSAGE = "Could not upload the question to the server";
     private Solo solo;
+    private MockHttpClient mockHttpClient;
 
     public EditQuestionActivityTest() {
         super(EditQuestionActivity.class);
@@ -36,10 +39,12 @@ public class EditQuestionActivityTest
     @Override
     protected void setUp() {
         getActivityAndWaitFor(TTChecks.EDIT_QUESTIONS_SHOWN);
-        solo = new Solo(getInstrumentation());
+        solo = new Solo(getInstrumentation(), getActivity());
+        mockHttpClient = new MockHttpClient();
+        SwengHttpClientFactory.setInstance(mockHttpClient);
     }
 
-    public void testSubmitFail() {
+    public void testSubmit() {
         final String questionBody = "Question body";
         final String firstAnswerBody = "Answer A";
         final String scdAnswerBody = "Answer B";
@@ -61,8 +66,7 @@ public class EditQuestionActivityTest
         EditText tagsEditor = solo.getEditText(TAGS_EDITOR_TEXT);
         solo.typeText(tagsEditor, tags);
         
-        MockHttpClient mockHttpClient = new MockHttpClient();
-        mockHttpClient.pushCannedResponse("*",  HttpStatus.SC_BAD_REQUEST, 
+        mockHttpClient.pushCannedResponse("/*/",  HttpStatus.SC_BAD_REQUEST, 
                 null, "application/json");
         
         assertTrue("Submit button not found.", solo.searchButton(SUBMIT_BUTTON_TEXT));
@@ -89,10 +93,7 @@ public class EditQuestionActivityTest
         assertTrue(FALSE_ANSWER_BUTTON + " button cannot be found.", solo.searchButton(FALSE_ANSWER_BUTTON));
         solo.clickOnButton(FALSE_ANSWER_BUTTON);
         
-        assertTrue("No submit button can be found.", solo.searchButton(SUBMIT_BUTTON_TEXT));
         Button submitButton = solo.getButton(SUBMIT_BUTTON_TEXT);
-        
-        assertTrue("Tags editor cannot be found.", solo.searchEditText(TAGS_EDITOR_TEXT));
         EditText tagsEditor = solo.getEditText(TAGS_EDITOR_TEXT);
         
         solo.typeText(tagsEditor, "        ");
@@ -157,7 +158,6 @@ public class EditQuestionActivityTest
     public void testSubmitButton() throws InterruptedException {
         
         //Make sure button is not enabled at first
-        assertTrue("Submit button cannot be found.", solo.searchButton(SUBMIT_BUTTON_TEXT));
         Button submitButton = solo.getButton(SUBMIT_BUTTON_TEXT);
         assertFalse("Submit button must be disabled at first.", submitButton.isEnabled());
         
@@ -180,7 +180,6 @@ public class EditQuestionActivityTest
         assertFalse("The submit button can become enabled with no tags", submitButton.isEnabled());
         
         //Fill tags
-        assertTrue("Tags editor cannot be found.", solo.searchEditText(TAGS_EDITOR_TEXT));
         EditText tagsEditor = solo.getEditText(TAGS_EDITOR_TEXT);
         solo.typeText(tagsEditor, "      ");
         assertFalse("The submit button can become enabled with only spaces as tags.", submitButton.isEnabled());
@@ -198,7 +197,6 @@ public class EditQuestionActivityTest
     }
     
     private void fillQuestionBody(String questionBody) {
-        assertTrue("Question editor cannot be found.", solo.searchEditText(QUESTION_EDITOR_TEXT));
         EditText questionEditor = solo.getEditText(QUESTION_EDITOR_TEXT);
         solo.typeText(questionEditor, questionBody);
     }
@@ -208,7 +206,6 @@ public class EditQuestionActivityTest
     }
     
     private void fillAnswerBody(String currentAnswerBody, String nextAnswerBody) {
-        assertTrue("No answer editor can be found.", solo.searchEditText(currentAnswerBody));
         EditText firstAnswerEditor = solo.getEditText(currentAnswerBody);
         solo.typeText(firstAnswerEditor, nextAnswerBody);
     }
