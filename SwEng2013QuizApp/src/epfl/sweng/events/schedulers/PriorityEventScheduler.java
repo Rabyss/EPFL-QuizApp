@@ -5,8 +5,6 @@ import java.util.PriorityQueue;
 import epfl.sweng.events.Event;
 import epfl.sweng.events.PriorityEvent;
 
-
-
 /**
  * Ordonnanceur d'événements basé sur une queue de priorité. Les événements de
  * cet ordonnanceur sont délivrés en fonction de leur priorité.
@@ -26,36 +24,35 @@ import epfl.sweng.events.PriorityEvent;
  * peuvent être mélangés sans problèmes.
  */
 public class PriorityEventScheduler extends QueueEventScheduler {
-	PriorityQueue<PriorityEvent<?>> priorityQueue;
+    private PriorityQueue<PriorityEvent<?>> priorityQueue;
 
-	/**
-	 * Crée un nouvel ordonnanceur avec gestion de priorité.
-	 */
-	public PriorityEventScheduler() {
-		priorityQueue = new PriorityQueue<PriorityEvent<?>>();
-	}
+    /**
+     * Crée un nouvel ordonnanceur avec gestion de priorité.
+     */
+    public PriorityEventScheduler() {
+        priorityQueue = new PriorityQueue<PriorityEvent<?>>();
+    }
 
-	/**
-	 * Ajoute un événement.
-	 */
-	public synchronized void addEvent(Event event) {
-		if(event instanceof PriorityEvent<?>) {
-			priorityQueue.offer((PriorityEvent<?>) event);
-		}
-		else {
-			super.addEvent(event);
-		}
-	}
+    /**
+     * Ajoute un événement.
+     */
+    public synchronized void addEvent(Event event) {
+        if (event instanceof PriorityEvent<?>) {
+            priorityQueue.offer((PriorityEvent<?>) event);
+        } else {
+            super.addEvent(event);
+        }
+    }
 
-	/**
-	 * Retourne le prochain événement.
-	 */
-	public synchronized Event nextEvent() {
-		Event event;
-		if((event = super.nextEvent()) != null) {
-			return event;
-		}
+    /**
+     * Retourne le prochain événement.
+     */
+    public synchronized Event nextEvent() {
+        Event event = super.nextEvent();
+        if (event != null) {
+            return event;
+        }
 
-		return priorityQueue.poll();
-	}
+        return priorityQueue.poll();
+    }
 }

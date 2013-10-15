@@ -1,5 +1,6 @@
 package epfl.sweng.events;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -12,65 +13,68 @@ import java.util.Set;
  * terminée.
  */
 public abstract class EventEmitter implements EventEmitterInterface {
-	/**
-	 * La liste des EventListeners associés à cet émetteur.
-	 */
-	protected Set<EventListener> listeners = new HashSet<EventListener>();
+    /**
+     * La liste des EventListeners associés à cet émetteur.
+     */
+    private Set<EventListener> listeners = new HashSet<EventListener>();
 
-	/**
-	 * L'objet qui sera associé comme émetteur pour les événements émis par cet
-	 * émetteur. Ceci permet, avec la classe EventEmitterInterface, d'émuler le
-	 * comportement d'un EventListener complet dans une classe qui ne pourrait
-	 * pas en hériter.
-	 */
-	protected EventEmitterInterface emitter;
+    /**
+     * L'objet qui sera associé comme émetteur pour les événements émis par cet
+     * émetteur. Ceci permet, avec la classe EventEmitterInterface, d'émuler le
+     * comportement d'un EventListener complet dans une classe qui ne pourrait
+     * pas en hériter.
+     */
+    private EventEmitterInterface emitter;
 
-	/**
-	 * Crée un nouveau émetteur d'événement.
-	 */
-	public EventEmitter() {
-		this(null);
-	}
+    /**
+     * Crée un nouveau émetteur d'événement.
+     */
+    public EventEmitter() {
+        this(null);
+    }
 
-	/**
-	 * Crée un nouveau émetteur d'événement émettant des événements pour le
-	 * compte d'un autre éméteur ou pseudo-émetteur.
-	 * 
-	 * @param emitter
-	 *            L'émetteur à utiliser comme origine pour les événements émis.
-	 *            Par défaut soi-même si null.
-	 */
-	public EventEmitter(EventEmitterInterface emitter) {
-		this.emitter = emitter != null ? emitter : this;
-	}
+    /**
+     * Crée un nouveau émetteur d'événement émettant des événements pour le
+     * compte d'un autre éméteur ou pseudo-émetteur.
+     * 
+     * @param emitter
+     *            L'émetteur à utiliser comme origine pour les événements émis.
+     *            Par défaut soi-même si null.
+     */
+    public EventEmitter(EventEmitterInterface emitter) {
+        this.emitter = emitter != null ? emitter : this;
+    }
 
-	/**
-	 * Ajoute un gestionnaire aux événements de cet émétteur.
-	 */
-	public void addListener(EventListener listener) {
-		if(listener != null) {
-			listeners.add(listener);
-		}
-	}
+    /**
+     * Ajoute un gestionnaire aux événements de cet émétteur.
+     */
+    public void addListener(EventListener listener) {
+        if (listener != null) {
+            listeners.add(listener);
+        }
+    }
 
-	/**
-	 * Retire un gestionnaire de cet émetteur.
-	 */
-	public void removeListener(EventListener listener) {
-		listeners.remove(listener);
-	}
+    /**
+     * Retire un gestionnaire de cet émetteur.
+     */
+    public void removeListener(EventListener listener) {
+        listeners.remove(listener);
+    }
 
-	/**
-	 * Emet un événement.
-	 */
-	public void emit(Event event) {
-		for(EventListener listener : listeners) {
-			try {
-				event.trigger(listener, emitter);
-			}
-			catch(Exception e) {
-				// Ignore exceptions when emitting events
-			}
-		}
-	}
+    /**
+     * Emet un événement.
+     */
+    public void emit(Event event) {
+        for (EventListener listener : listeners) {
+            try {
+                event.trigger(listener, emitter);
+            } catch (UnhandledEventException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+    }
 }

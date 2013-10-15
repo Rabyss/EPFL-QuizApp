@@ -9,13 +9,13 @@ import epfl.sweng.events.Event;
  * d'événements à distribuer et de décider dans quel ordre les distribuer.
  */
 public interface EventScheduler {
-	/**
-	 * Ajoute un nouvel événement à cet ordonnanceur.
-	 */
-	public abstract void addEvent(Event event);
+    /**
+     * Ajoute un nouvel événement à cet ordonnanceur.
+     */
+    void addEvent(Event event);
 
-	/**
-	 * Demande le prochain événement selon l'ordre imposé par cet ordonnanceur.
-	 */
-	public abstract Event nextEvent();
+    /**
+     * Demande le prochain événement selon l'ordre imposé par cet ordonnanceur.
+     */
+    Event nextEvent();
 }

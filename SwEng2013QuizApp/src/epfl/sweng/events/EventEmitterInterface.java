@@ -13,6 +13,7 @@ package epfl.sweng.events;
  * les appels aux méthodes add/removeListener à cet objet interne.
  */
 public interface EventEmitterInterface {
-	public abstract void addListener(EventListener listener);
-	public abstract void removeListener(EventListener listener);
+    void addListener(EventListener listener);
+
+    void removeListener(EventListener listener);
 }

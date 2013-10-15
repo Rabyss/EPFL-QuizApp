@@ -19,7 +19,7 @@ public abstract class ServerEvent extends Event {
 		return mResponse;
 	}
 
-	public void setResponse(String mResponse) {
-		this.mResponse = mResponse;
+	public void setResponse(String response) {
+		this.mResponse = response;
 	}
 }

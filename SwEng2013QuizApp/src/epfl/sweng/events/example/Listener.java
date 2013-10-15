@@ -11,8 +11,6 @@ public class Listener implements EventListener {
 		Calculator calc = new Calculator();
 		calc.addListener(this);
 		
-		calc.add(4, 6);
-		calc.divide(33, 22);
 		calc.add(1, 2);
 	}
 	
