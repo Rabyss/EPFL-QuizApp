@@ -5,6 +5,7 @@ package epfl.sweng.test.minimalmock;
 
 
 import org.apache.http.HttpStatus;
+import org.apache.http.entity.StringEntity;
 import org.junit.Assert;
 
 import com.jayway.android.robotium.solo.Solo;
@@ -13,6 +14,7 @@ import android.test.ActivityInstrumentationTestCase2;
 
 import epfl.sweng.QuizQuestion;
 import epfl.sweng.editquestions.EditQuestionActivity;
+import epfl.sweng.servercomm.RequestContext;
 import epfl.sweng.servercomm.ServerCommunicator;
 import epfl.sweng.servercomm.SwengHttpClientFactory;
 import epfl.sweng.testing.TestCoordinator;
@@ -23,7 +25,7 @@ public class HttpClientTest extends ActivityInstrumentationTestCase2<EditQuestio
 	
 	private Solo solo;
 	private QuizQuestion quizQuestion;
-	
+	private RequestContext rContext;
 	  public HttpClientTest() {
 	        super(EditQuestionActivity.class);
 	    }
@@ -35,12 +37,14 @@ public class HttpClientTest extends ActivityInstrumentationTestCase2<EditQuestio
 	     
 	        String[] answer = {"42", "27"};
 	        String[] tags = {"hello", "salut"};
-	        quizQuestion= new QuizQuestion(1, "What is the answer to life, the universe, and everything?", answer ,0, tags, "sweng");
 	        
+	        quizQuestion= new QuizQuestion(1, "What is the answer to life, the universe, and everything?", answer ,0, tags, "sweng");
+	        rContext = new RequestContext(ServerCommunicator.SWENG_SUBMIT_QUESTION_URL, new StringEntity(quizQuestion.toJSON()));
+	        rContext.addHeader("Context-type", "application/json");
 	    }
 	
     public void testSubmitAQuestion(){
-    	ServerCommunicator.getInstance().submitQuizQuestion(quizQuestion, new EditQuestionActivity());
+    	ServerCommunicator.getInstance().doHttpPost(rContext);
     	getActivityAndWaitFor(TTChecks.EDIT_QUESTIONS_SHOWN);
     	getActivityAndWaitFor(TTChecks.NEW_QUESTION_SUBMITTED);
     }
