@@ -40,6 +40,7 @@ public class EditQuestionActivityTest
     protected void setUp() {
         getActivityAndWaitFor(TTChecks.EDIT_QUESTIONS_SHOWN);
         solo = new Solo(getInstrumentation(), getActivity());
+        
         mockHttpClient = new MockHttpClient();
         SwengHttpClientFactory.setInstance(mockHttpClient);
     }
