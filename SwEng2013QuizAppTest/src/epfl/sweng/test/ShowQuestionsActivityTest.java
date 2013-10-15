@@ -44,6 +44,8 @@ public class ShowQuestionsActivityTest extends
 		Button nextQuestionButton = solo.getButton("Next question");
 		assertFalse("Next question button is disabled",
 				nextQuestionButton.isEnabled());
+		assertTrue("Tag 1 is display", solo.searchText("h2g2"));
+		assertTrue("Tag 2 is display", solo.searchText("trivia"));
 	}
 	
 	public void testBadAnswerSelected() {

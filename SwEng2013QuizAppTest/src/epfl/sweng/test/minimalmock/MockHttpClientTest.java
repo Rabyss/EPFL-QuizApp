@@ -1,6 +1,9 @@
 package epfl.sweng.test.minimalmock;
 
+import java.io.IOException;
+
 import org.apache.http.HttpStatus;
+import org.junit.Assert;
 
 import android.test.ActivityInstrumentationTestCase2;
 
@@ -50,21 +53,19 @@ public class MockHttpClientTest extends ActivityInstrumentationTestCase2<ShowQue
         assertTrue("Correct answer must be displayed", solo.searchText("Forty-two"));
         assertTrue("Incorrect answer must be displayed", solo.searchText("Twenty-seven"));
     }
-    /*public void testFetchQuestionFails(){
-    	try{
-    	
+    public void testFetchQuestionFails(){
+   	
     	 httpClient.pushCannedResponse(
                  "GET (?:https?://[^/]+|[^/]+)?/+quizquestions/random\\b",
-                 HttpStatus.SC_EXPECTATION_FAILED,
+                 HttpStatus.SC_BAD_REQUEST,
                  null,
                  "application/json");
-    	 Assert.fail("a QuestionRetrievingException must be detected");
-    	}catch(Exception e){
     	 getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
          assertTrue("An error message must be display", solo.searchText("There was an error retrieving the question"));
-    	}
-    }*/
-
+    }
+    	
+    
+    
     protected void getActivityAndWaitFor(final TestCoordinator.TTChecks expected) {
         TestCoordinator.run(getInstrumentation(), new TestingTransaction() {
             @Override
