@@ -16,6 +16,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+import epfl.sweng.MalformedQuestionException;
 import epfl.sweng.QuizQuestion;
 import epfl.sweng.R;
 import epfl.sweng.servercomm.RequestContext;
@@ -24,7 +25,6 @@ import epfl.sweng.testing.TestCoordinator;
 import epfl.sweng.testing.TestCoordinator.TTChecks;
 import epfl.sweng.ui.AnswerEditor;
 import epfl.sweng.ui.QuestionActivity;
-import epfl.sweng.utils.MalformedQuestionException;
 
 /**
  * 

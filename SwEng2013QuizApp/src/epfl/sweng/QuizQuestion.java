@@ -7,7 +7,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import epfl.sweng.utils.MalformedQuestionException;
 
 /**
  * Represents a question of the quiz.

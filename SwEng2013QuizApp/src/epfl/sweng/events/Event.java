@@ -9,114 +9,113 @@ import java.lang.reflect.Method;
  * EventEmitter et reçu par un EventListener. Il ne possède aucune propriété et
  * doit être étendu pour lui associer une signification.
  */
+@SuppressWarnings("serial")
 public class Event implements Cloneable, Serializable {
+	/**
+	 * L'émetteur qui a émit cet événement. Cet attribut n'est pas sérialisé
+	 * avec l'événement, dans un tel cas, l'émetteur original est perdu.
+	 */
+	transient private EventEmitterInterface mEmitter;
 
-    private static final long serialVersionUID = 7691440123399361812L;
-    /**
-     * L'émetteur qui a émit cet événement. Cet attribut n'est pas sérialisé
-     * avec l'événement, dans un tel cas, l'émetteur original est perdu.
-     */
-    transient private EventEmitterInterface mEmitter;
+	/**
+	 * Retourne l'émetteur de cet événement.
+	 */
+	public EventEmitterInterface getEmitter() {
+		return mEmitter;
+	}
 
-    /**
-     * Retourne l'émetteur de cet événement.
-     */
-    public EventEmitterInterface getEmitter() {
-        return mEmitter;
-    }
+	/**
+	 * Notifie un EventListener précis que cet événement est survenu.
+	 * 
+	 * @param listener
+	 *            L'EventListener à notifier.
+	 * 
+	 * @throws UnhandledEventException
+	 *             Si l'événement n'est pas géré par le listener spécifié.
+	 * @throws InvocationTargetException
+	 *             Si l'execution du listener a provoqué une exception.
+	 */
+	public final void trigger(EventListener listener) throws InvocationTargetException {
+		trigger(listener, null);
+	}
 
-    /**
-     * Notifie un EventListener précis que cet événement est survenu.
-     * 
-     * @param listener
-     *            L'EventListener à notifier.
-     * 
-     * @throws UnhandledEventException
-     *             Si l'événement n'est pas géré par le listener spécifié.
-     * @throws InvocationTargetException
-     *             Si l'execution du listener a provoqué une exception.
-     */
-    public final void trigger(EventListener listener) throws UnhandledEventException, InvocationTargetException {
-        trigger(listener, null);
-    }
+	/**
+	 * Notifie un EventListener précis que cet événement est survenu comme s'il
+	 * provenait d'un émetteur donné.
+	 * 
+	 * @param listener
+	 *            L'EventListener à notifier.
+	 * @param emitter
+	 *            L'émetteur de cet événement.
+	 * 
+	 * @throws UnhandledEventException
+	 *             Si l'événement n'est pas géré par le listener spécifié.
+	 * @throws InvocationTargetException
+	 *             Si l'execution du listener a provoqué une exception.
+	 */
+	public final void trigger(EventListener listener,
+			EventEmitterInterface emitter) throws InvocationTargetException {
+		// Event itself is not modified
+		Event event = (Event) this.clone();
 
-    /**
-     * Notifie un EventListener précis que cet événement est survenu comme s'il
-     * provenait d'un émetteur donné.
-     * 
-     * @param listener
-     *            L'EventListener à notifier.
-     * @param emitter
-     *            L'émetteur de cet événement.
-     * 
-     * @throws UnhandledEventException
-     *             Si l'événement n'est pas géré par le listener spécifié.
-     * @throws InvocationTargetException
-     *             Si l'execution du listener a provoqué une exception.
-     */
-    public final void trigger(EventListener listener,
-            EventEmitterInterface emitter) throws UnhandledEventException,
-            InvocationTargetException {
-        // Event itself is not modified
-        Event event = (Event) this.clone();
+		// Set the emitter
+		event.mEmitter = emitter;
 
-        // Set the emitter
-        event.mEmitter = emitter;
+		// --------------------------------------
+		// In memoriam of Generics-powered events
+		// "Because *this*, doesnt work"
+		// --------------------------------------
 
-        // --------------------------------------
-        // In memoriam of Generics-powered events
-        // "Because *this*, doesnt work"
-        // --------------------------------------
+		// The class of the event
+		Class<?> eventClass = event.getClass();
 
-        // The class of the event
-        Class<?> eventClass = event.getClass();
+		while (eventClass != null) {
+			try {
+				// Try to get a handler for the exact class of this event
+				Method on = listener.getClass().getMethod("on", eventClass);
+				
+				// Ensure accessibility
+				on.setAccessible(true); // Inner-class are otherwise unavailable
 
-        while (eventClass != null) {
-            try {
-                // Try to get a handler for the exact class of this event
-                Method on = listener.getClass().getMethod("on", eventClass);
+				// Invoke!
+				on.invoke(listener, event);
+				
+				// Done
+				return;
+			} catch (NoSuchMethodException e) {
+				// A listener should not need to implement a 'on' method.
+				// Maybe a parent handles it.
+				eventClass = getParent(eventClass);
+			} catch (IllegalArgumentException e) {
+				// A listener should not need to handle every 'on' method.
+				// Maybe a parent handles it.
+				eventClass = getParent(eventClass);
+			} catch (IllegalAccessException e) {
+				eventClass = getParent(eventClass);
+			}
+			
+		}
+	}
 
-                // Ensure accessibility
-                on.setAccessible(true); // Inner-class are otherwise unavailable
+	private Class<?> getParent(Class<?> eventClass) {
+		// Exception when getting the handler, handler is probably
+		// undefined
 
-                // Invoke!
-                on.invoke(listener, event);
+		if (eventClass == Event.class) {
+			// Event is the super-class of all events
+			return null;
+		}
 
-                // Done
-                return;
-            } catch (InvocationTargetException e) {
-                // Invocation throwed an exception, rethrow it
-                throw e;
-            } catch (NoSuchMethodException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (IllegalArgumentException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }/*
-              * catch (Exception e) { // Exception when getting the handler,
-              * handler is probably // undefined
-              * 
-              * if (eventClass == Event.class) { // Event is the super-class of
-              * all events break; }
-              * 
-              * // Try eventClass = eventClass.getSuperclass(); }
-              */
-        }
-
-        // Event has not be catched
-        throw new UnhandledEventException();
-    }
-
-    public Object clone() {
-        try {
-            return super.clone();
-        } catch (CloneNotSupportedException e) {
-            // Should not happen
-            return this;
-        }
-    }
+		// Try
+		return eventClass.getSuperclass();
+	}
+	
+	public Object clone() {
+		try {
+			return super.clone();
+		} catch (CloneNotSupportedException e) {
+			// Should not happen
+			return this;
+		}
+	}
 }

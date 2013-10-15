@@ -18,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import epfl.sweng.MalformedQuestionException;
 import epfl.sweng.QuizQuestion;
 import epfl.sweng.R;
 import epfl.sweng.servercomm.RequestContext;
@@ -25,7 +26,6 @@ import epfl.sweng.servercomm.ServerCommunicator;
 import epfl.sweng.testing.TestCoordinator;
 import epfl.sweng.testing.TestCoordinator.TTChecks;
 import epfl.sweng.ui.QuestionActivity;
-import epfl.sweng.utils.MalformedQuestionException;
 
 /**
  * Activity to download a question and display it

@@ -1,4 +1,4 @@
-package epfl.sweng.utils;
+package epfl.sweng;
 
 /**
  * Exception when a QuizQuestion is malformed
