@@ -10,5 +10,21 @@ public class AuthenticationActivityTest extends ActivityInstrumentationTestCase2
 			Class<AuthenticationActivity> activityClass) {
 		super(activityClass);
 	}
-
+	
+	/**
+	 * Test if the AuthenticationActivity is correctly initilized
+	 */
+	public void displayCorrectlyAuthenticationActivity(){
+		
+	}
+	/**
+	 * Test if the fields are cleared after a bad authentication
+	 */
+	public void badAuthenticationDisplaying(){
+		
+	}
+	
+	public void correctAuthenticationDisplaying(){
+		
+	}
 }
