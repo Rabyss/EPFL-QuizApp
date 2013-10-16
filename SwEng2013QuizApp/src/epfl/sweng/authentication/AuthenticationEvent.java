@@ -32,7 +32,7 @@ public abstract class AuthenticationEvent extends ServerEvent {
 	public static class GettingSessionIDEvent extends AuthenticationEvent {
 		private static final long serialVersionUID = 5329326030002190038L;
 		
-		public GettingSessionIDEvent(String sessionID) {
+		public GettingSessionIDEvent() {
 		}
 		
 		public String getSessionID() {
