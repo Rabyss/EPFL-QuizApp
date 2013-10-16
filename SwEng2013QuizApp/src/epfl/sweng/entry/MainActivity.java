@@ -99,7 +99,7 @@ public class MainActivity extends Activity {
 			public void onClick(View v) {
 				if (mIsLogged) {
 					mIsLogged = false;
-					//TODO: log out
+					//TODO log out
 					displayInit();
 				
 					TestCoordinator.check(TTChecks.LOGGED_OUT);
@@ -134,6 +134,5 @@ public class MainActivity extends Activity {
 	}
 	public static void setIsLogged(boolean isLogged) {
 		mIsLogged = isLogged;
-	}
-		
+	}		
 }

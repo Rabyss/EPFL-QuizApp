@@ -8,11 +8,12 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 
+import epfl.sweng.events.EventEmitter;
 import epfl.sweng.events.EventListener;
 import epfl.sweng.servercomm.RequestContext;
 import epfl.sweng.servercomm.ServerCommunicator;
 
-public class Authenticator implements EventListener {
+public class Authenticator extends EventEmitter implements EventListener {
 	private String username;
 	private String password;
 	private String token;
@@ -30,7 +31,7 @@ public class Authenticator implements EventListener {
 	private void requestToken() {
 		ServerCommunicator.getInstance().addListener(this);
 		RequestContext req = new RequestContext("https://sweng-quiz.appspot.com/login");
-		ServerCommunicator.getInstance().doHttpGet(req, new AuthenticationEvent.GettingTokenEvent());
+		ServerCommunicator.getInstance().doHttpGet(req, new ServerAuthenticationEvent.GettingTokenEvent());
 	}
 	
 	private void tequilaAuth() {
@@ -43,7 +44,7 @@ public class Authenticator implements EventListener {
 			UrlEncodedFormEntity entity;
 			entity = new UrlEncodedFormEntity(params);
 			RequestContext req = new RequestContext("https://tequila.epfl.ch/cgi-bin/tequila/login", entity);
-			ServerCommunicator.getInstance().doHttpPost(req, new AuthenticationEvent.TequilaStatusEvent());
+			ServerCommunicator.getInstance().doHttpPost(req, new ServerAuthenticationEvent.TequilaStatusEvent());
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -57,14 +58,15 @@ public class Authenticator implements EventListener {
 		try {
 			entity = new StringEntity(json);
 			RequestContext req = new RequestContext("POST https://sweng-quiz.appspot.com/login", entity);
-			ServerCommunicator.getInstance().doHttpPost(req, new AuthenticationEvent.GettingSessionIDEvent());
+			ServerCommunicator.getInstance().doHttpPost(req, new ServerAuthenticationEvent.GettingSessionIDEvent());
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
-	public void on(AuthenticationEvent.GettingTokenEvent event) {
+	public void on(ServerAuthenticationEvent.GettingTokenEvent event) {
+		System.err.println("GettingToken"); // TODO REMOVE ME
 		try {
 			String json = event.getResponse();
 			this.token = new JSONToken(json).getToken();
@@ -77,19 +79,22 @@ public class Authenticator implements EventListener {
 		
 	}
 	
-	public void on(AuthenticationEvent.TequilaStatusEvent event) {
-		if (event.getResponse().equals("OK")) {
-			requestSessionID();
-		} else {
+	public void on(ServerAuthenticationEvent.TequilaStatusEvent event) {
+		System.err.println("TequilaStatus"); // TODO REMOVE ME
+		// TODO if (event.getStatus().equals(200 OK)) {
+		requestSessionID();
+		//} else {
 			// TODO Not OK case
-		}
+		// }
 	}
 	
-	public void on(AuthenticationEvent.GettingSessionIDEvent event) {
+	public void on(ServerAuthenticationEvent.GettingSessionIDEvent event) {
+		System.err.println("GettingSessionID"); // TODO REMOVE ME
 		try {
 			String json = event.getResponse();
 			this.session = new JSONSession(json).getSession();
-
+			
+			this.emit(new AuthenticationEvent.AuthenticatedEvent(session));
 			// TODO Do something neat :3
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
