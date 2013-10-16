@@ -2,18 +2,20 @@ package epfl.sweng.test;
 
 import org.apache.http.HttpStatus;
 
+import android.test.ActivityInstrumentationTestCase2;
+import android.widget.Button;
+import android.widget.EditText;
+
 import com.jayway.android.robotium.solo.Solo;
 
+import epfl.sweng.MalformedQuestionException;
+import epfl.sweng.QuizQuestion;
 import epfl.sweng.editquestions.EditQuestionActivity;
-import epfl.sweng.servercomm.ServerCommunicator;
 import epfl.sweng.servercomm.SwengHttpClientFactory;
 import epfl.sweng.test.minimalmock.MockHttpClient;
 import epfl.sweng.testing.TestCoordinator;
 import epfl.sweng.testing.TestCoordinator.TTChecks;
 import epfl.sweng.testing.TestingTransaction;
-import android.test.ActivityInstrumentationTestCase2;
-import android.widget.Button;
-import android.widget.EditText;
 
 
 public class EditQuestionActivityTest 
@@ -29,6 +31,7 @@ public class EditQuestionActivityTest
     private static final String FALSE_ANSWER_BUTTON = "\u2718";
     private static final String TRUE_ANSWER_BUTTON_TEXT = "\u2714";
     private static final String FETCHING_ERROR_MESSAGE = "Could not upload the question to the server";
+	private static final String FETCHING_SUCCESS_MESSAGE = "Successful submit";
     private Solo solo;
     private MockHttpClient mockHttpClient;
 
@@ -44,8 +47,51 @@ public class EditQuestionActivityTest
         mockHttpClient = new MockHttpClient();
         SwengHttpClientFactory.setInstance(mockHttpClient);
     }
-
+    
     public void testSubmit() {
+        final String questionBody = "Question body";
+        final String firstAnswerBody = "Answer A";
+        final String scdAnswerBody = "Answer B";
+        final String tags = "A B";
+        
+        fillQuestionBody(questionBody);
+        fillNextAnswerBody(firstAnswerBody);
+        
+        assertTrue("+ button cannot be found.", solo.searchButton(PLUS_BUTTON_TEXT));
+        solo.clickOnButton(PLUS_BUTTON_TEXT);
+        waitForChange();
+        
+        fillNextAnswerBody(scdAnswerBody);
+        
+        assertTrue(FALSE_ANSWER_BUTTON + " buttons cannot be found.", solo.searchButton(FALSE_ANSWER_BUTTON,2));
+        solo.clickOnButton(FALSE_ANSWER_BUTTON);
+        
+        assertTrue("Tags editor cannot be found.", solo.searchEditText(TAGS_EDITOR_TEXT));
+        EditText tagsEditor = solo.getEditText(TAGS_EDITOR_TEXT);
+        solo.typeText(tagsEditor, tags);
+        String[] answers = {firstAnswerBody, scdAnswerBody};
+        QuizQuestion question = new QuizQuestion(1234, questionBody, answers, 0, tags.split(" "), "ooiu");
+        try {
+			mockHttpClient.pushCannedResponse("/*/",  HttpStatus.SC_OK, 
+			        question.toJSON(), "application/json");
+		} catch (MalformedQuestionException e) {
+			e.printStackTrace();
+		}
+        
+        assertTrue("Submit button not found.", solo.searchButton(SUBMIT_BUTTON_TEXT));
+        solo.clickOnButton(SUBMIT_BUTTON_TEXT);
+        getActivityAndWaitFor(TTChecks.NEW_QUESTION_SUBMITTED);
+        assertFalse("Error message found.", solo.searchText(FETCHING_ERROR_MESSAGE));
+        assertTrue("Submit success msg found", solo.searchText(FETCHING_SUCCESS_MESSAGE));
+        
+        assertFalse("Question body has changed after bad submit.", solo.searchEditText(questionBody));
+        assertFalse("First answer body has changed after bad submit.", solo.searchEditText(firstAnswerBody));
+        assertFalse("Second answer body has changed after bad submit.", solo.searchEditText(scdAnswerBody));
+        assertFalse("Tags body has changed after bad submit.", solo.searchEditText(tags));
+        assertFalse("The checked answer does no longer exist after bad submit.", solo.searchButton(TRUE_ANSWER_BUTTON_TEXT));
+    }
+
+    public void testBadSubmit() {
         final String questionBody = "Question body";
         final String firstAnswerBody = "Answer A";
         final String scdAnswerBody = "Answer B";
