@@ -57,7 +57,7 @@ public class Authenticator extends EventEmitter implements EventListener {
 		StringEntity entity;
 		try {
 			entity = new StringEntity(json);
-			RequestContext req = new RequestContext("POST https://sweng-quiz.appspot.com/login", entity);
+			RequestContext req = new RequestContext("https://sweng-quiz.appspot.com/login", entity);
 			ServerCommunicator.getInstance().doHttpPost(req, new ServerAuthenticationEvent.GettingSessionIDEvent());
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
