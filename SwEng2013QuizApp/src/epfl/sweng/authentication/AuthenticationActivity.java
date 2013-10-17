@@ -7,6 +7,7 @@ import epfl.sweng.testing.TestCoordinator;
 import epfl.sweng.testing.TestCoordinator.TTChecks;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -26,6 +27,7 @@ public class AuthenticationActivity extends Activity implements EventListener {
 	private EditText mPassword;
 	private Button mLogin;
 	private LinearLayout mLinearLayout;
+	private ProgressDialog mLoading;
 	
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +56,10 @@ public class AuthenticationActivity extends Activity implements EventListener {
         mPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         mLinearLayout.addView(mPassword);
         
+        mLoading = new ProgressDialog(this);
+        mLoading.setMessage("Authentication in progress...");
+        mLoading.setCancelable(false);
+        
         mLogin = new Button(this);
         mLogin.setText(R.string.log_button);
         final AuthenticationActivity mThis = this;
@@ -62,6 +68,8 @@ public class AuthenticationActivity extends Activity implements EventListener {
 			@Override
 			public void onClick(View v) {
 				mLogin.setEnabled(false);
+				
+				mLoading.show();
 				
 				mAuthenticator = new Authenticator(mUsername.getText().toString(), mPassword.getText().toString());
 				mAuthenticator.addListener(mThis);
@@ -89,6 +97,8 @@ public class AuthenticationActivity extends Activity implements EventListener {
 	public void on(AuthenticationEvent.AuthenticatedEvent event) {
 		mAuthenticator.removeListener(this);
 		
+		mLoading.dismiss();
+		
 		String sessionID = event.getSessionID();
 		SharedPreferences prefs = this.getPreferences(MODE_PRIVATE);
 		prefs.edit().putString("sessionID", sessionID);
@@ -99,6 +109,8 @@ public class AuthenticationActivity extends Activity implements EventListener {
 	}
 
 	public void on(AuthenticationEvent.AuthenticationErrorEvent event) {
+		mLoading.dismiss();
+		
 		String error = event.getError();
 		if (error.equals("wrong indentifier")) {
 			clearEditField();
