@@ -2,6 +2,7 @@ package epfl.sweng.servercomm;
 
 import java.util.HashMap;
 
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 
 /**
@@ -28,7 +29,11 @@ public class RequestContext {
     }
 
     public void addHeader(String name, String value) {
-        mHeaders.put(name, value);
+    	mHeaders.put(name, value);
+    }
+    
+    public void addHeader(Header header) {
+        mHeaders.put(header.getName(), header.getValue());
     }
 
     public String getServerURL() {

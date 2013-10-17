@@ -56,12 +56,15 @@ public class AuthenticationActivity extends Activity implements EventListener {
         
         mLogin = new Button(this);
         mLogin.setText(R.string.log_button);
+        final AuthenticationActivity mThis = this;
         mLogin.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
+				mLogin.setEnabled(false);
+				
 				mAuthenticator = new Authenticator(mUsername.getText().toString(), mPassword.getText().toString());
-				System.err.println("Authenticate"); // TODO REMOVE ME
+				mAuthenticator.addListener(mThis);
 				mAuthenticator.authenticate();
 			}
 		});
@@ -84,7 +87,8 @@ public class AuthenticationActivity extends Activity implements EventListener {
 	
 	// TODO Test it!
 	public void on(AuthenticationEvent.AuthenticatedEvent event) {
-		System.err.println("Authenticaded"); // TODO REMOVE ME
+		mAuthenticator.removeListener(this);
+		
 		String sessionID = event.getSessionID();
 		SharedPreferences prefs = this.getPreferences(MODE_PRIVATE);
 		prefs.edit().putString("sessionID", sessionID);
@@ -95,7 +99,6 @@ public class AuthenticationActivity extends Activity implements EventListener {
 	}
 
 	public void on(AuthenticationEvent.AuthenticationErrorEvent event) {
-		System.err.println("AuthenticationError"); // TODO REMOVE ME
 		String error = event.getError();
 		if (error.equals("wrong indentifier")) {
 			clearEditField();
