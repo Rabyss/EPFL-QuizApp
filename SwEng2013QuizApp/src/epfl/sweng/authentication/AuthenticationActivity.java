@@ -61,6 +61,8 @@ public class AuthenticationActivity extends Activity implements EventListener {
 			
 			@Override
 			public void onClick(View v) {
+				mLogin.setEnabled(false);
+				
 				mAuthenticator = new Authenticator(mUsername.getText().toString(), mPassword.getText().toString());
 				mAuthenticator.addListener(mThis);
 				mAuthenticator.authenticate();
