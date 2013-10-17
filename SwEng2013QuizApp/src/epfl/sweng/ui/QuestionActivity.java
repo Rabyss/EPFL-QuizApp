@@ -8,6 +8,7 @@ import epfl.sweng.entry.MainActivity;
 import epfl.sweng.events.EventListener;
 import epfl.sweng.servercomm.ServerCommunicator;
 import epfl.sweng.servercomm.ServerEvent;
+import epfl.sweng.servercomm.ServerResponse;
 
 /**
  * Contains common treatments of activities dealing with quiz questions.
@@ -38,12 +39,12 @@ public abstract class QuestionActivity extends Activity implements EventListener
 
     public void processEvent(ServerEvent event) {
     	
-    	String data = event.getResponse();
+    	ServerResponse data = event.getResponse();
 
         // Checks whether the update concern the currrent activity
         hideProgressDialog();
 
-        if (data != null) {
+        if (data != null && data.getStatusCode() < 400) {
             processDownloadedData(data);
         } else {
             serverFailure();

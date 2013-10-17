@@ -8,11 +8,9 @@ import java.util.Map.Entry;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.BasicResponseHandler;
-
-import epfl.sweng.events.EventEmitter;
 
 import android.os.AsyncTask;
+import epfl.sweng.events.EventEmitter;
 
 /**
  * 
@@ -63,7 +61,7 @@ public final class ServerCommunicator extends EventEmitter {
 	 * 
 	 */
 	private final class PostTask extends
-			AsyncTask<RequestContext, Void, String> {
+			AsyncTask<RequestContext, Void, ServerResponse> {
 		private ServerEvent mEvent;
 
 		public PostTask(ServerEvent event) {
@@ -71,7 +69,7 @@ public final class ServerCommunicator extends EventEmitter {
 		}
 
 		@Override
-		protected String doInBackground(RequestContext... params) {
+		protected ServerResponse doInBackground(RequestContext... params) {
 			RequestContext reqContext = params[0];
 			HttpPost post = new HttpPost(reqContext.getServerURL());
 			// Gets an iterator to iterate over each header
@@ -82,7 +80,7 @@ public final class ServerCommunicator extends EventEmitter {
 				post.setHeader(header.getKey(), header.getValue());
 				headersIterator.remove();
 			}
-			ResponseHandler<String> handler = new BasicResponseHandler();
+			ResponseHandler<ServerResponse> handler = new CustomResponseHandler();
 			try {
 				post.setEntity(reqContext.getEntity());
 				return SwengHttpClientFactory.getInstance().execute(post,
@@ -93,7 +91,7 @@ public final class ServerCommunicator extends EventEmitter {
 		}
 
 		@Override
-		protected void onPostExecute(String result) {
+		protected void onPostExecute(ServerResponse result) {
 			super.onPostExecute(result);
 			
 			mEvent.setResponse(result);
@@ -106,7 +104,7 @@ public final class ServerCommunicator extends EventEmitter {
 	 * Asynchronous task used to send GET requests.
 	 * 
 	 */
-	private final class GetTask extends AsyncTask<RequestContext, Void, String> {
+	private final class GetTask extends AsyncTask<RequestContext, Void, ServerResponse> {
 		private ServerEvent mEvent;
 
 		public GetTask(ServerEvent event) {
@@ -114,12 +112,12 @@ public final class ServerCommunicator extends EventEmitter {
 		}
 
 		@Override
-		protected String doInBackground(RequestContext... params) {
+		protected ServerResponse doInBackground(RequestContext... params) {
 			RequestContext reqContext = params[0];
 			// Construct the request
 			HttpGet questionFetchRequest = new HttpGet(
 					reqContext.getServerURL());
-			ResponseHandler<String> questionFetchHandler = new BasicResponseHandler();
+			ResponseHandler<ServerResponse> questionFetchHandler = new CustomResponseHandler();
 
 			try {
 				return SwengHttpClientFactory.getInstance().execute(
@@ -130,7 +128,7 @@ public final class ServerCommunicator extends EventEmitter {
 		}
 
 		@Override
-		protected void onPostExecute(String result) {
+		protected void onPostExecute(ServerResponse result) {
 			super.onPostExecute(result);
 			mEvent.setResponse(result);
 			ServerCommunicator.getInstance().emit(mEvent);

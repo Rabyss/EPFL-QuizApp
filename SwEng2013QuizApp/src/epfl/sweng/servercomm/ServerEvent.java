@@ -4,22 +4,22 @@ import epfl.sweng.events.Event;
 
 public abstract class ServerEvent extends Event {
 	private static final long serialVersionUID = -2895588419411857521L;
-	private String mResponse;
+	private ServerResponse mResponse;
 	
 	public ServerEvent() {
 		super();
 	}
 	
-	public ServerEvent(String response) {
+	public ServerEvent(ServerResponse response) {
 		super();
 		this.mResponse = response;
 	}
 
-	public String getResponse() {
+	public ServerResponse getResponse() {
 		return mResponse;
 	}
 
-	public void setResponse(String response) {
+	public void setResponse(ServerResponse response) {
 		this.mResponse = response;
 	}
 }
