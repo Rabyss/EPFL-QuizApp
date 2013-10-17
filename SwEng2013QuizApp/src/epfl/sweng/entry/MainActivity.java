@@ -134,5 +134,5 @@ public class MainActivity extends Activity {
 	}
 	public static void setIsLogged(boolean isLogged) {
 		mIsLogged = isLogged;
-	}		
+	}
 }
