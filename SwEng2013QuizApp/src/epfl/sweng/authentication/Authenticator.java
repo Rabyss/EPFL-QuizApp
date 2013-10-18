@@ -14,6 +14,9 @@ import epfl.sweng.servercomm.RequestContext;
 import epfl.sweng.servercomm.ServerCommunicator;
 
 public class Authenticator extends EventEmitter implements EventListener {
+	private static final int SWENG_OK = 200;
+	private static final int TEQUILA_OK = 302;
+	
 	private String mUsername;
 	private String mPassword;
 	private String mToken;
@@ -56,8 +59,6 @@ public class Authenticator extends EventEmitter implements EventListener {
 	private void requestSessionID() {
 		String json = "{\"token\": \""+this.mToken+"\"}";
 		
-		System.err.println(json);
-		
 		try {
 			StringEntity entity;
 			entity = new StringEntity(json);
@@ -70,42 +71,55 @@ public class Authenticator extends EventEmitter implements EventListener {
 		}
 	}
 	
+	private void error(String message) {
+		this.emit(new AuthenticationEvent.AuthenticationErrorEvent(message));
+		ServerCommunicator.getInstance().removeListener(this);
+	}
+	
 	public void on(ServerAuthenticationEvent.GettingTokenEvent event) {
-		try {
-			String json = event.getResponse();
-			this.mToken = new JSONToken(json).getToken();
+		int status = event.getStatus();
+		
+		if (status == SWENG_OK) {
+			try {
+				String json = event.getToken();
+				this.mToken = new JSONToken(json).getToken();
+			} catch (JSONException e) {
+				this.error("Error: malformed JSON (token).");
+			}
 			
 			tequilaAuth();
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} else {
+			this.error("Error "+status+" on SwEng Server.");
 		}
 		
 	}
 	
 	public void on(ServerAuthenticationEvent.TequilaStatusEvent event) {
-		// TODO if (event.getStatus().equals(200 OK)) {
-		requestSessionID();
-		//} else {
-			// TODO Not OK case
-			// requestToken();
-		// }
+		int status = event.getStatus();
+		
+		if (status == TEQUILA_OK) {
+			requestSessionID();
+		} else {
+			this.error("Error "+status+" on Tequila Server.");
+		}
 	}
 	
 	public void on(ServerAuthenticationEvent.GettingSessionIDEvent event) {
-		// TODO Error => requestToken();
-		System.err.println("on(GettingSessionIDEvent)");
-		try {
-			String json = event.getResponse();
-			this.mSession = new JSONSession(json).getSession();
-			
-			ServerCommunicator.getInstance().removeListener(this);
-			
-			this.emit(new AuthenticationEvent.AuthenticatedEvent(mSession));
-			// TODO Do something neat :3
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		int status = event.getStatus();
+		
+		if (status == SWENG_OK) {
+			try {
+				String json = event.getSessionID();
+				this.mSession = new JSONSession(json).getSession();
+				
+				ServerCommunicator.getInstance().removeListener(this);
+				
+				this.emit(new AuthenticationEvent.AuthenticatedEvent(mSession));
+			} catch (JSONException e) {
+				this.error("Error: malformed JSON (session).");
+			}
+		} else {
+			this.error("Error "+status+" on SwengServer"); 
 		}
 	}
 }

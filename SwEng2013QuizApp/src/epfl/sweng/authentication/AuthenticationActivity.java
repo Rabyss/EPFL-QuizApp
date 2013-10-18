@@ -14,7 +14,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.EditText;
@@ -63,7 +62,7 @@ public class AuthenticationActivity extends Activity implements EventListener {
         mLogin = new Button(this);
         mLogin.setText(R.string.log_button);
         final AuthenticationActivity mThis = this;
-        mLogin.setOnClickListener(new OnClickListener() {
+        mLogin.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
@@ -110,6 +109,9 @@ public class AuthenticationActivity extends Activity implements EventListener {
 
 	public void on(AuthenticationEvent.AuthenticationErrorEvent event) {
 		mLoading.dismiss();
+		mLogin.setEnabled(true);
+		
+		// TODO Write error for the user
 		
 		String error = event.getError();
 		if (error.equals("wrong indentifier")) {

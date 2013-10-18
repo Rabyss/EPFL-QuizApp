@@ -13,7 +13,11 @@ public abstract class ServerAuthenticationEvent extends ServerEvent {
 		}
 		
 		public String getToken() {
-			return this.getResponse();
+			return this.getResponse().getEntity();
+		}
+		
+		public int getStatus() {
+			return this.getResponse().getStatusCode();
 		}
 	}
 	
@@ -23,8 +27,8 @@ public abstract class ServerAuthenticationEvent extends ServerEvent {
 		public TequilaStatusEvent() {
 		}
 		
-		public String getStatus() {
-			return this.getResponse();
+		public int getStatus() {
+			return this.getResponse().getStatusCode();
 		}
 	}
 	
@@ -36,7 +40,11 @@ public abstract class ServerAuthenticationEvent extends ServerEvent {
 		}
 		
 		public String getSessionID() {
-			return this.getResponse();
+			return this.getResponse().getEntity();
+		}
+		
+		public int getStatus() {
+			return this.getResponse().getStatusCode();
 		}
 	}
 }

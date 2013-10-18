@@ -6,6 +6,8 @@ public abstract class AuthenticationEvent extends Event {
 	private static final long serialVersionUID = -5936292490766850403L;
 
 	public static class AuthenticatedEvent extends ServerAuthenticationEvent {
+		private static final long serialVersionUID = 6215745042573035974L;
+		
 		private String sessionID;
 
 		public AuthenticatedEvent(String sessionID) {
@@ -18,6 +20,8 @@ public abstract class AuthenticationEvent extends Event {
 	}
 	
 	public static class AuthenticationErrorEvent extends ServerAuthenticationEvent {
+		private static final long serialVersionUID = -5567148060264321495L;
+		
 		private String error;
 
 		public AuthenticationErrorEvent(String error) {
