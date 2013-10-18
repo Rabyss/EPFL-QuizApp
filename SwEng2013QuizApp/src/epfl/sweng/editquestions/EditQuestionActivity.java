@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import org.apache.http.entity.StringEntity;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -40,6 +41,10 @@ public class EditQuestionActivity extends QuestionActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+		SharedPreferences prefs = getSharedPreferences("user_session", MODE_PRIVATE);
+		String sessionID = prefs.getString("SESSION_ID", null);
+		
         setContentView(R.layout.activity_edit_question);
 
         answers = new ArrayList<AnswerEditor>();
@@ -62,6 +67,7 @@ public class EditQuestionActivity extends QuestionActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.edit_question, menu);
+        
         return true;
     }
 

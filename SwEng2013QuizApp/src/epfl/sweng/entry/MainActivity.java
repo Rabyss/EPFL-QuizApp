@@ -3,6 +3,7 @@ package epfl.sweng.entry;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
@@ -26,14 +27,18 @@ public class MainActivity extends Activity {
 	private Button mShowQuestionButton;
 	private Button mSubmitQuestionButton;
 	private LinearLayout mLinearLayout;
-	private Activity mThis;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		SharedPreferences prefs = getSharedPreferences("user_session", MODE_PRIVATE);
+		String sessionID = prefs.getString("SESSION_ID", null);
+		
+		mIsLogged = sessionID != null;
+		
 		displayInit();
 		
-
 		// let the testing infrastructure know that entry point has been
 		// initialized
 		TestCoordinator.check(TTChecks.MAIN_ACTIVITY_SHOWN);
@@ -99,18 +104,18 @@ public class MainActivity extends Activity {
 			mSubmitQuestionButton.setEnabled(false);
 		}
 		
-		mThis = this;
 		mLogButton.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
 				if (mIsLogged) {
 					mIsLogged = false;
-					//TODO log out
-					// Delete stored session
-					SharedPreferences prefs = mThis.getPreferences(MODE_PRIVATE);
-					prefs.edit().remove("sessionID");
-					prefs.edit().apply();
+
+					// Logout: Delete stored session
+					SharedPreferences prefs = getSharedPreferences("user_session", MODE_PRIVATE);
+					Editor editor = prefs.edit();
+					editor.clear();
+					editor.apply();
 					
 					displayInit();
 				
