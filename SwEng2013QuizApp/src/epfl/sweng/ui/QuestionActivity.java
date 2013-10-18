@@ -3,9 +3,11 @@ package epfl.sweng.ui;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import epfl.sweng.entry.MainActivity;
 import epfl.sweng.events.EventListener;
+import epfl.sweng.servercomm.RequestContext;
 import epfl.sweng.servercomm.ServerCommunicator;
 import epfl.sweng.servercomm.ServerEvent;
 import epfl.sweng.servercomm.ServerResponse;
@@ -13,12 +15,15 @@ import epfl.sweng.servercomm.ServerResponse;
 /**
  * Contains common treatments of activities dealing with quiz questions.
  */
-public abstract class QuestionActivity extends Activity implements EventListener {
+public abstract class QuestionActivity extends Activity implements
+        EventListener {
 
     private ProgressDialog progressDialog;
-    
+
     protected final static int TOAST_DISPLAY_TIME = 2000;
     private final static int HTTP_ERROR_THRESHOLD = 400;
+    private String mSessionID;
+    private RequestContext mReqContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +33,14 @@ public abstract class QuestionActivity extends Activity implements EventListener
         progressDialog.setIndeterminate(false);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progressDialog.setCancelable(true);
+        
+        mReqContext = new RequestContext();
+        
+        SharedPreferences prefs = getSharedPreferences("user_session",
+                MODE_PRIVATE);
+        mSessionID = prefs.getString("SESSION_ID", null);
+        mReqContext.addHeader("Authorization", "Tequila "+mSessionID);
+        
         
         ServerCommunicator.getInstance().addListener(this);
     }
@@ -39,8 +52,8 @@ public abstract class QuestionActivity extends Activity implements EventListener
     }
 
     public void processEvent(ServerEvent event) {
-    	
-    	ServerResponse data = event.getResponse();
+
+        ServerResponse data = event.getResponse();
 
         // Checks whether the update concern the currrent activity
         hideProgressDialog();
@@ -52,8 +65,8 @@ public abstract class QuestionActivity extends Activity implements EventListener
         }
     }
 
-    protected abstract void serverFailure();		
-    
+    protected abstract void serverFailure();
+
     /**
      * Process the data after download.
      * 
@@ -68,6 +81,10 @@ public abstract class QuestionActivity extends Activity implements EventListener
 
     protected void hideProgressDialog() {
         progressDialog.dismiss();
+    }
+
+    protected RequestContext getRequestContext() {
+        return mReqContext;
     }
 
 }

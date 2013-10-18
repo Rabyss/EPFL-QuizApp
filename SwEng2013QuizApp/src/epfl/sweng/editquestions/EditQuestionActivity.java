@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import org.apache.http.entity.StringEntity;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -20,7 +19,6 @@ import android.widget.Toast;
 import epfl.sweng.MalformedQuestionException;
 import epfl.sweng.QuizQuestion;
 import epfl.sweng.R;
-import epfl.sweng.servercomm.RequestContext;
 import epfl.sweng.servercomm.ServerCommunicator;
 import epfl.sweng.testing.TestCoordinator;
 import epfl.sweng.testing.TestCoordinator.TTChecks;
@@ -34,16 +32,12 @@ import epfl.sweng.ui.QuestionActivity;
  */
 public class EditQuestionActivity extends QuestionActivity {
     private ArrayList<AnswerEditor> answers;
-    private String mSessionID;
     private boolean resettingUI = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-		SharedPreferences prefs = getSharedPreferences("user_session", MODE_PRIVATE);
-		mSessionID = prefs.getString("SESSION_ID", null);
-		
         setContentView(R.layout.activity_edit_question);
 
         answers = new ArrayList<AnswerEditor>();
@@ -66,7 +60,7 @@ public class EditQuestionActivity extends QuestionActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.edit_question, menu);
-        
+
         return true;
     }
 
@@ -92,14 +86,15 @@ public class EditQuestionActivity extends QuestionActivity {
                 InputMethodManager.HIDE_NOT_ALWAYS);
 
         QuizQuestion quizQuestion = extractQuizQuestion();
-        RequestContext reqContext;
         try {
-            reqContext = new RequestContext(
-                    ServerCommunicator.SWENG_SUBMIT_QUESTION_URL,
+            super.getRequestContext().setServerURL(
+                    ServerCommunicator.SWENG_SUBMIT_QUESTION_URL);
+            super.getRequestContext().setEntity(
                     new StringEntity(quizQuestion.toJSON()));
-            reqContext.addHeader("Content-type", "application/json");
-            reqContext.addHeader("Authorization", "Tequila "+mSessionID); // TODO Do it everywhere!
-            ServerCommunicator.getInstance().doHttpPost(reqContext, new PostedQuestionEvent());
+            super.getRequestContext().addHeader("Content-type",
+                    "application/json");
+            ServerCommunicator.getInstance().doHttpPost(
+                    super.getRequestContext(), new PostedQuestionEvent());
         } catch (MalformedQuestionException e) {
             Toast.makeText(this, e.getMessage(), TOAST_DISPLAY_TIME).show();
         } catch (UnsupportedEncodingException e) {
@@ -108,9 +103,9 @@ public class EditQuestionActivity extends QuestionActivity {
 
         showProgressDialog();
     }
-    
+
     public void on(PostedQuestionEvent event) {
-    	super.processEvent(event);
+        super.processEvent(event);
     }
 
     public void tryAudit() {
@@ -160,7 +155,6 @@ public class EditQuestionActivity extends QuestionActivity {
         return result.toArray(new String[result.size()]);
     }
 
-
     @Override
     protected void processDownloadedData(Object data) {
         Toast.makeText(this, R.string.successful_submit, TOAST_DISPLAY_TIME)
@@ -179,12 +173,14 @@ public class EditQuestionActivity extends QuestionActivity {
         resettingUI = false;
         TestCoordinator.check(TTChecks.NEW_QUESTION_SUBMITTED);
     }
+
     @Override
-	protected void serverFailure() {
-		Toast.makeText(this, R.string.submit_server_failure, Toast.LENGTH_LONG).show();
-		TestCoordinator.check(TTChecks.NEW_QUESTION_SUBMITTED);
-		
-	}
+    protected void serverFailure() {
+        Toast.makeText(this, R.string.submit_server_failure, Toast.LENGTH_LONG)
+                .show();
+        TestCoordinator.check(TTChecks.NEW_QUESTION_SUBMITTED);
+
+    }
 
     /**
      * Test when texts change
@@ -213,7 +209,5 @@ public class EditQuestionActivity extends QuestionActivity {
 
         }
     }
-    
-    
 
 }

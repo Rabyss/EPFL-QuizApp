@@ -28,12 +28,26 @@ public class RequestContext {
         mHeaders = new HashMap<String, String>();
     }
 
-    public void addHeader(String name, String value) {
-    	mHeaders.put(name, value);
+    public RequestContext() {
+        mServerURL = null;
+        mEntity = null;
+        mHeaders = new HashMap<String, String>();
     }
-    
+
+    public void addHeader(String name, String value) {
+        mHeaders.put(name, value);
+    }
+
     public void addHeader(Header header) {
         mHeaders.put(header.getName(), header.getValue());
+    }
+
+    public void setServerURL(String serverURL) {
+        mServerURL = serverURL;
+    }
+
+    public void setEntity(HttpEntity entity) {
+        mEntity = entity;
     }
 
     public String getServerURL() {
