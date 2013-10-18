@@ -12,8 +12,7 @@ import org.apache.http.util.EntityUtils;
 public class CustomResponseHandler implements ResponseHandler<ServerResponse> {
 
 	@Override
-	public ServerResponse handleResponse(HttpResponse response)
-			throws ClientProtocolException, IOException {
+	public ServerResponse handleResponse(HttpResponse response) throws ClientProtocolException, IOException {
 		StatusLine statusLine = response.getStatusLine();
 		int statusCode = statusLine.getStatusCode();
 		HttpEntity entity = response.getEntity();

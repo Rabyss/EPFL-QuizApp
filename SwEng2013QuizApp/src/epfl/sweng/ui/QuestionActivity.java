@@ -18,6 +18,7 @@ public abstract class QuestionActivity extends Activity implements EventListener
     private ProgressDialog progressDialog;
     
     protected final static int TOAST_DISPLAY_TIME = 2000;
+    private final static int HTTP_ERROR_THRESHOLD = 400;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +45,7 @@ public abstract class QuestionActivity extends Activity implements EventListener
         // Checks whether the update concern the currrent activity
         hideProgressDialog();
 
-        if (data != null && data.getStatusCode() < 400) {
+        if (data != null && data.getStatusCode() < HTTP_ERROR_THRESHOLD) {
             processDownloadedData(data);
         } else {
             serverFailure();
