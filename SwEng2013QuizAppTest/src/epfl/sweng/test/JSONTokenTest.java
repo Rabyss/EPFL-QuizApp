@@ -22,7 +22,7 @@ public class JSONTokenTest extends AndroidTestCase {
 	public void testInvalidConstruction() {
 		String invalidResponse = "{ [} }";
 		try {
-			JSONToken jsonToken = new JSONToken(invalidResponse);
+			new JSONToken(invalidResponse);
 			fail("The consturctor should throw an exception.");
 		} catch (JSONException e) {
 			assertTrue(true);

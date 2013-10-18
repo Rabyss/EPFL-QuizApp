@@ -1,7 +1,5 @@
 package epfl.sweng.test;
 
-import org.apache.http.HttpStatus;
-
 import com.jayway.android.robotium.solo.Solo;
 
 import epfl.sweng.authentication.AuthenticationActivity;
@@ -17,6 +15,9 @@ import android.widget.EditText;
 public class AuthenticationActivityTest extends ActivityInstrumentationTestCase2<AuthenticationActivity> {
 	private Solo solo;
 	private MockHttpClient httpClient;
+	private static final int ERROR_400 = 400;
+	private static final int STATUS_200 = 200;
+	private static final int STATUS_302 = 302;
 	
 	public AuthenticationActivityTest() {
 		super(AuthenticationActivity.class);
@@ -31,7 +32,7 @@ public class AuthenticationActivityTest extends ActivityInstrumentationTestCase2
 	/**
 	 * Test if the AuthenticationActivity is correctly initialized
 	 */
-	public void testDisplayCorrectlyAuthenticationActivity(){
+	public void testDisplayCorrectlyAuthenticationActivity() {
 		assertTrue("GASPAR username editText is displayed", solo.searchEditText("GASPAR Username"));
 		assertTrue("GASPAR password editText is displayed", solo.searchEditText("GASPAR Password"));
 		assertTrue("Button log in is displayed", solo.searchButton("Log in using Tequila"));
@@ -40,10 +41,10 @@ public class AuthenticationActivityTest extends ActivityInstrumentationTestCase2
 	/**
 	 * Test if the fields are cleared after a bad authentication
 	 */
-	public void testBadAuthenticationDisplaying(){
+	public void testBadAuthenticationDisplaying() {
 		httpClient= new MockHttpClient();
 		SwengHttpClientFactory.setInstance(httpClient);
-		httpClient.pushCannedResponse("/*/", 400, 
+		httpClient.pushCannedResponse("/*/", ERROR_400, 
 				null, "application/json");
 		EditText username= solo.getEditText("GASPAR Username");
 		EditText password = solo.getEditText("GASPAR Password");
@@ -57,17 +58,17 @@ public class AuthenticationActivityTest extends ActivityInstrumentationTestCase2
 		assertTrue("Button log in must be enabled", solo.getButton("Log in using Tequila").isEnabled());
 	}
 	
-	public void testCorrectAuthenticationDisplaying(){
+	public void testCorrectAuthenticationDisplaying() {
 		httpClient= new MockHttpClient();
 		SwengHttpClientFactory.setInstance(httpClient);
 		
-		httpClient.pushCannedResponse("POST https://sweng-quiz.appspot.com/login", 200, 
+		httpClient.pushCannedResponse("POST https://sweng-quiz.appspot.com/login", STATUS_200, 
 				"{\"session\": \"<random_string>\","
 			 +" \"message\": \"Here's your session id. Please include the following HTTP"
 			 +"             header in your subsequent requests:\n"
 			 +"            Authorization: Tequila <random_string>\"}", "application/json");
 		
-		httpClient.pushCannedResponse("POST https://tequila.epfl.ch/cgi-bin/tequila/login", 302, "{"
+		httpClient.pushCannedResponse("POST https://tequila.epfl.ch/cgi-bin/tequila/login", STATUS_302, "{"
 				+"  \"token\": \"rqtvk5d3za2x6ocak1a41dsmywogrdlv5\","
 				+"  \"message\": \"Here's your authentication token. Please validate it "
 				+"              with Tequila at https://tequila.epfl.ch/cgi-bin/tequila/login\" }",
@@ -75,7 +76,7 @@ public class AuthenticationActivityTest extends ActivityInstrumentationTestCase2
 		
 		
 		httpClient.pushCannedResponse("GET.*https://sweng-quiz.appspot.com/login", 
-				200, "{"
+				STATUS_200, "{"
 				+"  \"token\": \"rqtvk5d3za2x6ocak1a41dsmywogrdlv5\","
 				+"  \"message\": \"Here's your authentication token. Please validate it "
 				+"              with Tequila at https://tequila.epfl.ch/cgi-bin/tequila/login\" }",
