@@ -16,6 +16,7 @@ import epfl.sweng.servercomm.ServerCommunicator;
 public class Authenticator extends EventEmitter implements EventListener {
 	private static final int SWENG_OK = 200;
 	private static final int TEQUILA_OK = 302;
+	private static final int TEQUILA_WRONG_CREDITENTIAL = 200;
 	
 	private String mUsername;
 	private String mPassword;
@@ -51,8 +52,7 @@ public class Authenticator extends EventEmitter implements EventListener {
 			
             ServerCommunicator.getInstance().doHttpPost(req, new ServerAuthenticationEvent.TequilaStatusEvent());
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			this.error("Error: Unsupported Encoding Exception.");
 		}
 	}
 	
@@ -66,8 +66,7 @@ public class Authenticator extends EventEmitter implements EventListener {
             req.addHeader("Content-type", "application/json");
 			ServerCommunicator.getInstance().doHttpPost(req, new ServerAuthenticationEvent.GettingSessionIDEvent());
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			this.error("Error: Unsupported Encoding Exception.");
 		}
 	}
 	
@@ -99,6 +98,8 @@ public class Authenticator extends EventEmitter implements EventListener {
 		
 		if (status == TEQUILA_OK) {
 			requestSessionID();
+		} else if (status == TEQUILA_WRONG_CREDITENTIAL) {
+			this.error("Wrong username or password.");
 		} else {
 			this.error("Error "+status+" on Tequila Server.");
 		}

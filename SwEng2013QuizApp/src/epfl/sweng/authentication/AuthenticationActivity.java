@@ -18,6 +18,7 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 
 public class AuthenticationActivity extends Activity implements EventListener {
@@ -111,7 +112,9 @@ public class AuthenticationActivity extends Activity implements EventListener {
 		mLoading.dismiss();
 		mLogin.setEnabled(true);
 		
-		// TODO Write error for the user
+		clearEditField();
+		
+		Toast.makeText(this, event.getError(), Toast.LENGTH_LONG).show();
 		
 		String error = event.getError();
 		if (error.equals("wrong indentifier")) {

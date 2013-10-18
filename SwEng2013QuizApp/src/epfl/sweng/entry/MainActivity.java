@@ -2,6 +2,7 @@ package epfl.sweng.entry;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
@@ -25,6 +26,7 @@ public class MainActivity extends Activity {
 	private Button mShowQuestionButton;
 	private Button mSubmitQuestionButton;
 	private LinearLayout mLinearLayout;
+	private Activity mThis;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +58,7 @@ public class MainActivity extends Activity {
 				EditQuestionActivity.class);
 		startActivity(displayEditQuestionsIntent);
 	}
+	
 	public void displayAuthentication(View view) {
 		Intent displayAuthenticationIntent = new Intent(this, AuthenticationActivity.class);
 		startActivity(displayAuthenticationIntent);
@@ -68,6 +71,7 @@ public class MainActivity extends Activity {
 		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		startActivity(intent);
 	}
+	
 	public void displayInit() {
 		mLinearLayout = new LinearLayout(this);
         mLinearLayout.setOrientation(LinearLayout.VERTICAL);
@@ -77,6 +81,7 @@ public class MainActivity extends Activity {
         displayButton();
         setContentView(mLinearLayout);
 	}
+	
 	public void displayButton() {
 		mLogButton = new Button(this);
 		mShowQuestionButton = new Button(this);
@@ -93,6 +98,8 @@ public class MainActivity extends Activity {
 			mShowQuestionButton.setEnabled(false);
 			mSubmitQuestionButton.setEnabled(false);
 		}
+		
+		mThis = this;
 		mLogButton.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -100,6 +107,11 @@ public class MainActivity extends Activity {
 				if (mIsLogged) {
 					mIsLogged = false;
 					//TODO log out
+					// Delete stored session
+					SharedPreferences prefs = mThis.getPreferences(MODE_PRIVATE);
+					prefs.edit().remove("sessionID");
+					prefs.edit().apply();
+					
 					displayInit();
 				
 					TestCoordinator.check(TTChecks.LOGGED_OUT);
