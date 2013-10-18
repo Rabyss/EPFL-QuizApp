@@ -18,14 +18,14 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 	
 	@Override
 	protected void setUp() {
-		solo = new Solo(getInstrumentation());
+      getActivityAndWaitFor(TTChecks.MAIN_ACTIVITY_SHOWN);	
+      solo = new Solo(getInstrumentation(), getActivity());
 	}
 	
 	/**
 	 * Test the main activity if an user is logged
 	 */
 	public void testLoggedUser(){	
-		getActivityAndWaitFor(TTChecks.MAIN_ACTIVITY_SHOWN);	
 		assertTrue("Show question button is shown", solo.searchButton("Show a random question.", 1));
 		assertTrue("Submit question button is shown", solo.searchText("Submit a quiz question."));
 		assertTrue("Log out button is shown", solo.searchText("Log out"));
@@ -34,11 +34,11 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 		assertTrue("Log in button is enabled", solo.getButton("Log out").isEnabled());
 		
 	}
-	/**
+
+  /**
 	 * Test the main activity if an user push the log out button
 	 */
 	public void testLogOut(){
-		getActivityAndWaitFor(TTChecks.MAIN_ACTIVITY_SHOWN);
 		solo.clickOnButton("Log out");
 		getActivityAndWaitFor(TTChecks.MAIN_ACTIVITY_SHOWN);
 		getActivityAndWaitFor(TTChecks.LOGGED_OUT);
@@ -49,18 +49,18 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
 		assertFalse("submit question button is disabled", solo.getButton("Submit a quiz question.").isEnabled());
 		assertTrue("Log in button is enabled", solo.getButton("Log in using Tequila").isEnabled());		
 	}
-	public void testSubmitQuestionButton(){
-		getActivityAndWaitFor(TTChecks.MAIN_ACTIVITY_SHOWN);
+
+  public void testSubmitQuestionButton(){
 		solo.clickOnButton("Submit a quiz question.");
 		getActivityAndWaitFor(TTChecks.EDIT_QUESTIONS_SHOWN);
 	}
-	public void testShowQuestionButton(){
-		getActivityAndWaitFor(TTChecks.MAIN_ACTIVITY_SHOWN);
+
+  public void testShowQuestionButton(){
 		solo.clickOnButton("Show a random question.");
 		getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
 	}
+
 	public void testAuthenticateButton(){
-		getActivityAndWaitFor(TTChecks.MAIN_ACTIVITY_SHOWN);
 		solo.clickOnButton("Log out");
 		getActivityAndWaitFor(TTChecks.MAIN_ACTIVITY_SHOWN);
 		getActivityAndWaitFor(TTChecks.LOGGED_OUT);
