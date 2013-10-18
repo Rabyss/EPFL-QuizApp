@@ -10,8 +10,6 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.View;
@@ -100,10 +98,7 @@ public class AuthenticationActivity extends Activity implements EventListener {
 		mLoading.dismiss();
 		
 		String sessionID = event.getSessionID();
-		SharedPreferences prefs = getSharedPreferences("user_session", MODE_PRIVATE);
-		Editor editor = prefs.edit();
-		editor.putString("SESSION_ID", sessionID);
-		editor.apply();
+		UserStorage.getInstance(this).storeSessionID(sessionID);
 		
 		MainActivity.setIsLogged(true);
 		displayMainActivity();

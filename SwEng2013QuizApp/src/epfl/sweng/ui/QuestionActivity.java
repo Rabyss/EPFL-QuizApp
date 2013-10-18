@@ -3,8 +3,8 @@ package epfl.sweng.ui;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
+import epfl.sweng.authentication.UserStorage;
 import epfl.sweng.entry.MainActivity;
 import epfl.sweng.events.EventListener;
 import epfl.sweng.servercomm.RequestContext;
@@ -36,9 +36,7 @@ public abstract class QuestionActivity extends Activity implements
         
         mReqContext = new RequestContext();
         
-        SharedPreferences prefs = getSharedPreferences("user_session",
-                MODE_PRIVATE);
-        mSessionID = prefs.getString("SESSION_ID", null);
+        mSessionID = UserStorage.getInstance(this).getSessionID();
         mReqContext.addHeader("Authorization", "Tequila "+mSessionID);
         
         

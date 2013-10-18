@@ -2,8 +2,6 @@ package epfl.sweng.entry;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
@@ -13,6 +11,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import epfl.sweng.R;
 import epfl.sweng.authentication.AuthenticationActivity;
+import epfl.sweng.authentication.UserStorage;
 import epfl.sweng.editquestions.EditQuestionActivity;
 import epfl.sweng.showquestions.ShowQuestionsActivity;
 import epfl.sweng.testing.TestCoordinator;
@@ -27,13 +26,13 @@ public class MainActivity extends Activity {
 	private Button mShowQuestionButton;
 	private Button mSubmitQuestionButton;
 	private LinearLayout mLinearLayout;
+	private MainActivity mThis;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		SharedPreferences prefs = getSharedPreferences("user_session", MODE_PRIVATE);
-		String sessionID = prefs.getString("SESSION_ID", null);
+		String sessionID = UserStorage.getInstance(this).getSessionID();
 		
 		mIsLogged = sessionID != null;
 		
@@ -104,6 +103,7 @@ public class MainActivity extends Activity {
 			mSubmitQuestionButton.setEnabled(false);
 		}
 		
+		mThis = this;
 		mLogButton.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -111,11 +111,7 @@ public class MainActivity extends Activity {
 				if (mIsLogged) {
 					mIsLogged = false;
 
-					// Logout: Delete stored session
-					SharedPreferences prefs = getSharedPreferences("user_session", MODE_PRIVATE);
-					Editor editor = prefs.edit();
-					editor.clear();
-					editor.apply();
+					UserStorage.getInstance(mThis).removeSessionID();
 					
 					displayInit();
 				

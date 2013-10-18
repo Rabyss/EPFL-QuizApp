@@ -27,7 +27,7 @@ public final class ServerCommunicator extends EventEmitter {
 			+ "random";
 
 	private ServerCommunicator() {
-
+		
 	}
 
 	public static synchronized ServerCommunicator getInstance() {
