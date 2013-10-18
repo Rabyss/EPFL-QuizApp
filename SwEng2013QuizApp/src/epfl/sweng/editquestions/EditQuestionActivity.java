@@ -33,9 +33,8 @@ import epfl.sweng.ui.QuestionActivity;
  * 
  */
 public class EditQuestionActivity extends QuestionActivity {
-
     private ArrayList<AnswerEditor> answers;
-
+    private String mSessionID;
     private boolean resettingUI = false;
 
     @Override
@@ -43,7 +42,7 @@ public class EditQuestionActivity extends QuestionActivity {
         super.onCreate(savedInstanceState);
 
 		SharedPreferences prefs = getSharedPreferences("user_session", MODE_PRIVATE);
-		String sessionID = prefs.getString("SESSION_ID", null);
+		mSessionID = prefs.getString("SESSION_ID", null);
 		
         setContentView(R.layout.activity_edit_question);
 
@@ -99,6 +98,7 @@ public class EditQuestionActivity extends QuestionActivity {
                     ServerCommunicator.SWENG_SUBMIT_QUESTION_URL,
                     new StringEntity(quizQuestion.toJSON()));
             reqContext.addHeader("Content-type", "application/json");
+            reqContext.addHeader("Authorization", "Tequila "+mSessionID); // TODO Do it everywhere!
             ServerCommunicator.getInstance().doHttpPost(reqContext, new PostedQuestionEvent());
         } catch (MalformedQuestionException e) {
             Toast.makeText(this, e.getMessage(), TOAST_DISPLAY_TIME).show();
