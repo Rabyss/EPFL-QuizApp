@@ -17,9 +17,8 @@ public class AuthenticationActivityTest extends ActivityInstrumentationTestCase2
 	private Solo solo;
 	private MockHttpClient httpClient;
 	
-	public AuthenticationActivityTest(
-			Class<AuthenticationActivity> activityClass) {
-		super(activityClass);
+	public AuthenticationActivityTest() {
+		super(AuthenticationActivity.class);
 	}
 	
 	@Override
