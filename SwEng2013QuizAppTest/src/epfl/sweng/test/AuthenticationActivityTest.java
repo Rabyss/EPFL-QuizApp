@@ -29,7 +29,7 @@ public class AuthenticationActivityTest extends ActivityInstrumentationTestCase2
 	/**
 	 * Test if the AuthenticationActivity is correctly initialized
 	 */
-	public void displayCorrectlyAuthenticationActivity(){
+	public void testDisplayCorrectlyAuthenticationActivity(){
 		getActivityAndWaitFor(TTChecks.AUTHENTICATION_ACTIVITY_SHOWN);
 		assertTrue("GASPAR username editText is displayed", solo.searchEditText("GASPAR Username"));
 		assertTrue("GASPAR password editText is displayed", solo.searchEditText("GASPAR Password"));
@@ -39,7 +39,7 @@ public class AuthenticationActivityTest extends ActivityInstrumentationTestCase2
 	/**
 	 * Test if the fields are cleared after a bad authentication
 	 */
-	public void badAuthenticationDisplaying(){
+	public void testBadAuthenticationDisplaying(){
 		getActivityAndWaitFor(TTChecks.AUTHENTICATION_ACTIVITY_SHOWN);
 		EditText username= solo.getEditText("GASPAR Username");
 		EditText password = solo.getEditText("GASPAR Password");
@@ -53,7 +53,7 @@ public class AuthenticationActivityTest extends ActivityInstrumentationTestCase2
 		assertTrue("Button log in must be enabled", solo.getButton("Log in using Tequila").isEnabled());
 	}
 	
-	public void correctAuthenticationDisplaying(){
+	public void testCorrectAuthenticationDisplaying(){
 		getActivityAndWaitFor(TTChecks.AUTHENTICATION_ACTIVITY_SHOWN);
 		EditText username= solo.getEditText("GASPAR Username");
 		EditText password = solo.getEditText("GASPAR Password");
