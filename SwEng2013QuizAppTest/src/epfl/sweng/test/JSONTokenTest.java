@@ -28,4 +28,15 @@ public class JSONTokenTest extends AndroidTestCase {
 			assertTrue(true);
 		}
 	}
+	
+	public void testGetter() {
+		String response = "{ message: \"Here's your authentication token.\", " +
+				"token: \"5jiju5n4edckf6264u6kd5w7gpx73zdb\" }";
+		try {
+			JSONToken jsonToken = new JSONToken(response);
+			assertEquals(jsonToken.getToken(), "5jiju5n4edckf6264u6kd5w7gpx73zdb");
+		} catch (JSONException e) {
+			fail("The JSON string is correct");
+		}
+	}
 }
