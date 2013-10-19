@@ -85,7 +85,6 @@ public final class ServerCommunicator extends EventEmitter {
 			RequestContext reqContext = params[0];
 			HttpPost post = new HttpPost(reqContext.getServerURL());
 			exctractHeaders(post, reqContext);
-			System.out.println(Arrays.toString(post.getAllHeaders()));
 			ResponseHandler<ServerResponse> handler = new CustomResponseHandler();
 			try {
 				post.setEntity(reqContext.getEntity());
@@ -125,8 +124,6 @@ public final class ServerCommunicator extends EventEmitter {
 			HttpGet get = new HttpGet(reqContext.getServerURL());
 			ResponseHandler<ServerResponse> questionFetchHandler = new CustomResponseHandler();
 			exctractHeaders(get, reqContext);
-			System.out.println(Arrays.toString(get.getAllHeaders()));
-
 			try {
 				return SwengHttpClientFactory.getInstance().execute(get,
 						questionFetchHandler);
