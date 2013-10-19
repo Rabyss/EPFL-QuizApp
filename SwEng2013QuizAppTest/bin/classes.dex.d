@@ -1,0 +1,26 @@
+/home/elieva/sweng-2013-team-jackson5/SwEng2013QuizAppTest/bin/classes.dex : \
+/home/elieva/sweng-2013-team-jackson5/SwEng2013QuizAppTest/bin/classes/epfl/sweng/test/QuizQuestionTest.class \
+/home/elieva/sweng-2013-team-jackson5/SwEng2013QuizAppTest/bin/classes/epfl/sweng/test/AuthenticationActivityTest$1.class \
+/home/elieva/sweng-2013-team-jackson5/SwEng2013QuizAppTest/bin/classes/epfl/sweng/test/UserStorageTest.class \
+/home/elieva/sweng-2013-team-jackson5/SwEng2013QuizAppTest/bin/classes/epfl/sweng/test/BuildConfig.class \
+/home/elieva/sweng-2013-team-jackson5/SwEng2013QuizAppTest/bin/classes/epfl/sweng/test/R$attr.class \
+/home/elieva/sweng-2013-team-jackson5/SwEng2013QuizAppTest/bin/classes/epfl/sweng/test/AuthenticationActivityTest.class \
+/home/elieva/sweng-2013-team-jackson5/SwEng2013QuizAppTest/bin/classes/epfl/sweng/test/ShowQuestionsActivityTest.class \
+/home/elieva/sweng-2013-team-jackson5/SwEng2013QuizAppTest/bin/classes/epfl/sweng/test/JSONSessionTest.class \
+/home/elieva/sweng-2013-team-jackson5/SwEng2013QuizAppTest/bin/classes/epfl/sweng/test/R$drawable.class \
+/home/elieva/sweng-2013-team-jackson5/SwEng2013QuizAppTest/bin/classes/epfl/sweng/test/EditQuestionActivityTest$1.class \
+/home/elieva/sweng-2013-team-jackson5/SwEng2013QuizAppTest/bin/classes/epfl/sweng/test/EditQuestionActivityTest.class \
+/home/elieva/sweng-2013-team-jackson5/SwEng2013QuizAppTest/bin/classes/epfl/sweng/test/minimalmock/MockHttpClientTest.class \
+/home/elieva/sweng-2013-team-jackson5/SwEng2013QuizAppTest/bin/classes/epfl/sweng/test/minimalmock/MockHttpResponse.class \
+/home/elieva/sweng-2013-team-jackson5/SwEng2013QuizAppTest/bin/classes/epfl/sweng/test/minimalmock/MockHttpClientTest$1.class \
+/home/elieva/sweng-2013-team-jackson5/SwEng2013QuizAppTest/bin/classes/epfl/sweng/test/minimalmock/MockRequestDirector.class \
+/home/elieva/sweng-2013-team-jackson5/SwEng2013QuizAppTest/bin/classes/epfl/sweng/test/minimalmock/MockHttpClient$CannedResponse.class \
+/home/elieva/sweng-2013-team-jackson5/SwEng2013QuizAppTest/bin/classes/epfl/sweng/test/minimalmock/MockHttpClient.class \
+/home/elieva/sweng-2013-team-jackson5/SwEng2013QuizAppTest/bin/classes/epfl/sweng/test/ShowQuestionsActivityTest$1.class \
+/home/elieva/sweng-2013-team-jackson5/SwEng2013QuizAppTest/bin/classes/epfl/sweng/test/JSONTokenTest.class \
+/home/elieva/sweng-2013-team-jackson5/SwEng2013QuizAppTest/bin/classes/epfl/sweng/test/R$string.class \
+/home/elieva/sweng-2013-team-jackson5/SwEng2013QuizAppTest/bin/classes/epfl/sweng/test/R.class \
+/home/elieva/sweng-2013-team-jackson5/SwEng2013QuizAppTest/bin/classes/epfl/sweng/test/UserStorageTest$1.class \
+/home/elieva/sweng-2013-team-jackson5/SwEng2013QuizAppTest/bin/classes/epfl/sweng/test/MainActivityTest$1.class \
+/home/elieva/sweng-2013-team-jackson5/SwEng2013QuizAppTest/bin/classes/epfl/sweng/test/MainActivityTest.class \
+/home/elieva/sweng-2013-team-jackson5/SwEng2013QuizAppTest/bin/dexedLibs/robotium-3546341ddd6e9cdbe666f28ad8e59ea3.jar \

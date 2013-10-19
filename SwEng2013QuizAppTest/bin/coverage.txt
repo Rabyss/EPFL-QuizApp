@@ -1,0 +1,28 @@
+[EMMA v2.0.5312 report, generated Sat Oct 19 17:27:28 CEST 2013]
+-------------------------------------------------------------------------------
+OVERALL COVERAGE SUMMARY:
+
+[class, %]	[method, %]	[block, %]	[line, %]	[name]
+96 % (49/51)!	88 % (197/224)	87 % (2990/3419)	88 % (696.6/791)	all classes
+
+OVERALL STATS SUMMARY:
+
+total packages:	9
+total classes:	51
+total methods:	224
+total executable files:	26
+total executable lines:	791
+
+COVERAGE BREAKDOWN BY PACKAGE:
+
+[class, %]	[method, %]	[block, %]	[line, %]	[name]
+100 % (12/12)	77 % (36/47)	69 % (334/487)!	72 % (92/127)!	epfl.sweng.servercomm
+100 % (2/2)	69 % (9/13)!	79 % (114/145)!	75 % (35.2/47)!	epfl.sweng.events
+100 % (4/4)	71 % (10/14)	79 % (380/480)!	91 % (61.2/67)	epfl.sweng.testing
+92 % (12/13)!	96 % (47/49)	90 % (571/634)	89 % (149.8/168)	epfl.sweng.authentication
+100 % (4/4)	95 % (19/20)	93 % (240/257)	92 % (58/63)	epfl.sweng.entry
+100 % (2/2)	77 % (10/13)	94 % (284/301)	92 % (61/66)	epfl.sweng
+100 % (5/5)	92 % (22/24)	95 % (340/358)	94 % (83/88)	epfl.sweng.ui
+100 % (5/5)	100 % (24/24)	96 % (355/370)	95 % (78.6/83)	epfl.sweng.showquestions
+75 % (3/4)!	100 % (20/20)	96 % (372/387)	95 % (77.8/82)	epfl.sweng.editquestions
+-------------------------------------------------------------------------------
