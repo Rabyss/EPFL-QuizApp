@@ -1,10 +1,12 @@
 package epfl.sweng.servercomm;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.http.HttpRequest;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -27,7 +29,7 @@ public final class ServerCommunicator extends EventEmitter {
 			+ "random";
 
 	private ServerCommunicator() {
-		
+
 	}
 
 	public static synchronized ServerCommunicator getInstance() {
@@ -55,6 +57,16 @@ public final class ServerCommunicator extends EventEmitter {
 		new PostTask(event).execute(reqContext);
 	}
 
+	private void exctractHeaders(HttpRequest request, RequestContext reqContext) {
+		Iterator<Entry<String, String>> headersIterator = reqContext
+				.getHeaders().entrySet().iterator();
+		while (headersIterator.hasNext()) {
+			Map.Entry<String, String> header = headersIterator.next();
+			request.setHeader(header.getKey(), header.getValue());
+			headersIterator.remove();
+		}
+	}
+
 	/**
 	 * 
 	 * Asynchronous task used to send POST requests.
@@ -72,14 +84,8 @@ public final class ServerCommunicator extends EventEmitter {
 		protected ServerResponse doInBackground(RequestContext... params) {
 			RequestContext reqContext = params[0];
 			HttpPost post = new HttpPost(reqContext.getServerURL());
-			// Gets an iterator to iterate over each header
-			Iterator<Entry<String, String>> headersIterator = params[0]
-					.getHeaders().entrySet().iterator();
-			while (headersIterator.hasNext()) {
-				Map.Entry<String, String> header = headersIterator.next();
-				post.setHeader(header.getKey(), header.getValue());
-				headersIterator.remove();
-			}
+			exctractHeaders(post, reqContext);
+			System.out.println(Arrays.toString(post.getAllHeaders()));
 			ResponseHandler<ServerResponse> handler = new CustomResponseHandler();
 			try {
 				post.setEntity(reqContext.getEntity());
@@ -93,7 +99,7 @@ public final class ServerCommunicator extends EventEmitter {
 		@Override
 		protected void onPostExecute(ServerResponse result) {
 			super.onPostExecute(result);
-			
+
 			mEvent.setResponse(result);
 			ServerCommunicator.getInstance().emit(mEvent);
 		}
@@ -104,7 +110,8 @@ public final class ServerCommunicator extends EventEmitter {
 	 * Asynchronous task used to send GET requests.
 	 * 
 	 */
-	private final class GetTask extends AsyncTask<RequestContext, Void, ServerResponse> {
+	private final class GetTask extends
+			AsyncTask<RequestContext, Void, ServerResponse> {
 		private ServerEvent mEvent;
 
 		public GetTask(ServerEvent event) {
@@ -115,13 +122,14 @@ public final class ServerCommunicator extends EventEmitter {
 		protected ServerResponse doInBackground(RequestContext... params) {
 			RequestContext reqContext = params[0];
 			// Construct the request
-			HttpGet questionFetchRequest = new HttpGet(
-					reqContext.getServerURL());
+			HttpGet get = new HttpGet(reqContext.getServerURL());
 			ResponseHandler<ServerResponse> questionFetchHandler = new CustomResponseHandler();
+			exctractHeaders(get, reqContext);
+			System.out.println(Arrays.toString(get.getAllHeaders()));
 
 			try {
-				return SwengHttpClientFactory.getInstance().execute(
-						questionFetchRequest, questionFetchHandler);
+				return SwengHttpClientFactory.getInstance().execute(get,
+						questionFetchHandler);
 			} catch (IOException e) {
 				return null;
 			}
