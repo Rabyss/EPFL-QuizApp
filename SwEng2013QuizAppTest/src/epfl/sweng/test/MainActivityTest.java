@@ -30,7 +30,6 @@ public class MainActivityTest extends
 		solo = new Solo(getInstrumentation(), getActivity());
 		if (solo.searchButton("Log out")) {
 			solo.clickOnButton("Log out");
-			getActivityAndWaitFor(TTChecks.LOGGED_OUT);
 		}
 	}
 
