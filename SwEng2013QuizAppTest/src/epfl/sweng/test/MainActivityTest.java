@@ -6,6 +6,7 @@ import com.jayway.android.robotium.solo.Solo;
 
 import android.test.ActivityInstrumentationTestCase2;
 import android.widget.EditText;
+import epfl.sweng.authentication.UserStorage;
 import epfl.sweng.entry.MainActivity;
 import epfl.sweng.servercomm.SwengHttpClientFactory;
 import epfl.sweng.test.minimalmock.MockHttpClient;
@@ -28,13 +29,14 @@ public class MainActivityTest extends
 	protected void setUp() {
 		getActivityAndWaitFor(TTChecks.MAIN_ACTIVITY_SHOWN);
 		solo = new Solo(getInstrumentation(), getActivity());
-		if (solo.searchButton("Log out")) {
+		if (solo.searchButton("Log out")){
 			solo.clickOnButton("Log out");
 		}
 	}
 
 	@Override
 	public void tearDown() {
+		UserStorage.getInstance(getActivity()).removeSessionID();
 		solo.finishOpenedActivities();
 	}
 
