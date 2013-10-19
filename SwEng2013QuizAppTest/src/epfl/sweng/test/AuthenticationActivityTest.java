@@ -29,6 +29,12 @@ public class AuthenticationActivityTest extends ActivityInstrumentationTestCase2
 		solo = new Solo(getInstrumentation(), getActivity());
 		
 	}
+	
+	 @Override
+	 public void tearDown() {
+	     solo.finishOpenedActivities();
+	 }
+	
 	/**
 	 * Test if the AuthenticationActivity is correctly initialized
 	 */
