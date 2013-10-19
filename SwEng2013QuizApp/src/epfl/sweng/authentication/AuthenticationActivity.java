@@ -3,12 +3,11 @@ package epfl.sweng.authentication;
 import epfl.sweng.R;
 import epfl.sweng.entry.MainActivity;
 import epfl.sweng.events.EventListener;
+import epfl.sweng.servercomm.ServerCommunicator;
 import epfl.sweng.testing.TestCoordinator;
 import epfl.sweng.testing.TestCoordinator.TTChecks;
-
 import android.app.Activity;
 import android.app.ProgressDialog;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;

@@ -146,6 +146,7 @@ public class MainActivityTest extends
 		solo.typeText(password, "SevenDwarfs");
 		solo.clickOnButton("Log in using Tequila");
 		getActivityAndWaitFor(TTChecks.MAIN_ACTIVITY_SHOWN);
+
 	}
 
 	private void getActivityAndWaitFor(final TestCoordinator.TTChecks expected) {

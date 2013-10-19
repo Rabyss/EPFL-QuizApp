@@ -113,8 +113,6 @@ public class Authenticator extends EventEmitter implements EventListener {
 				String json = event.getSessionID();
 				this.mSession = new JSONSession(json).getSession();
 				
-				ServerCommunicator.getInstance().removeListener(this);
-				
 				this.emit(new AuthenticationEvent.AuthenticatedEvent(mSession));
 			} catch (JSONException e) {
 				this.error("Error: malformed JSON (session).");
