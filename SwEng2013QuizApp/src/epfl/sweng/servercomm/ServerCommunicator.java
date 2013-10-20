@@ -1,7 +1,6 @@
 package epfl.sweng.servercomm;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
