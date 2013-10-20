@@ -51,15 +51,14 @@ public class MockHttpClientTest extends ActivityInstrumentationTestCase2<ShowQue
         assertTrue("Correct answer must be displayed", solo.searchText("Forty-two"));
         assertTrue("Incorrect answer must be displayed", solo.searchText("Twenty-seven"));
     }
-    public void testFetchQuestionFails(){
-   	
-    	 httpClient.pushCannedResponse(
+    public void testFetchQuestionFails() {
+    	httpClient.pushCannedResponse(
                  "GET (?:https?://[^/]+|[^/]+)?/+quizquestions/random\\b",
                  HttpStatus.SC_BAD_REQUEST,
                  null,
                  "application/json");
-    	 getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
-         assertTrue("An error message must be display", solo.searchText("There was an error retrieving the question"));
+		getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
+		assertTrue("An error message must be display", solo.searchText("There was an error retrieving the question"));
     }
     	
     

@@ -29,7 +29,7 @@ public class MainActivityTest extends
 	protected void setUp() {
 		getActivityAndWaitFor(TTChecks.MAIN_ACTIVITY_SHOWN);
 		solo = new Solo(getInstrumentation(), getActivity());
-		if (solo.searchButton("Log out")){
+		if (solo.searchButton("Log out")) {
 			solo.clickOnButton("Log out");
 		}
 	}

@@ -30,10 +30,10 @@ public class AuthenticationActivityTest extends ActivityInstrumentationTestCase2
 		
 	}
 	
-	 @Override
-	 public void tearDown() {
-	     solo.finishOpenedActivities();
-	 }
+	@Override
+	public void tearDown() {
+	    solo.finishOpenedActivities();
+	}
 	
 	/**
 	 * Test if the AuthenticationActivity is correctly initialized

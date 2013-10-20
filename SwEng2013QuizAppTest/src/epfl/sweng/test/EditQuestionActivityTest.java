@@ -19,8 +19,7 @@ import epfl.sweng.testing.TestingTransaction;
 
 
 public class EditQuestionActivityTest 
-    extends ActivityInstrumentationTestCase2<EditQuestionActivity>
-{
+    extends ActivityInstrumentationTestCase2<EditQuestionActivity> {
     
     private static final String SUBMIT_BUTTON_TEXT = "Submit";
     private static final String QUESTION_EDITOR_TEXT = "Type in the question's text body";
@@ -31,7 +30,9 @@ public class EditQuestionActivityTest
     private static final String FALSE_ANSWER_BUTTON = "\u2718";
     private static final String TRUE_ANSWER_BUTTON_TEXT = "\u2714";
     private static final String FETCHING_ERROR_MESSAGE = "Could not upload the question to the server";
-	private static final String FETCHING_SUCCESS_MESSAGE = "Successful submit";
+    private static final String FETCHING_SUCCESS_MESSAGE = "Successful submit";
+    private static final int THREE = 3;
+	private static final int QUIZ_QUEST_ID = 1234;
     private Solo solo;
     private MockHttpClient mockHttpClient;
 
@@ -63,14 +64,14 @@ public class EditQuestionActivityTest
         
         fillNextAnswerBody(scdAnswerBody);
         
-        assertTrue(FALSE_ANSWER_BUTTON + " buttons cannot be found.", solo.searchButton(FALSE_ANSWER_BUTTON,2));
+        assertTrue(FALSE_ANSWER_BUTTON + " buttons cannot be found.", solo.searchButton(FALSE_ANSWER_BUTTON, 2));
         solo.clickOnButton(FALSE_ANSWER_BUTTON);
         
         assertTrue("Tags editor cannot be found.", solo.searchEditText(TAGS_EDITOR_TEXT));
         EditText tagsEditor = solo.getEditText(TAGS_EDITOR_TEXT);
         solo.typeText(tagsEditor, tags);
         String[] answers = {firstAnswerBody, scdAnswerBody};
-        QuizQuestion question = new QuizQuestion(1234, questionBody, answers, 0, tags.split(" "), "ooiu");
+        QuizQuestion question = new QuizQuestion(QUIZ_QUEST_ID, questionBody, answers, 0, tags.split(" "), "ooiu");
         try {
 			mockHttpClient.pushCannedResponse("/*/",  HttpStatus.SC_OK, 
 			        question.toJSON(), "application/json");
@@ -88,7 +89,8 @@ public class EditQuestionActivityTest
         assertFalse("First answer body has changed after bad submit.", solo.searchEditText(firstAnswerBody));
         assertFalse("Second answer body has changed after bad submit.", solo.searchEditText(scdAnswerBody));
         assertFalse("Tags body has changed after bad submit.", solo.searchEditText(tags));
-        assertFalse("The checked answer does no longer exist after bad submit.", solo.searchButton(TRUE_ANSWER_BUTTON_TEXT));
+        assertFalse("The checked answer does no longer exist after bad submit.",
+        		solo.searchButton(TRUE_ANSWER_BUTTON_TEXT));
     }
 
     public void testBadSubmit() {
@@ -106,7 +108,7 @@ public class EditQuestionActivityTest
         
         fillNextAnswerBody(scdAnswerBody);
         
-        assertTrue(FALSE_ANSWER_BUTTON + " buttons cannot be found.", solo.searchButton(FALSE_ANSWER_BUTTON,2));
+        assertTrue(FALSE_ANSWER_BUTTON + " buttons cannot be found.", solo.searchButton(FALSE_ANSWER_BUTTON, 2));
         solo.clickOnButton(FALSE_ANSWER_BUTTON);
         
         assertTrue("Tags editor cannot be found.", solo.searchEditText(TAGS_EDITOR_TEXT));
@@ -125,7 +127,8 @@ public class EditQuestionActivityTest
         assertTrue("First answer body has changed after bad submit.", solo.searchEditText(firstAnswerBody));
         assertTrue("Second answer body has changed after bad submit.", solo.searchEditText(scdAnswerBody));
         assertTrue("Tags body has changed after bad submit.", solo.searchEditText(tags));
-        assertTrue("The checked answer does no longer exist after bad submit.", solo.searchButton(TRUE_ANSWER_BUTTON_TEXT));
+        assertTrue("The checked answer does no longer exist after bad submit.",
+        		solo.searchButton(TRUE_ANSWER_BUTTON_TEXT));
     }
     
     public void testTags() {
@@ -156,11 +159,13 @@ public class EditQuestionActivityTest
         solo.clearEditText(tagsEditor);
         
         solo.typeText(tagsEditor, "\t\n\n   ");
-        assertFalse("Submit button should not be enabled when tags are just spaces of different sorts.", submitButton.isEnabled());
+        assertFalse("Submit button should not be enabled when tags are just spaces of different sorts.",
+        		submitButton.isEnabled());
         solo.clearEditText(tagsEditor);
         
         solo.typeText(tagsEditor, " , ");
-        assertFalse("Submit button should not be enabled when tags are just spaces and commas.", submitButton.isEnabled());
+        assertFalse("Submit button should not be enabled when tags are just spaces and commas.",
+        		submitButton.isEnabled());
         solo.clearEditText(tagsEditor);
         
         solo.typeText(tagsEditor, "a b");
@@ -169,15 +174,10 @@ public class EditQuestionActivityTest
     }
     
     public void testRemovingAllAnswers() {
-        
-        try {
-            assertTrue("No button to delete the answer can be found.", solo.searchButton(MINUS_BUTTON_TEXT, 1));
-            solo.clickOnButton(MINUS_BUTTON_TEXT);
-            waitForChange();
-            assertTrue(true);
-        } catch (Exception e) {
-            fail("No exception must be thrown if all answers are removed.");
-        }
+        assertTrue("No button to delete the answer can be found.", solo.searchButton(MINUS_BUTTON_TEXT, 1));
+        solo.clickOnButton(MINUS_BUTTON_TEXT);
+        waitForChange();
+        assertTrue(true);
     }
     
     public void testCheckAndUncheck() {
@@ -191,7 +191,7 @@ public class EditQuestionActivityTest
         waitForChange();
         solo.clickOnButton(PLUS_BUTTON_TEXT);
         waitForChange();
-        assertTrue("The + button does not add answer as expected.", solo.searchText(ANSWER_EDITOR_TEXT, 3));
+        assertTrue("The + button does not add answer as expected.", solo.searchText(ANSWER_EDITOR_TEXT, THREE));
         
         solo.clickOnButton(FALSE_ANSWER_BUTTON);
         waitForChange();
@@ -199,7 +199,8 @@ public class EditQuestionActivityTest
         
         solo.clickOnButton(FALSE_ANSWER_BUTTON);
         assertFalse("Two question can be checked at the same time.", solo.searchButton(TRUE_ANSWER_BUTTON_TEXT, 2));
-        assertTrue("Checking two question is equivalent to check no question.", solo.searchButton(TRUE_ANSWER_BUTTON_TEXT));
+        assertTrue("Checking two question is equivalent to check no question.",
+        		solo.searchButton(TRUE_ANSWER_BUTTON_TEXT));
     }
     
     public void testSubmitButton() throws InterruptedException {
@@ -210,7 +211,8 @@ public class EditQuestionActivityTest
         
         //Fill the question and make sure the submit button is still inactive
         fillQuestionBody("Quesiton body");
-        assertFalse("Editing the question is not sufficient to get the submit button active.", submitButton.isEnabled());
+        assertFalse("Editing the question is not sufficient to get the submit button active.",
+        		submitButton.isEnabled());
         
         //Fill only one answer and make sure the button is still inactive
         assertTrue("No answer editor can be found at first.", solo.searchEditText(ANSWER_EDITOR_TEXT));
@@ -221,7 +223,8 @@ public class EditQuestionActivityTest
         solo.clickOnButton(PLUS_BUTTON_TEXT);
         waitForChange();
         
-        assertTrue("No new answer editor can be found after pressing the + button.", solo.searchEditText(ANSWER_EDITOR_TEXT));
+        assertTrue("No new answer editor can be found after pressing the + button.",
+        		solo.searchEditText(ANSWER_EDITOR_TEXT));
         String secondAnswerBody = "Second answer body";
         fillNextAnswerBody(secondAnswerBody);
         assertFalse("The submit button can become enabled with no tags", submitButton.isEnabled());
@@ -285,5 +288,5 @@ public class EditQuestionActivityTest
                 return String.format("getActivityAndWaitFor(%s)", expected);
             }
         });
-      }
+    }
 }
