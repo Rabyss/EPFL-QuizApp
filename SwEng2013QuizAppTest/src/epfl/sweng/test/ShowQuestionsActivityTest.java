@@ -26,14 +26,15 @@ public class ShowQuestionsActivityTest extends
 
 	@Override
 	protected void setUp() {
-		solo = new Solo(getInstrumentation());
-		httpClient = new MockHttpClient();
-		SwengHttpClientFactory.setInstance(httpClient);
+        httpClient = new MockHttpClient();
+        SwengHttpClientFactory.setInstance(httpClient);
+	    pushCalculQuestion();
+        pushLifeQuestion();
+        getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
+		solo = new Solo(getInstrumentation(), getActivity());
 	}
 
 	public void testShowQuestion() {
-		pushLifeQuestion();
-		getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
 		assertTrue(
 				"Question is displayed",
 				solo.searchText("What is the answer to life, the universe, and everything?"));
@@ -49,8 +50,6 @@ public class ShowQuestionsActivityTest extends
 	}
 	
 	public void testBadAnswerSelected() {
-		pushLifeQuestion();
-		getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
 		solo.clickOnText("Twenty-seven");
 		getActivityAndWaitFor(TTChecks.ANSWER_SELECTED);
 		assertTrue("Cross is displayed", solo.searchText("\u2718"));
@@ -61,8 +60,6 @@ public class ShowQuestionsActivityTest extends
 	}
 	
 	public void testGoodAnswerSelected() {
-		pushLifeQuestion();
-		getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
 		solo.clickOnText("Forty-two");
 		getActivityAndWaitFor(TTChecks.ANSWER_SELECTED);
 		assertTrue("Check is displayed", solo.searchText("\u2714"));
@@ -75,10 +72,6 @@ public class ShowQuestionsActivityTest extends
 	}
 	
 	public void testReloadQuestion() {
-		pushCalculQuestion();
-		pushLifeQuestion();
-		getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
-		
 		
 		assertTrue(
 				"Question is displayed",
