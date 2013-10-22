@@ -1,7 +1,6 @@
 package epfl.sweng.showquestions;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -18,7 +17,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import epfl.sweng.quizquestions.MalformedQuestionException;
 import epfl.sweng.quizquestions.QuizQuestion;
 import epfl.sweng.R;
 import epfl.sweng.servercomm.ServerCommunicator;
