@@ -137,15 +137,17 @@ public class EditQuestionActivity extends QuestionActivity {
 
         String tagsText = ((EditText) findViewById(R.id.editTags)).getText()
                 .toString();
-        String[] tags = (tagsText.trim().isEmpty()) ? new String[0] : cleanUp(tagsText
-                .trim().split("\\W+"));
-        
-        Set<String> tagsSet = new HashSet<String>();
-        for (String tag : tags) {tagsSet.add(tag);}
+        String[] tags = (tagsText.trim().isEmpty()) ? new String[0]
+                : cleanUp(tagsText.trim().split("\\W+"));
 
-        //FIXME: think about implication of having a id ?
-        QuizQuestion quizQuestion = 
-                new QuizQuestion(question, answersText, solutionIndex, tagsSet, -1, null);
+        Set<String> tagsSet = new HashSet<String>();
+        for (String tag : tags) {
+            tagsSet.add(tag);
+        }
+
+        // FIXME: think about implication of having a id ?
+        QuizQuestion quizQuestion = new QuizQuestion(question, answersText,
+                solutionIndex, tagsSet, -1, null);
         return quizQuestion;
     }
 
