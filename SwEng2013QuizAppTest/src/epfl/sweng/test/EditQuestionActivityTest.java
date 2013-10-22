@@ -1,5 +1,9 @@
 package epfl.sweng.test;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.apache.http.HttpStatus;
 
 import android.test.ActivityInstrumentationTestCase2;
@@ -8,8 +12,8 @@ import android.widget.EditText;
 
 import com.jayway.android.robotium.solo.Solo;
 
-import epfl.sweng.MalformedQuestionException;
-import epfl.sweng.QuizQuestion;
+import epfl.sweng.quizquestions.MalformedQuestionException;
+import epfl.sweng.quizquestions.QuizQuestion;
 import epfl.sweng.editquestions.EditQuestionActivity;
 import epfl.sweng.servercomm.SwengHttpClientFactory;
 import epfl.sweng.test.minimalmock.MockHttpClient;
@@ -71,7 +75,11 @@ public class EditQuestionActivityTest
         EditText tagsEditor = solo.getEditText(TAGS_EDITOR_TEXT);
         solo.typeText(tagsEditor, tags);
         String[] answers = {firstAnswerBody, scdAnswerBody};
-        QuizQuestion question = new QuizQuestion(QUIZ_QUEST_ID, questionBody, answers, 0, tags.split(" "), "ooiu");
+        
+        Set<String> tagsSet = new HashSet<String>();
+        for (String tag: tags.split(" ")) {tagsSet.add(tag);}
+        QuizQuestion question = new QuizQuestion(questionBody, Arrays.asList(answers), 0, tagsSet, QUIZ_QUEST_ID, "ooiu");
+                //new QuizQuestion(QUIZ_QUEST_ID, questionBody, answers, 0, tags.split(" "), "ooiu");
         try {
 			mockHttpClient.pushCannedResponse("/*/",  HttpStatus.SC_OK, 
 			        question.toJSON(), "application/json");

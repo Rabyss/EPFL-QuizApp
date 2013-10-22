@@ -18,8 +18,8 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import epfl.sweng.MalformedQuestionException;
-import epfl.sweng.QuizQuestion;
+import epfl.sweng.quizquestions.MalformedQuestionException;
+import epfl.sweng.quizquestions.QuizQuestion;
 import epfl.sweng.R;
 import epfl.sweng.servercomm.ServerCommunicator;
 import epfl.sweng.servercomm.ServerResponse;
@@ -63,10 +63,7 @@ public class ShowQuestionsActivity extends QuestionActivity {
     protected void processDownloadedData(Object data) {
         String strRandomQuestion = ((ServerResponse) data).getEntity();
         try {
-            mRandomQuestion = new QuizQuestion(
-                    new JSONObject(strRandomQuestion));
-        } catch (MalformedQuestionException e) {
-            Toast.makeText(this, e.getMessage(), TOAST_DISPLAY_TIME).show();
+            mRandomQuestion = new QuizQuestion(strRandomQuestion);
         } catch (JSONException e) {
             Toast.makeText(this, e.getMessage(), TOAST_DISPLAY_TIME).show();
         }

@@ -2,6 +2,8 @@ package epfl.sweng.editquestions;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.http.entity.StringEntity;
 
@@ -16,8 +18,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-import epfl.sweng.MalformedQuestionException;
-import epfl.sweng.QuizQuestion;
+import epfl.sweng.quizquestions.MalformedQuestionException;
+import epfl.sweng.quizquestions.QuizQuestion;
 import epfl.sweng.R;
 import epfl.sweng.servercomm.ServerCommunicator;
 import epfl.sweng.testing.TestCoordinator;
@@ -135,12 +137,15 @@ public class EditQuestionActivity extends QuestionActivity {
 
         String tagsText = ((EditText) findViewById(R.id.editTags)).getText()
                 .toString();
-        String[] tags = (tagsText.trim().isEmpty()) ? null : cleanUp(tagsText
+        String[] tags = (tagsText.trim().isEmpty()) ? new String[0] : cleanUp(tagsText
                 .trim().split("\\W+"));
+        
+        Set<String> tagsSet = new HashSet<String>();
+        for (String tag : tags) {tagsSet.add(tag);}
 
-        QuizQuestion quizQuestion = new QuizQuestion(null, question,
-                answersText.toArray(new String[answers.size()]), solutionIndex,
-                tags, null);
+        //FIXME: think about implication of having a id ?
+        QuizQuestion quizQuestion = 
+                new QuizQuestion(question, answersText, solutionIndex, tagsSet, -1, null);
         return quizQuestion;
     }
 
