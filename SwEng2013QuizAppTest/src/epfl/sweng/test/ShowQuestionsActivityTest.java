@@ -23,6 +23,7 @@ public class ShowQuestionsActivityTest extends
 	public ShowQuestionsActivityTest() {
 		super(ShowQuestionsActivity.class);
 	}
+	
 
 	@Override
 	protected void setUp() {
@@ -32,6 +33,11 @@ public class ShowQuestionsActivityTest extends
         pushLifeQuestion();
         getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
 		solo = new Solo(getInstrumentation(), getActivity());
+	}
+	
+	@Override
+	public void tearDown() {
+	    solo.finishOpenedActivities();
 	}
 
 	public void testShowQuestion() {
