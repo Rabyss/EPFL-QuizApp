@@ -155,7 +155,7 @@ public class QuizQuestion {
 	}
 
 	private static String[] extractArrayFromJson(JSONArray jsonArray)
-			throws JSONException {
+		throws JSONException {
 		String[] stringArray = new String[jsonArray.length()];
 		for (int i = 0; i < stringArray.length; i++) {
 			stringArray[i] = jsonArray.getString(i);
