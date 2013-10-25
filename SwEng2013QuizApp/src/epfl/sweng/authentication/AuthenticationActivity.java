@@ -50,6 +50,7 @@ public class AuthenticationActivity extends Activity implements EventListener {
         
         mPassword = new EditText(this);
         mPassword.setHint(R.string.password);
+        // replace the letters typed in the EditText by points (hide the password)
         mPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         mLinearLayout.addView(mPassword);
         
