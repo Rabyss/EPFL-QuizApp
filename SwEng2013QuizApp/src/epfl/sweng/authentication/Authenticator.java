@@ -37,6 +37,24 @@ public class Authenticator extends EventEmitter implements EventListener {
 		RequestContext req = new RequestContext("https://sweng-quiz.appspot.com/login");
 		ServerCommunicator.getInstance().doHttpGet(req, new ServerAuthenticationEvent.GettingTokenEvent());
 	}
+
+	public void on(ServerAuthenticationEvent.GettingTokenEvent event) {
+		int status = event.getStatus();
+		
+		if (status == SWENG_OK) {
+			try {
+				String json = event.getToken();
+				this.mToken = new JSONToken(json).getToken();
+			} catch (JSONException e) {
+				this.error("Error: malformed JSON (token).");
+			}
+			
+			tequilaAuth();
+		} else {
+			this.error("Error "+status+" on SwEng Server.");
+		}
+		
+	}
 	
 	private void tequilaAuth() {
 		ArrayList<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
@@ -56,6 +74,18 @@ public class Authenticator extends EventEmitter implements EventListener {
 		}
 	}
 	
+	public void on(ServerAuthenticationEvent.TequilaStatusEvent event) {
+		int status = event.getStatus();
+		
+		if (status == TEQUILA_OK) {
+			requestSessionID();
+		} else if (status == TEQUILA_WRONG_CREDITENTIAL) {
+			this.error("Wrong username or password.");
+		} else {
+			this.error("Error "+status+" on Tequila Server.");
+		}
+	}
+	
 	private void requestSessionID() {
 		String json = "{\"token\": \""+this.mToken+"\"}";
 		
@@ -67,41 +97,6 @@ public class Authenticator extends EventEmitter implements EventListener {
 			ServerCommunicator.getInstance().doHttpPost(req, new ServerAuthenticationEvent.GettingSessionIDEvent());
 		} catch (UnsupportedEncodingException e) {
 			this.error("Error: Unsupported Encoding Exception.");
-		}
-	}
-	
-	private void error(String message) {
-		this.emit(new AuthenticationEvent.AuthenticationErrorEvent(message));
-		ServerCommunicator.getInstance().removeListener(this);
-	}
-	
-	public void on(ServerAuthenticationEvent.GettingTokenEvent event) {
-		int status = event.getStatus();
-		
-		if (status == SWENG_OK) {
-			try {
-				String json = event.getToken();
-				this.mToken = new JSONToken(json).getToken();
-			} catch (JSONException e) {
-				this.error("Error: malformed JSON (token).");
-			}
-			
-			tequilaAuth();
-		} else {
-			this.error("Error "+status+" on SwEng Server.");
-		}
-		
-	}
-	
-	public void on(ServerAuthenticationEvent.TequilaStatusEvent event) {
-		int status = event.getStatus();
-		
-		if (status == TEQUILA_OK) {
-			requestSessionID();
-		} else if (status == TEQUILA_WRONG_CREDITENTIAL) {
-			this.error("Wrong username or password.");
-		} else {
-			this.error("Error "+status+" on Tequila Server.");
 		}
 	}
 	
@@ -120,5 +115,10 @@ public class Authenticator extends EventEmitter implements EventListener {
 		} else {
 			this.error("Error "+status+" on SwengServer"); 
 		}
+	}
+	
+	private void error(String message) {
+		this.emit(new AuthenticationEvent.AuthenticationErrorEvent(message));
+		ServerCommunicator.getInstance().removeListener(this);
 	}
 }
