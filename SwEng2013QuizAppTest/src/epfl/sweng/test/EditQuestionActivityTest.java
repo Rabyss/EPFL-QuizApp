@@ -77,8 +77,9 @@ public class EditQuestionActivityTest
         String[] answers = {firstAnswerBody, scdAnswerBody};
         
         Set<String> tagsSet = new HashSet<String>();
-        for (String tag: tags.split(" ")) {tagsSet.add(tag);}
-        QuizQuestion question = new QuizQuestion(questionBody, Arrays.asList(answers), 0, tagsSet, QUIZ_QUEST_ID, "ooiu");
+        for (String tag: tags.split(" ")) { tagsSet.add(tag); }
+        QuizQuestion question = new QuizQuestion(questionBody, Arrays.asList(answers), 0,
+        		tagsSet, QUIZ_QUEST_ID, "ooiu");
                 //new QuizQuestion(QUIZ_QUEST_ID, questionBody, answers, 0, tags.split(" "), "ooiu");
         try {
 			mockHttpClient.pushCannedResponse("/*/",  HttpStatus.SC_OK, 

@@ -43,7 +43,7 @@ public class QuizQuestionTest extends AndroidTestCase {
 			jsonObject.put("owner", "no");
 			new QuizQuestion(jsonObject.toString());
 			fail("A question without an ID cannot be built.");
-		}catch (JSONException e) {
+		} catch (JSONException e) {
 		}
 
 		try {
