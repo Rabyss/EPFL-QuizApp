@@ -139,14 +139,13 @@ public class ShowQuestionsActivity extends QuestionActivity {
     }
 
     private void displayTags() {
-        int totalTags = mRandomQuestion.getTags().length;
         LinearLayout tagLayout = new LinearLayout(this);
         tagLayout.setOrientation(LinearLayout.HORIZONTAL);
         tagLayout.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,
                 LayoutParams.WRAP_CONTENT));
-        for (int i = 0; i < totalTags; i++) {
+        for (String tag : mRandomQuestion.getTags()) {
             TextView tagText = new TextView(this);
-            tagText.setText(mRandomQuestion.getTags()[i]);
+            tagText.setText(tag);
             tagText.setPadding(PADDING_ZERO, PADDING_ZERO, PADDING_RIGHT,
                     PADDING_ZERO);
             tagText.setTextColor(Color.GRAY);
@@ -191,7 +190,7 @@ public class ShowQuestionsActivity extends QuestionActivity {
             TextView answerText = new TextView(mSelf);
             answerText.setPadding(PADDING_FIVE, PADDING_TWENTY, PADDING_ZERO,
                     PADDING_TWENTY);
-            answerText.setText(mRandomQuestion.getAnswers()[position]);
+            answerText.setText(mRandomQuestion.getAnswers().get(position));
             return answerText;
         }
 
