@@ -1,0 +1,6 @@
+there exists c in question.question such that !c.isWhitespace() and len(question.question) <= 500
+for all answer in question.answers there exists c in answer such that !c.isWhitespace() and len(answer) <= 500
+2 <= len(question.answers) <= 10
+there exists i such that isMarkedCorrect(question.answers[i])
+1 <= len(question.tags) <= 20
+for all tag in question.tags there exists c in tag such that !c.isWhitespace() and len(tag) <= 20
