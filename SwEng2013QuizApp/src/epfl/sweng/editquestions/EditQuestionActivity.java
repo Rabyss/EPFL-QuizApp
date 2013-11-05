@@ -67,25 +67,12 @@ public class EditQuestionActivity extends QuestionActivity {
     }
 
     public void addAnswer(View view) throws MalformedEditorButtonException {
-    	if (this.auditButtons() != 0) {
-    		throw new MalformedEditorButtonException();
-    	}
-    	
         ViewGroup linearLayout = (ViewGroup) findViewById(R.id.linearLayoutAnswers);
         answers.add(new AnswerEditor(this, linearLayout, false));
         tryAudit();
-        
-    	if (this.auditButtons() != 0) {
-    		throw new MalformedEditorButtonException();
-    	}
-    	
     }
 
     public ArrayList<AnswerEditor> getAnswers() throws MalformedEditorButtonException {
-    	if (this.auditButtons() != 0) {
-    		throw new MalformedEditorButtonException();
-    	}
-    	
         return answers;
     }
 
@@ -94,10 +81,6 @@ public class EditQuestionActivity extends QuestionActivity {
     }
 
     public void submitQuestion(View view) throws MalformedEditorButtonException {
-    	if (this.auditButtons() != 0) {
-    		throw new MalformedEditorButtonException();
-    	}
-    	
         InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 
         inputManager.hideSoftInputFromWindow(
@@ -121,10 +104,6 @@ public class EditQuestionActivity extends QuestionActivity {
         }
 
         showProgressDialog();
-
-    	if (this.auditButtons() != 0) {
-    		throw new MalformedEditorButtonException();
-    	}
     }
 
     public void on(PostedQuestionEvent event) {
