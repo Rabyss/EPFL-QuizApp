@@ -216,5 +216,17 @@ public class EditQuestionActivity extends QuestionActivity {
 
         }
     }
-
+    
+    private int auditButtons() {
+		/* 
+	    - A button exists to add a new answer. It has its text set to “+”, and its visibility set to VISIBLE.
+	    - A button exists to submit the queston. It has its text set to “Submit”, and its visibility set to VISIBLE.
+	    - For every answer, there is a button to remove that answer. This button has its text set to "-",
+	    and its visibility set to VISIBLE.
+	    - For every answer, there is a button to toggle its correctness. This button has its text set to “X” or “V”,
+	    and its visibility set to VISIBLE.
+		*/
+    	
+    	return 0; // FIXME
+    }
 }
