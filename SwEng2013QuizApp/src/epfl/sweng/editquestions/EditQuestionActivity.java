@@ -66,13 +66,26 @@ public class EditQuestionActivity extends QuestionActivity {
         return true;
     }
 
-    public void addAnswer(View view) {
+    public void addAnswer(View view) throws MalformedEditorButtonException {
+    	if (this.auditButtons() != 0) {
+    		throw new MalformedEditorButtonException();
+    	}
+    	
         ViewGroup linearLayout = (ViewGroup) findViewById(R.id.linearLayoutAnswers);
         answers.add(new AnswerEditor(this, linearLayout, false));
         tryAudit();
+        
+    	if (this.auditButtons() != 0) {
+    		throw new MalformedEditorButtonException();
+    	}
+    	
     }
 
-    public ArrayList<AnswerEditor> getAnswers() {
+    public ArrayList<AnswerEditor> getAnswers() throws MalformedEditorButtonException {
+    	if (this.auditButtons() != 0) {
+    		throw new MalformedEditorButtonException();
+    	}
+    	
         return answers;
     }
 
@@ -80,7 +93,11 @@ public class EditQuestionActivity extends QuestionActivity {
         return resettingUI;
     }
 
-    public void submitQuestion(View view) {
+    public void submitQuestion(View view) throws MalformedEditorButtonException {
+    	if (this.auditButtons() != 0) {
+    		throw new MalformedEditorButtonException();
+    	}
+    	
         InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 
         inputManager.hideSoftInputFromWindow(
@@ -104,6 +121,10 @@ public class EditQuestionActivity extends QuestionActivity {
         }
 
         showProgressDialog();
+
+    	if (this.auditButtons() != 0) {
+    		throw new MalformedEditorButtonException();
+    	}
     }
 
     public void on(PostedQuestionEvent event) {
@@ -218,23 +239,49 @@ public class EditQuestionActivity extends QuestionActivity {
     }
     
     private int auditButtons() {
-		/* 
-	    - A button exists to add a new answer. It has its text set to �+�, and its visibility set to VISIBLE.
-	    - A button exists to submit the queston. It has its text set to �Submit�, and its visibility set to VISIBLE.
-	    - For every answer, there is a button to remove that answer. This button has its text set to "-",
-	    and its visibility set to VISIBLE.
-	    - For every answer, there is a button to toggle its correctness. This button has its text set to �X� or �V�,
-	    and its visibility set to VISIBLE.
-		*/
+    	int errors = 0;
     	
-    	return 0; // FIXME
+    	if (!((Button) findViewById(R.id.buttonAddAnswer)).getText().equals("+")) {
+    		errors++;
+    	}
+    	if ((findViewById(R.id.buttonAddAnswer)).getVisibility() != View.VISIBLE) {
+    		errors++;
+    	}
+    	
+    	if (!((Button) findViewById(R.id.butttonSubmitQuestion)).getText().equals("Submit")) {
+    		errors++;
+    	}
+    	if ((findViewById(R.id.butttonSubmitQuestion)).getVisibility() != View.VISIBLE) {
+    		errors++;
+    	}
+    	
+    	for (AnswerEditor answer : answers) {
+    		Button removeBtn = answer.getRemoveButton();
+    		Button correctBtn = answer.getCorrectButton();
+    		
+    		if (removeBtn.getVisibility() != View.VISIBLE) {
+    			errors++;
+    		}
+        	if (!removeBtn.getText().equals("-")) {
+        		errors++;
+        	}
+    		
+    		if (correctBtn.getVisibility() != View.VISIBLE) {
+    			errors++;
+    		}
+        	if (!correctBtn.getText().equals("\u2718") && !correctBtn.getText().equals("\u2714")) {
+        		errors++;
+        	}
+    	}
+    	
+    	return errors;
     }
     
-    private int auditAnswers(){
+    private int auditAnswers() {
         int tickCount = 0;
-        for (AnswerEditor answer : answers){
+        for (AnswerEditor answer : answers) {
             String answerText = answer.getCorrectButton().getText().toString();
-            if (answerText.equals(R.string.button_check)){
+            if (answerText.equals(R.string.button_check)) {
                 tickCount++;
             }
         }

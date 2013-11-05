@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import epfl.sweng.R;
 import epfl.sweng.editquestions.EditQuestionActivity;
+import epfl.sweng.editquestions.MalformedEditorButtonException;
 import epfl.sweng.testing.TestCoordinator;
 import epfl.sweng.testing.TestCoordinator.TTChecks;
 import android.text.Editable;
@@ -59,21 +60,25 @@ public class AnswerEditor {
 
 			@Override
 			public void onClick(View v) {
-				ArrayList<AnswerEditor> answers = activity.getAnswers();
+				ArrayList<AnswerEditor> answers;
+				try {
+					answers = activity.getAnswers();
 
-				if (!isCorrect()) {
-					for (AnswerEditor a : answers) {
-						if (a.isCorrect()) {
-							a.setCorrect(false);
+					if (!isCorrect()) {
+						for (AnswerEditor a : answers) {
+							if (a.isCorrect()) {
+								a.setCorrect(false);
+							}
 						}
+						setCorrect(true);
+					} else {
+						setCorrect(false);
 					}
-					setCorrect(true);
-				} else {
-					setCorrect(false);
+				} catch (MalformedEditorButtonException e) {
+					e.printStackTrace();
 				}
 				
 				TestCoordinator.check(TTChecks.QUESTION_EDITED);
-
 			}
 		});
 
@@ -106,10 +111,6 @@ public class AnswerEditor {
 		return mCorrect;
 	}
 
-	public Button getCorrectButton() {
-        return mCorrectButton;
-    }
-
     public void setCorrect(Boolean correct) {
 		if (correct) {
 			mCorrectButton.setText(R.string.button_check);
@@ -124,10 +125,19 @@ public class AnswerEditor {
 	public Button getRemoveButton() {
 		return mRemoveButton;
 	}
+	
+	public Button getCorrectButton() {
+		return mCorrectButton;
+	}
 
 	public void remove() {
-		ArrayList<AnswerEditor> answers = mActivity.getAnswers();
-		answers.remove(this);
+		ArrayList<AnswerEditor> answers;
+		try {
+			answers = mActivity.getAnswers();
+			answers.remove(this);
+		} catch (MalformedEditorButtonException e) {
+			e.printStackTrace();
+		}
 
 		((ViewGroup) linearLayout.getParent()).removeView(linearLayout);
 
