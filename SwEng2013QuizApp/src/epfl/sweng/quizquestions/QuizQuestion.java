@@ -5,16 +5,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.List;
+import java.util.Set;
+import java.util.Map;
 import java.util.Collection;
 import java.util.AbstractCollection;
-import java.util.Iterator;
 import java.util.Collections;
-import java.util.List;
-import java.util.LinkedList;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.Iterator;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 
 /**
  * Represents a question of the quiz.
@@ -24,10 +24,16 @@ public class QuizQuestion {
 	// Uses Integer instead of int to allow them to be nullable.
 	private final int mId;
 	private final String mQuestion;
-	private final List<String> mAnswers;
+	private final AnswersList mAnswers;
 	private final int mSolutionIndex;
-	private final Set<String> mTags;
+	private final TagsSet mTags;
 	private final String mOwner;
+
+    private static final int MAX_QUESTION_LENGTH = 500;
+    private static final int MIN_ANSWERS_NUM = 2;
+    private static final int MAX_ANSWERS_NUM = 10;
+    private static final int MIN_TAGS_NUM = 1;
+    private static final int MAX_TAGS_NUM = 20;
 
 	public QuizQuestion(final String question, final List<String> answers,
 			final int solutionIndex, final Set<String> tags, final int id,
@@ -35,12 +41,12 @@ public class QuizQuestion {
 		mId = id;
 		mQuestion = question;
 
-        mAnswers = new LinkedList<String>();
+        mAnswers = new AnswersList();
         mAnswers.addAll(answers);
 
         mSolutionIndex = solutionIndex;
 
-        mTags = new HashSet<String>();
+        mTags = new TagsSet();
         mTags.addAll(tags);
 
 		mOwner = owner;
@@ -58,9 +64,15 @@ public class QuizQuestion {
 		JSONObject jsonModel = new JSONObject(jsonText);
 		mId = jsonModel.getInt("id");
 		mQuestion = jsonModel.getString("question");
-		mAnswers = new LinkedList<String>(extractCollectionFromJSONArray(jsonModel.getJSONArray("answers")));
+
+        mAnswers = new AnswersList();
+        mAnswers.addAll(extractCollectionFromJSONArray(jsonModel.getJSONArray("answers")));
+
 		mSolutionIndex = jsonModel.getInt("solutionIndex");
-		mTags = new HashSet<String>(extractCollectionFromJSONArray(jsonModel.getJSONArray("tags")));
+
+		mTags = new TagsSet();
+        mTags.addAll(extractCollectionFromJSONArray(jsonModel.getJSONArray("tags")));
+
 		mOwner = jsonModel.getString("owner");
 	}
 
@@ -99,7 +111,7 @@ public class QuizQuestion {
 	 *             if the question is malformed
 	 */
 	public String toJSON() throws MalformedQuestionException {
-		if (this.audit() != 0) {
+		if (this.auditErrors() != 0) {
 			throw new MalformedQuestionException("Question that must be "
 					+ " converted to JSON is malformed");
 		}
@@ -126,41 +138,17 @@ public class QuizQuestion {
 	 * 
 	 * @return the number of errors in this instance representation
 	 */
-	public int audit() {
-		int auditErrors = 0;
-		boolean mustCheckAnswers = true;
-		boolean mustCheckTags = true;
-		if (mQuestion == null || mQuestion.trim().isEmpty()) {
-			auditErrors++;
-		}
-		if (mAnswers == null || mAnswers.size() < 2) {
-			mustCheckAnswers = false;
-			auditErrors++;
-		}
-		if (mSolutionIndex < 0 || mSolutionIndex >= mAnswers.size()) {
-			auditErrors++;
-		}
-		if (mTags == null || mTags.size() < 1) {
-			mustCheckTags = false;
-			auditErrors++;
+	public int auditErrors() {
+		int errors = 0;
+
+		if (containsNotSpaceChar(mQuestion) || mQuestion.length() <= MAX_QUESTION_LENGTH) {
+			errors++;
 		}
 
-		if (mustCheckAnswers) {
-			for (String answer : mAnswers) {
-				if (answer == null || answer.trim().isEmpty()) {
-					auditErrors++;
-				}
-			}
-		}
-		if (mustCheckTags) {
-			for (String tag : mTags) {
-				if (tag == null || tag.trim().isEmpty()) {
-					auditErrors++;
-				}
-			}
-		}
+        errors += mAnswers.auditErrors();
+        errors += mTags.auditErrors();
 
-		return auditErrors;
+		return errors;
 	}
 
 	private static Collection<String> extractCollectionFromJSONArray(JSONArray jsonArray) throws JSONException {
@@ -186,4 +174,63 @@ public class QuizQuestion {
         };
 	}
 
+    private boolean containsNotSpaceChar(String str) {
+        if (str == null) {
+            return false;
+        }
+
+        for (int i = 0; i < str.length(); i++) {
+            if (!Character.isWhitespace(str.charAt(i))) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private class AnswersList extends LinkedList<String> {
+
+        public int auditErrors() {
+            int errors = 0;
+            int numAnswers = size();
+
+            if (numAnswers < MIN_ANSWERS_NUM || numAnswers > MAX_ANSWERS_NUM) {
+                errors++;
+            }
+
+            if (mSolutionIndex < 0 || mSolutionIndex >= numAnswers) {
+                errors++;
+            }
+
+            for (String answer : this) {
+                if (!containsNotSpaceChar(answer)) {
+                    errors++;
+                }
+            }
+
+            return errors;
+        }
+
+    }
+
+    private class TagsSet extends HashSet<String> {
+
+        public int auditErrors() {
+            int errors = 0;
+            int numTags = size();
+
+            if (numTags < MIN_TAGS_NUM || numTags > MAX_TAGS_NUM) {
+                errors++;
+            }
+
+            for (String tag : this) {
+                if (!containsNotSpaceChar(tag)) {
+                    errors++;
+                }
+            }
+
+            return errors;
+        }
+
+    }
 }
