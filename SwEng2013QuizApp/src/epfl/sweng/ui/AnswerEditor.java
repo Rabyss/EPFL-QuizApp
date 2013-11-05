@@ -106,7 +106,11 @@ public class AnswerEditor {
 		return mCorrect;
 	}
 
-	public void setCorrect(Boolean correct) {
+	public Button getCorrectButton() {
+        return mCorrectButton;
+    }
+
+    public void setCorrect(Boolean correct) {
 		if (correct) {
 			mCorrectButton.setText(R.string.button_check);
 			mCorrect = true;

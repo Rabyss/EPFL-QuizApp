@@ -219,14 +219,25 @@ public class EditQuestionActivity extends QuestionActivity {
     
     private int auditButtons() {
 		/* 
-	    - A button exists to add a new answer. It has its text set to “+”, and its visibility set to VISIBLE.
-	    - A button exists to submit the queston. It has its text set to “Submit”, and its visibility set to VISIBLE.
+	    - A button exists to add a new answer. It has its text set to ï¿½+ï¿½, and its visibility set to VISIBLE.
+	    - A button exists to submit the queston. It has its text set to ï¿½Submitï¿½, and its visibility set to VISIBLE.
 	    - For every answer, there is a button to remove that answer. This button has its text set to "-",
 	    and its visibility set to VISIBLE.
-	    - For every answer, there is a button to toggle its correctness. This button has its text set to “X” or “V”,
+	    - For every answer, there is a button to toggle its correctness. This button has its text set to ï¿½Xï¿½ or ï¿½Vï¿½,
 	    and its visibility set to VISIBLE.
 		*/
     	
     	return 0; // FIXME
+    }
+    
+    private int auditAnswers(){
+        int tickCount = 0;
+        for (AnswerEditor answer : answers){
+            String answerText = answer.getCorrectButton().getText().toString();
+            if (answerText.equals(R.string.button_check)){
+                tickCount++;
+            }
+        }
+        return tickCount <= 1 ? 0 : 1;
     }
 }
