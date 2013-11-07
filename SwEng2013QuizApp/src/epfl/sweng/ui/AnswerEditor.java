@@ -106,6 +106,10 @@ public class AnswerEditor {
 	public String getContent() {
 		return mContent.getText().toString();
 	}
+	
+	public EditText getEditText(){
+		return mContent;
+	}
 
 	public boolean isCorrect() {
 		return mCorrect;
