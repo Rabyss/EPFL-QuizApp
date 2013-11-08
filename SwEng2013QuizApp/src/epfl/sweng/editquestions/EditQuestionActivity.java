@@ -273,8 +273,8 @@ public class EditQuestionActivity extends QuestionActivity {
 
 	private int auditEditText() {
 		int totalErrors = 0;
-		EditText questionText = ((EditText) findViewById(R.id.editQuestionText));
-		EditText tagsText = ((EditText) findViewById(R.id.editTags));
+		EditText questionText = (EditText) findViewById(R.id.editQuestionText);
+		EditText tagsText = (EditText) findViewById(R.id.editTags);
 		if (questionText == null
 				|| !questionText.getHint().equals(R.string.hint_question_text)
 				|| questionText.getVisibility() != View.VISIBLE) {
@@ -298,5 +298,18 @@ public class EditQuestionActivity extends QuestionActivity {
 		}
 		return totalErrors;
 	}
-
+	
+	private int auditSubmitButton() {
+		int errors = 0;
+		QuizQuestion quizQuestion = extractQuizQuestion();
+		
+		if (findViewById(R.id.butttonSubmitQuestion).isEnabled() && quizQuestion.auditErrors() != 0) {
+			errors = 1;
+		}
+		if (!findViewById(R.id.butttonSubmitQuestion).isEnabled() && quizQuestion.auditErrors() == 0) {
+			errors = 1;
+		}
+		
+		return errors;
+	}
 }
