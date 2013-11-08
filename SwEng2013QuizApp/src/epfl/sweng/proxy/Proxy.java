@@ -51,12 +51,13 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 	public void doHttpGet(RequestContext reqContext, ServerEvent event) {
 		this.emit(new ConnectionEvent(Type.ADD_OR_RETRIEVE_QUESTION));
 		if (isOnline()) {
+			
 			serverComm.doHttpGet(reqContext, event);
 		} else {
-			ServerResponse response = offlineRandomQuestion();
-			event.setResponse(response);
-			this.emit(event);
-			// TODO : changer l'event envoyé par un ReceivedEvent
+			// TODO : envoyer un bon event au service!!
+			ReceivedQuestionEvent receiveEvent = new ReceivedQuestionEvent();
+			receiveEvent.setResponse(offlineRandomQuestion());
+			this.emit(receiveEvent);
 		}
 
 	}
@@ -68,9 +69,9 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 			questionEntity = reqContext.getEntity().toString();
 			serverComm.doHttpPost(reqContext, event);
 		} else {
+			// TODO : envoyer un event au service!
 			postQuestion.add(questionToSubmit);
-			// TODO : ajouter un event pour notifié EditQuestionActivity
-			// TODO : dans EditQuestionActivity: changer les appel a ServerComm par un appel a proxy
+			this.emit(new PostedQuestionEvent());
 		}
 
 	}
