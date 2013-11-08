@@ -91,7 +91,7 @@ public class AnswerEditor {
 			@Override
 			public void onClick(View v) {
 				remove();
-				mActivity.tryAudit();
+				mActivity.updateSubmitButton();
 				TestCoordinator.check(TTChecks.QUESTION_EDITED);
 			}
 		});
@@ -100,7 +100,7 @@ public class AnswerEditor {
 			TestCoordinator.check(TTChecks.QUESTION_EDITED);
 		}
 
-		mActivity.tryAudit();
+		mActivity.updateSubmitButton();
 	}
 
 	public String getContent() {
@@ -123,7 +123,7 @@ public class AnswerEditor {
 			mCorrectButton.setText(R.string.button_cross);
 			mCorrect = false;
 		}
-		mActivity.tryAudit();
+		mActivity.updateSubmitButton();
 	}
 
 	public Button getRemoveButton() {
@@ -173,7 +173,7 @@ public class AnswerEditor {
 		@Override
 		public void afterTextChanged(Editable s) {
 			if (!mActivity.isResettingUI()) {
-				mActivity.tryAudit();
+				mActivity.updateSubmitButton();
 				TestCoordinator.check(TTChecks.QUESTION_EDITED);
 			}
 		}
