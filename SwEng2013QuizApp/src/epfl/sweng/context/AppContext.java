@@ -2,12 +2,8 @@ package epfl.sweng.context;
 
 import epfl.sweng.context.conn_states.ConnectionState;
 import epfl.sweng.events.EventEmitter;
-import epfl.sweng.events.EventEmitterInterface;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Singleton used to carry the global state of the program at a given time.
