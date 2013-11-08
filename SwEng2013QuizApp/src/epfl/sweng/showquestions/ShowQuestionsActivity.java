@@ -54,7 +54,6 @@ public class ShowQuestionsActivity extends QuestionActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		mSelf = this;
 		getQuestion();
 	}
 
