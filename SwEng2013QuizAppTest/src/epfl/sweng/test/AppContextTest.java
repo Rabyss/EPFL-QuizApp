@@ -3,7 +3,11 @@ package epfl.sweng.test;
 import android.test.AndroidTestCase;
 import epfl.sweng.context.AppContext;
 import epfl.sweng.context.ConnectionEvent;
-import epfl.sweng.context.conn_states.*;
+import epfl.sweng.context.conn_states.ConnectionState;
+import epfl.sweng.context.conn_states.IdleOfflineConnectionState;
+import epfl.sweng.context.conn_states.IdleOnlineConnectionState;
+import epfl.sweng.context.conn_states.ServerInCommunicationConnectionState;
+import epfl.sweng.context.conn_states.ServerSyncConnectionState;
 import epfl.sweng.events.EventEmitter;
 
 public class AppContextTest extends AndroidTestCase {
@@ -35,7 +39,8 @@ public class AppContextTest extends AndroidTestCase {
         connectFromIdleOffline(eventEmitter);
 
         eventEmitter.emit(new ConnectionEvent(ConnectionEvent.Type.ADD_OR_RETRIEVE_QUESTION));
-        assertEquals("must be in server comm state", getCurrentConnectionState(), ServerInCommunicationConnectionState.class);
+        assertEquals("must be in server comm state", getCurrentConnectionState(),
+        		ServerInCommunicationConnectionState.class);
 
         eventEmitter.emit(new ConnectionEvent(ConnectionEvent.Type.COMMUNICATION_ERROR));
         assertEquals("must be in idle (offline) state", getCurrentConnectionState(), IdleOfflineConnectionState.class);
@@ -52,6 +57,6 @@ public class AppContextTest extends AndroidTestCase {
     }
 
     private Class<? extends ConnectionState> getCurrentConnectionState() {
-       return AppContext.getContext().getCurrentConnectionState().getClass();
+    	return AppContext.getContext().getCurrentConnectionState().getClass();
     }
 }
