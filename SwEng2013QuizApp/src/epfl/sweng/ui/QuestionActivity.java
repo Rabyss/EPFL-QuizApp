@@ -8,7 +8,6 @@ import epfl.sweng.authentication.UserStorage;
 import epfl.sweng.context.AppContext;
 import epfl.sweng.entry.MainActivity;
 import epfl.sweng.events.EventListener;
-import epfl.sweng.proxy.Proxy;
 import epfl.sweng.servercomm.RequestContext;
 import epfl.sweng.servercomm.ServerEvent;
 import epfl.sweng.servercomm.ServerResponse;
@@ -39,7 +38,7 @@ public abstract class QuestionActivity extends Activity implements
         AppContext.getContext().setSessionID(UserStorage.getInstance(this).getSessionID());
         mReqContext.addHeader("Authorization", "Tequila "+AppContext.getContext().getSessionID());
 
-        Proxy.getInstance().addListener(this);
+        ServerCommunicator.getInstance().addListener(this);
     }
 
     @Override
