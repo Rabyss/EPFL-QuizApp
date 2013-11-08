@@ -8,7 +8,9 @@ public abstract class ConnectionState {
     public abstract boolean isOnline();
 
     public class UnknownTransitionException extends Exception {
-        public UnknownTransitionException(ConnectionState connectionState,
+        
+		private static final long serialVersionUID = 1292955820617487850L;
+		public UnknownTransitionException(ConnectionState connectionState,
                                           ConnectionEvent event) {
             super("Unknown transition when in state "+connectionState+" and get event "+event.getType()+".");
         }

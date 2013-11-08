@@ -22,7 +22,7 @@ public final class ConnectionStateMachine implements EventListener {
         try {
             mCurrentState = mCurrentState.getNextState(event);
         } catch (ConnectionState.UnknownTransitionException e) {
-            //TODO: think about this part
+            //TODO : think about this part
         }
     }
 

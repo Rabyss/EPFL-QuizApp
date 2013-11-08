@@ -190,7 +190,9 @@ public class QuizQuestion {
 
     private class AnswersList extends LinkedList<String> {
 
-        public int auditErrors() {
+		private static final long serialVersionUID = 3821236061355668378L;
+
+		public int auditErrors() {
             int errors = 0;
             int numAnswers = size();
 
@@ -215,7 +217,9 @@ public class QuizQuestion {
 
     private class TagsSet extends HashSet<String> {
 
-        public int auditErrors() {
+		private static final long serialVersionUID = -3692725125179875656L;
+
+		public int auditErrors() {
             int errors = 0;
             int numTags = size();
 

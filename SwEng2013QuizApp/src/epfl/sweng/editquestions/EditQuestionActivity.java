@@ -73,7 +73,7 @@ public class EditQuestionActivity extends QuestionActivity {
 	}
 
 	public ArrayList<AnswerEditor> getAnswers()
-			throws MalformedEditorButtonException {
+		throws MalformedEditorButtonException {
 		return answers;
 	}
 
