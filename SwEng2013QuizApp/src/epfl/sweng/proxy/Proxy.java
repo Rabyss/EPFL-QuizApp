@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import org.apache.http.HttpStatus;
-import org.json.JSONException;
 
 import epfl.sweng.context.AppContext;
 import epfl.sweng.context.ConnectionEvent;
@@ -12,7 +11,6 @@ import epfl.sweng.context.ConnectionEvent.Type;
 import epfl.sweng.editquestions.PostedQuestionEvent;
 import epfl.sweng.events.EventEmitter;
 import epfl.sweng.events.EventListener;
-import epfl.sweng.quizquestions.QuizQuestion;
 import epfl.sweng.servercomm.RequestContext;
 import epfl.sweng.servercomm.ServerCommunicator;
 import epfl.sweng.servercomm.ServerEvent;
@@ -26,7 +24,8 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 	private ArrayList<QuestionToSubmit> postQuestion;
 	private ArrayList<ServerResponse> getQuestion;
 	private static Proxy sInstance = null;
-	private String jsonQuestion;
+	private String questionEntity;
+	private QuestionToSubmit questionToSubmit;
 
 	private Proxy() {
 		serverComm = ServerCommunicator.getInstance();
@@ -58,14 +57,12 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 
 	@Override
 	public void doHttpPost(RequestContext reqContext, ServerEvent event) {
+		questionToSubmit = new QuestionToSubmit(reqContext, event);
 		if (isOnline()) {
-			jsonQuestion = reqContext.getEntity().toString();
+			questionEntity = reqContext.getEntity().toString();
 			serverComm.doHttpPost(reqContext, event);
-
-			// TODO stocké les submit questions dans le alreadyPostQuestion
 		} else {
-			postQuestion.add(new QuestionToSubmit(reqContext, event));
-			// TODO stocké les submit dans un array qu'il faudra ensuite submit
+			postQuestion.add(questionToSubmit);
 		}
 
 	}
@@ -84,15 +81,21 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 		}
 	}
 
-	// public void on(ConnectedEvent.OfflineEvent event) {
-	//
-	// }
-	// public void on(ConnectedEvent.OnlineEvent event) {
-	//
-	// }
+	
+	public void on(OnlineEvent event) {
+		if (!postQuestion.isEmpty()) {
+			RequestContext reqContext= postQuestion.get(0).getReqContext();
+			ServerEvent postEvent= postQuestion.get(0).getEvent();
+			postQuestion.remove(0);
+			doHttpPost(reqContext, postEvent);
+		}
+		
+	}
+	
 	public void on(ReceivedQuestionEvent event) {
 		ServerResponse data = event.getResponse();
 		if (data != null && data.getStatusCode() < HTTP_ERROR_THRESHOLD) {
+			
 			getQuestion.add(data);
 			this.emit(new ConnectionEvent(Type.COMMUNICATION_SUCCESS));
 		} else {
@@ -104,10 +107,20 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 	public void on(PostedQuestionEvent event) {
 		ServerResponse data = event.getResponse();
 		if (data != null && data.getStatusCode() < HTTP_ERROR_THRESHOLD) {
-
+			ServerResponse serverResponse = new ServerResponse(questionEntity, data.getStatusCode());
+			getQuestion.add(serverResponse);
+			this.emit(new ConnectionEvent(Type.COMMUNICATION_SUCCESS));
+			this.emit(event);
+			//post other cached questions that wait to be posted
+			on(new OnlineEvent());
+			
 		} else {
+			postQuestion.add(0, questionToSubmit);
+			this.emit(new ConnectionEvent(Type.COMMUNICATION_ERROR));
+			this.emit(event);
 
 		}
+		
 	}
 
 	private class QuestionToSubmit {
