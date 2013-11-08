@@ -141,7 +141,7 @@ public class QuizQuestion {
 	public int auditErrors() {
 		int errors = 0;
 
-		if (containsNotSpaceChar(mQuestion) || mQuestion.length() <= MAX_QUESTION_LENGTH) {
+		if (!containsNonWhitespaceCharacters(mQuestion) || mQuestion.length() > MAX_QUESTION_LENGTH) {
 			errors++;
 		}
 
@@ -174,7 +174,7 @@ public class QuizQuestion {
         };
 	}
 
-    private boolean containsNotSpaceChar(String str) {
+    private boolean containsNonWhitespaceCharacters(String str) {
         if (str == null) {
             return false;
         }
@@ -205,7 +205,7 @@ public class QuizQuestion {
             }
 
             for (String answer : this) {
-                if (!containsNotSpaceChar(answer)) {
+                if (!containsNonWhitespaceCharacters(answer)) {
                     errors++;
                 }
             }
@@ -228,7 +228,7 @@ public class QuizQuestion {
             }
 
             for (String tag : this) {
-                if (!containsNotSpaceChar(tag)) {
+                if (!containsNonWhitespaceCharacters(tag)) {
                     errors++;
                 }
             }
