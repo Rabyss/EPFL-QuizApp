@@ -218,6 +218,17 @@ public class EditQuestionActivity extends QuestionActivity {
 		}
 	}
 
+	public int auditErrors() {
+		int errors = 0;
+		
+		errors += auditAnswers();
+		errors += auditButtons();
+		errors += auditEditText();
+		errors += auditSubmitButton();
+		
+		return errors;
+	}
+	
 	private int auditButtons() {
 		int errors = 0;
 
