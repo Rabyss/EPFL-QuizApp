@@ -146,7 +146,6 @@ public class EditQuestionActivity extends QuestionActivity {
 			tagsSet.add(tag);
 		}
 
-		// FIXME: think about implication of having a id ?
 		QuizQuestion quizQuestion = new QuizQuestion(question, answersText,
 				solutionIndex, tagsSet, -1, null);
 		return quizQuestion;
@@ -197,14 +196,14 @@ public class EditQuestionActivity extends QuestionActivity {
 		@Override
 		public void onTextChanged(CharSequence s, int start, int before,
 				int count) {
-			// TODO Auto-generated method stub
+			// Nothing to do
 
 		}
 
 		@Override
 		public void beforeTextChanged(CharSequence s, int start, int count,
 				int after) {
-			// TODO Auto-generated method stub
+			// Nothing to do
 
 		}
 

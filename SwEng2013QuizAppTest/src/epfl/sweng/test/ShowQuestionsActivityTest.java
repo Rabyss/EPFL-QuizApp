@@ -73,7 +73,6 @@ public class ShowQuestionsActivityTest extends
 		Button nextQuestionButton = solo.getButton("Next question");
 		assertTrue("Next question button is enabled",
 				nextQuestionButton.isEnabled());
-		// TODO Test if listView is disabled but how ???
 		assertFalse("Wait for an answer is not displayed", solo.searchText("Wait for an answer..."));
 	}
 	
