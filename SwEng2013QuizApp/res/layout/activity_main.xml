@@ -47,7 +47,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
-            android:text="@string/online_mode"
+            android:text="@string/offline_mode"
             android:checked="true" />
 
     </RelativeLayout>
