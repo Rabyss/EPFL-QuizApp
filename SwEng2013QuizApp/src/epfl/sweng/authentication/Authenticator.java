@@ -8,6 +8,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 
+import epfl.sweng.entry.MainActivity;
 import epfl.sweng.events.EventEmitter;
 import epfl.sweng.events.EventListener;
 import epfl.sweng.servercomm.RequestContext;
@@ -107,8 +108,10 @@ public class Authenticator extends EventEmitter implements EventListener {
 			try {
 				String json = event.getSessionID();
 				this.mSession = new JSONSession(json).getSession();
+		        
+				MainActivity.setIsLogged(true);
 				
-				this.emit(new AuthenticationEvent.AuthenticatedEvent(mSession));
+		        this.emit(new AuthenticationEvent.AuthenticatedEvent(mSession));
 			} catch (JSONException e) {
 				this.error("Error: malformed JSON (session).");
 			}

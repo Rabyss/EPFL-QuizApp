@@ -97,9 +97,9 @@ public class AuthenticationActivity extends Activity implements EventListener {
 		mLoading.dismiss();
 		
 		String sessionID = event.getSessionID();
+		
 		UserStorage.getInstance(this).storeSessionID(sessionID);
 		
-		MainActivity.setIsLogged(true);
 		displayMainActivity();
 	}
 
