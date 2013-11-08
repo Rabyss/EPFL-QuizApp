@@ -9,6 +9,7 @@ import epfl.sweng.context.AppContext;
 import epfl.sweng.entry.MainActivity;
 import epfl.sweng.events.EventListener;
 import epfl.sweng.servercomm.RequestContext;
+import epfl.sweng.servercomm.ServerCommunicator;
 import epfl.sweng.servercomm.ServerEvent;
 import epfl.sweng.servercomm.ServerResponse;
 

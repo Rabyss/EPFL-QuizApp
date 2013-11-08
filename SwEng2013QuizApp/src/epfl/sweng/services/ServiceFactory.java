@@ -6,7 +6,7 @@ import epfl.sweng.showquestions.ShowQuestionsActivity;
 public class ServiceFactory {
 
     public static Service getServiceFor(EditQuestionActivity activity) {
-        return new QuestionPublisherService();
+        return new QuestionPublisherService(activity);
     }
 
     public static Service getServiceFor(ShowQuestionsActivity activity) {

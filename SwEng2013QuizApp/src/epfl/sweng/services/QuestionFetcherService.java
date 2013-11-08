@@ -1,11 +1,13 @@
 package epfl.sweng.services;
 
 import org.apache.http.HttpStatus;
+import org.json.JSONException;
 
 import epfl.sweng.context.AppContext;
 import epfl.sweng.events.EventEmitter;
 import epfl.sweng.events.EventListener;
 import epfl.sweng.proxy.Proxy;
+import epfl.sweng.quizquestions.QuizQuestion;
 import epfl.sweng.servercomm.RequestContext;
 import epfl.sweng.servercomm.ServerCommunicator;
 import epfl.sweng.servercomm.ServerResponse;
@@ -36,7 +38,14 @@ public class QuestionFetcherService extends EventEmitter implements Service,
         } else if (status >= HttpStatus.SC_BAD_REQUEST) {
             this.emit(new ConnexionErrorEvent());
         } else {
-            
+            QuizQuestion quizQuestion = null;
+            try {
+                quizQuestion = new QuizQuestion(response.getEntity().toString());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            this.emit(new ShowQuestionEvent(quizQuestion));
         }
     }
 
