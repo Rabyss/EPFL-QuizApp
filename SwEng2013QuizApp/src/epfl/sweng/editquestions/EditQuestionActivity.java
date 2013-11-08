@@ -51,7 +51,7 @@ public class EditQuestionActivity extends QuestionActivity {
 				.addTextChangedListener(new EditTextWatcher());
 		((EditText) findViewById(R.id.editTags))
 				.addTextChangedListener(new EditTextWatcher());
-		((Button) findViewById(R.id.butttonSubmitQuestion)).setEnabled(false);
+		((Button) findViewById(R.id.buttonSubmitQuestion)).setEnabled(false);
 
 		// let the testing infrastructure know that edit question has been
 		// initialized
@@ -114,10 +114,10 @@ public class EditQuestionActivity extends QuestionActivity {
 	public void tryAudit() {
 		QuizQuestion quizQuestion = extractQuizQuestion();
 		if (quizQuestion.auditErrors() == 0) {
-			((Button) findViewById(R.id.butttonSubmitQuestion))
+			((Button) findViewById(R.id.buttonSubmitQuestion))
 					.setEnabled(true);
 		} else {
-			((Button) findViewById(R.id.butttonSubmitQuestion))
+			((Button) findViewById(R.id.buttonSubmitQuestion))
 					.setEnabled(false);
 		}
 	}
@@ -172,7 +172,7 @@ public class EditQuestionActivity extends QuestionActivity {
 		resettingUI = true;
 		((EditText) findViewById(R.id.editQuestionText)).setText("");
 		((EditText) findViewById(R.id.editTags)).setText("");
-		((Button) findViewById(R.id.butttonSubmitQuestion)).setEnabled(false);
+		((Button) findViewById(R.id.buttonSubmitQuestion)).setEnabled(false);
 		while (answers.size() > 1) {
 			answers.get(answers.size() - 1).remove();
 		}
@@ -229,11 +229,11 @@ public class EditQuestionActivity extends QuestionActivity {
 			errors++;
 		}
 
-		if (!((Button) findViewById(R.id.butttonSubmitQuestion)).getText()
+		if (!((Button) findViewById(R.id.buttonSubmitQuestion)).getText()
 				.equals("Submit")) {
 			errors++;
 		}
-		if ((findViewById(R.id.butttonSubmitQuestion)).getVisibility() != View.VISIBLE) {
+		if ((findViewById(R.id.buttonSubmitQuestion)).getVisibility() != View.VISIBLE) {
 			errors++;
 		}
 
@@ -303,10 +303,10 @@ public class EditQuestionActivity extends QuestionActivity {
 		int errors = 0;
 		QuizQuestion quizQuestion = extractQuizQuestion();
 		
-		if (findViewById(R.id.butttonSubmitQuestion).isEnabled() && quizQuestion.auditErrors() != 0) {
+		if (findViewById(R.id.buttonSubmitQuestion).isEnabled() && quizQuestion.auditErrors() != 0) {
 			errors = 1;
 		}
-		if (!findViewById(R.id.butttonSubmitQuestion).isEnabled() && quizQuestion.auditErrors() == 0) {
+		if (!findViewById(R.id.buttonSubmitQuestion).isEnabled() && quizQuestion.auditErrors() == 0) {
 			errors = 1;
 		}
 		
