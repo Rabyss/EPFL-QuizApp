@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import epfl.sweng.R;
 import epfl.sweng.authentication.AuthenticationActivity;
@@ -27,6 +28,7 @@ public class MainActivity extends Activity {
 	private Button mSubmitQuestionButton;
 	private LinearLayout mLinearLayout;
 	private MainActivity mThis;
+	private CheckBox isOnlineCheckBox;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -92,15 +94,19 @@ public class MainActivity extends Activity {
 		mShowQuestionButton.setText(R.string.show_random_question);
 		mSubmitQuestionButton = new Button(this);
 		mSubmitQuestionButton.setText(R.string.submit_quiz);
+		isOnlineCheckBox = new CheckBox(this);
+		isOnlineCheckBox.setText(R.string.online_mode);
 		
 		if (mIsLogged) {
 			mLogButton.setText(R.string.log_out);
 			mShowQuestionButton.setEnabled(true);
 			mSubmitQuestionButton.setEnabled(true);
+			isOnlineCheckBox.setVisibility(View.VISIBLE);
 		} else {
 			mLogButton.setText(R.string.log_button);
 			mShowQuestionButton.setEnabled(false);
 			mSubmitQuestionButton.setEnabled(false);
+			isOnlineCheckBox.setVisibility(View.INVISIBLE);
 		}
 		
 		mThis = this;
@@ -143,6 +149,7 @@ public class MainActivity extends Activity {
 		mLinearLayout.addView(mLogButton);
 		mLinearLayout.addView(mShowQuestionButton);
 		mLinearLayout.addView(mSubmitQuestionButton);
+		mLinearLayout.addView(isOnlineCheckBox);
 		
 	}
 	public static void setIsLogged(boolean isLogged) {
