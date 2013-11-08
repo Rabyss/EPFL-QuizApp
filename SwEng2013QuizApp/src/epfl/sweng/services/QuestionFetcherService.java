@@ -18,6 +18,7 @@ public class QuestionFetcherService extends EventEmitter implements Service,
 
     public QuestionFetcherService(EventListener listener) {
         addListener(listener);
+        Proxy.getInstance().addListener(this);
     }
 
     @Override

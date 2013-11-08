@@ -25,6 +25,7 @@ public class QuestionPublisherService extends EventEmitter implements Service,
     public QuestionPublisherService(EditQuestionActivity activity) {
         addListener(activity);
         mActivity = activity;
+        Proxy.getInstance().addListener(this);
     }
 
     @Override

@@ -56,6 +56,7 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 			ServerResponse response = offlineRandomQuestion();
 			event.setResponse(response);
 			this.emit(event);
+			// TODO : changer l'event envoyé par un ReceivedEvent
 		}
 
 	}
@@ -68,6 +69,8 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 			serverComm.doHttpPost(reqContext, event);
 		} else {
 			postQuestion.add(questionToSubmit);
+			// TODO : ajouter un event pour notifié EditQuestionActivity
+			// TODO : dans EditQuestionActivity: changer les appel a ServerComm par un appel a proxy
 		}
 
 	}
