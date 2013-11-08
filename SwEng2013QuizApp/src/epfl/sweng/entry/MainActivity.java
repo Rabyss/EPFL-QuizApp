@@ -107,6 +107,7 @@ public class MainActivity extends Activity {
 		mSubmitQuestionButton.setText(R.string.submit_quiz);
 		isOfflineCheckBox = new CheckBox(this);
 		isOfflineCheckBox.setText(R.string.offline_mode);
+		isOfflineCheckBox.setChecked(!AppContext.getContext().isOnline());
 		
 		if (mIsLogged) {
 			mLogButton.setText(R.string.log_out);

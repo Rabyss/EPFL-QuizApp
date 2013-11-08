@@ -17,13 +17,14 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import epfl.sweng.quizquestions.QuizQuestion;
 import epfl.sweng.R;
-import epfl.sweng.servercomm.ServerCommunicator;
+import epfl.sweng.proxy.Proxy;
+import epfl.sweng.quizquestions.QuizQuestion;
 import epfl.sweng.servercomm.ServerResponse;
 import epfl.sweng.testing.TestCoordinator;
 import epfl.sweng.testing.TestCoordinator.TTChecks;
 import epfl.sweng.ui.QuestionActivity;
+
 
 /**
  * Activity to download a question and display it
@@ -76,8 +77,8 @@ public class ShowQuestionsActivity extends QuestionActivity {
                 LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         // downloads a random question from the server
         super.getRequestContext().setServerURL(
-                ServerCommunicator.SWENG_GET_RANDOM_QUESTION_URL);
-        ServerCommunicator.getInstance().doHttpGet(super.getRequestContext(),
+                Proxy.SWENG_GET_RANDOM_QUESTION_URL);
+        Proxy.getInstance().doHttpGet(super.getRequestContext(),
                 new ReceivedQuestionEvent());
         // show a progress dialog while waiting for question
         showProgressDialog();
