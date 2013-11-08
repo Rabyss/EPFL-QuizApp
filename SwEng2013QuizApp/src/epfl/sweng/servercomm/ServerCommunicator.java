@@ -12,13 +12,14 @@ import org.apache.http.client.methods.HttpPost;
 
 import android.os.AsyncTask;
 import epfl.sweng.events.EventEmitter;
+import epfl.sweng.proxy.IServer;
 
 /**
  * 
  * Handles communication with the server.
  * 
  */
-public final class ServerCommunicator extends EventEmitter {
+public final class ServerCommunicator extends EventEmitter implements IServer {
 
 	private static ServerCommunicator sInstance = null;
 	public final static String SWENG_SERVER_URL = "https://sweng-quiz.appspot.com";
