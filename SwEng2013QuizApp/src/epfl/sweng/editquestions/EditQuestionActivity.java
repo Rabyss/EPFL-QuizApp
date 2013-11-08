@@ -114,6 +114,7 @@ public class EditQuestionActivity extends QuestionActivity {
     public void tryAudit() {
         QuizQuestion quizQuestion = extractQuizQuestion();
         if (quizQuestion.auditErrors() == 0) {
+            System.err.println("AUDITING");
             ((Button) findViewById(R.id.buttonSubmitQuestion)).setEnabled(true);
         } else {
             ((Button) findViewById(R.id.buttonSubmitQuestion))
@@ -214,6 +215,17 @@ public class EditQuestionActivity extends QuestionActivity {
             }
 
         }
+    }
+
+    public int auditErrors() {
+        int errors = 0;
+
+        errors += auditAnswers();
+        errors += auditButtons();
+        errors += auditEditText();
+        errors += auditSubmitButton();
+
+        return errors;
     }
 
     private int auditButtons() {

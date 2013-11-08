@@ -8,11 +8,20 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.LinearLayout;
 import epfl.sweng.R;
 import epfl.sweng.authentication.AuthenticationActivity;
 import epfl.sweng.authentication.UserStorage;
+import epfl.sweng.context.AppContext;
+import epfl.sweng.context.ConnectionEvent;
+import epfl.sweng.context.ConnectionEvent.Type;
 import epfl.sweng.editquestions.EditQuestionActivity;
+import epfl.sweng.events.EventEmitter;
+import epfl.sweng.proxy.OnlineEvent;
+import epfl.sweng.proxy.Proxy;
 import epfl.sweng.showquestions.ShowQuestionsActivity;
 import epfl.sweng.testing.TestCoordinator;
 import epfl.sweng.testing.TestCoordinator.TTChecks;
@@ -22,11 +31,13 @@ import epfl.sweng.testing.TestCoordinator.TTChecks;
  */
 public class MainActivity extends Activity {
 	private static boolean mIsLogged = false;
+	private EventEmitter emitter;
 	private Button mLogButton;
 	private Button mShowQuestionButton;
 	private Button mSubmitQuestionButton;
 	private LinearLayout mLinearLayout;
 	private MainActivity mThis;
+	private CheckBox isOfflineCheckBox;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +46,9 @@ public class MainActivity extends Activity {
 		String sessionID = UserStorage.getInstance(this).getSessionID();
 		
 		mIsLogged = sessionID != null;
-		
+		emitter= new MainActivityEventEmitter();
+		AppContext.getContext().addAsListener(emitter);
+		emitter.addListener(Proxy.getInstance());
 		displayInit();
 		
 		// let the testing infrastructure know that entry point has been
@@ -92,15 +105,19 @@ public class MainActivity extends Activity {
 		mShowQuestionButton.setText(R.string.show_random_question);
 		mSubmitQuestionButton = new Button(this);
 		mSubmitQuestionButton.setText(R.string.submit_quiz);
+		isOfflineCheckBox = new CheckBox(this);
+		isOfflineCheckBox.setText(R.string.offline_mode);
 		
 		if (mIsLogged) {
 			mLogButton.setText(R.string.log_out);
 			mShowQuestionButton.setEnabled(true);
 			mSubmitQuestionButton.setEnabled(true);
+			isOfflineCheckBox.setVisibility(View.VISIBLE);
 		} else {
 			mLogButton.setText(R.string.log_button);
 			mShowQuestionButton.setEnabled(false);
 			mSubmitQuestionButton.setEnabled(false);
+			isOfflineCheckBox.setVisibility(View.INVISIBLE);
 		}
 		
 		mThis = this;
@@ -140,12 +157,27 @@ public class MainActivity extends Activity {
 				
 			}
 		});
+		
+		isOfflineCheckBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				
+				emitter.emit(new ConnectionEvent(Type.OFFLINE_CHECKBOX_CLICKED));
+				// offline
+				if (!isChecked) {
+					emitter.emit(new OnlineEvent());
+				}
+			}
+		});
 		mLinearLayout.addView(mLogButton);
 		mLinearLayout.addView(mShowQuestionButton);
 		mLinearLayout.addView(mSubmitQuestionButton);
+		mLinearLayout.addView(isOfflineCheckBox);
 		
 	}
 	public static void setIsLogged(boolean isLogged) {
 		mIsLogged = isLogged;
 	}
+	
 }
