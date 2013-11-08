@@ -1,5 +1,7 @@
 package epfl.sweng.context;
 
+import epfl.sweng.context.conn_state.ConnectionState;
+
 /**
  * Singleton used to carry the global state of the program at a given time.
  */
@@ -31,4 +33,7 @@ public enum AppContext {
         return mConnectionStateMachine.isOnline();
     }
 
+    public ConnectionState getCurrentConnexionState() {
+        return mConnectionStateMachine.getCurrentConnectionState();
+    }
 }

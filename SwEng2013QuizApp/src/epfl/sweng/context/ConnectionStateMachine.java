@@ -26,4 +26,8 @@ public final class ConnectionStateMachine implements EventListener {
         }
     }
 
+    public ConnectionState getCurrentConnectionState() {
+        return mCurrentState;
+    }
+
 }

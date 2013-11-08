@@ -13,7 +13,7 @@ public abstract class ConnectionState {
             super("Unknown transition when in state "+connectionState+" and get event "+event.getType()+".");
         }
         public UnknownTransitionException(ConnectionEvent event) {
-            //TODO: call the other constructor with the current state.
+            this(AppContext.getContext().getCurrentConnexionState(), event);
         }
     }
 }
