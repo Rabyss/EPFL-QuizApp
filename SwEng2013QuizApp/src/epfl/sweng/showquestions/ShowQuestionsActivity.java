@@ -18,7 +18,6 @@ import android.widget.Toast;
 import epfl.sweng.R;
 import epfl.sweng.quizquestions.QuizQuestion;
 import epfl.sweng.services.NothingInCacheEvent;
-import epfl.sweng.services.Service;
 import epfl.sweng.services.ServiceFactory;
 import epfl.sweng.services.ShowQuestionEvent;
 import epfl.sweng.testing.TestCoordinator;
@@ -42,7 +41,6 @@ public class ShowQuestionsActivity extends QuestionActivity {
 	private TextView mCorrectness;
 	private LinearLayout mLinearLayout;
 	private ListView mAnswersList;
-	private Service mService;
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -54,13 +52,13 @@ public class ShowQuestionsActivity extends QuestionActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		mSelf = this;
 		getQuestion();
 	}
 
 	private void getQuestion() {
 		// downloads a random question from the server
-		mService = ServiceFactory.getServiceFor(this);
-		mService.execute();
+		ServiceFactory.getServiceFor(this).execute();
 		showProgressDialog();
 	}
 

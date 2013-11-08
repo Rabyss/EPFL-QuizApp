@@ -17,7 +17,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 import epfl.sweng.R;
 import epfl.sweng.quizquestions.QuizQuestion;
-import epfl.sweng.services.Service;
 import epfl.sweng.services.ServiceFactory;
 import epfl.sweng.services.SuccessfulSubmitEvent;
 import epfl.sweng.testing.TestCoordinator;
@@ -31,188 +30,186 @@ import epfl.sweng.ui.QuestionActivity;
  * 
  */
 public class EditQuestionActivity extends QuestionActivity {
-    private ArrayList<AnswerEditor> answers;
-    private boolean resettingUI = false;
-    private Service mService;
+	private ArrayList<AnswerEditor> answers;
+	private boolean resettingUI = false;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_edit_question);
+		setContentView(R.layout.activity_edit_question);
 
-        answers = new ArrayList<AnswerEditor>();
-        answers.add(new AnswerEditor(this,
-                (ViewGroup) findViewById(R.id.linearLayoutAnswers), true));
+		answers = new ArrayList<AnswerEditor>();
+		answers.add(new AnswerEditor(this,
+				(ViewGroup) findViewById(R.id.linearLayoutAnswers), true));
 
-        findViewById(R.id.editQuestionText).requestFocus();
-        ((EditText) findViewById(R.id.editQuestionText))
-                .addTextChangedListener(new EditTextWatcher());
-        ((EditText) findViewById(R.id.editTags))
-                .addTextChangedListener(new EditTextWatcher());
-        ((Button) findViewById(R.id.buttonSubmitQuestion)).setEnabled(false);
+		findViewById(R.id.editQuestionText).requestFocus();
+		((EditText) findViewById(R.id.editQuestionText))
+				.addTextChangedListener(new EditTextWatcher());
+		((EditText) findViewById(R.id.editTags))
+				.addTextChangedListener(new EditTextWatcher());
+		((Button) findViewById(R.id.buttonSubmitQuestion)).setEnabled(false);
 
-        // let the testing infrastructure know that edit question has been
-        // initialized
-        TestCoordinator.check(TTChecks.EDIT_QUESTIONS_SHOWN);
-    }
+		// let the testing infrastructure know that edit question has been
+		// initialized
+		TestCoordinator.check(TTChecks.EDIT_QUESTIONS_SHOWN);
+	}
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.edit_question, menu);
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.edit_question, menu);
 
-        return true;
-    }
+		return true;
+	}
 
-    public void addAnswer(View view) throws MalformedEditorButtonException {
-        ViewGroup linearLayout = (ViewGroup) findViewById(R.id.linearLayoutAnswers);
-        answers.add(new AnswerEditor(this, linearLayout, false));
-        updateSubmitButton();
-    }
+	public void addAnswer(View view) throws MalformedEditorButtonException {
+		ViewGroup linearLayout = (ViewGroup) findViewById(R.id.linearLayoutAnswers);
+		answers.add(new AnswerEditor(this, linearLayout, false));
+		updateSubmitButton();
+	}
 
-    public ArrayList<AnswerEditor> getAnswers() throws MalformedEditorButtonException {
-        return answers;
-    }
+	public ArrayList<AnswerEditor> getAnswers()
+			throws MalformedEditorButtonException {
+		return answers;
+	}
 
-    public boolean isResettingUI() {
-        return resettingUI;
-    }
+	public boolean isResettingUI() {
+		return resettingUI;
+	}
 
-    public void submitQuestion(View view) throws MalformedEditorButtonException {
-    	if (auditErrors() > 0) {
-    		return;
-    	}
-    	
-        InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+	public void submitQuestion(View view) throws MalformedEditorButtonException {
+		if (auditErrors() > 0) {
+			return;
+		}
 
-        inputManager.hideSoftInputFromWindow(
-                getCurrentFocus().getWindowToken(),
-                InputMethodManager.HIDE_NOT_ALWAYS);
+		InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 
-        mService = ServiceFactory.getServiceFor(this);
-        mService.execute();
+		inputManager.hideSoftInputFromWindow(
+				getCurrentFocus().getWindowToken(),
+				InputMethodManager.HIDE_NOT_ALWAYS);
 
-        showProgressDialog();
-    }
+		ServiceFactory.getServiceFor(this).execute();
 
-    public void on(SuccessfulSubmitEvent event) {
-        hideProgressDialog();
-        Toast.makeText(this, R.string.successful_submit, TOAST_DISPLAY_TIME)
-                .show();
+		showProgressDialog();
+	}
 
-        // Reset UI
-        resettingUI = true;
-        ((EditText) findViewById(R.id.editQuestionText)).setText("");
-        ((EditText) findViewById(R.id.editTags)).setText("");
-        ((Button) findViewById(R.id.buttonSubmitQuestion)).setEnabled(false);
-        while (answers.size() > 1) {
-            answers.get(answers.size() - 1).remove();
-        }
-        answers.get(0).resetContent();
-        answers.get(0).setCorrect(false);
-        resettingUI = false;
-        TestCoordinator.check(TTChecks.NEW_QUESTION_SUBMITTED);
-    }
+	public void on(SuccessfulSubmitEvent event) {
+		hideProgressDialog();
+		Toast.makeText(this, R.string.successful_submit, TOAST_DISPLAY_TIME)
+				.show();
 
-    public void updateSubmitButton() {
-        QuizQuestion quizQuestion = extractQuizQuestion();
-        if (quizQuestion.auditErrors() == 0) {
-            ((Button) findViewById(R.id.buttonSubmitQuestion)).setEnabled(true);
-        } else {
-            ((Button) findViewById(R.id.buttonSubmitQuestion))
-                    .setEnabled(false);
-        }
-    }
+		// Reset UI
+		resettingUI = true;
+		((EditText) findViewById(R.id.editQuestionText)).setText("");
+		((EditText) findViewById(R.id.editTags)).setText("");
+		((Button) findViewById(R.id.buttonSubmitQuestion)).setEnabled(false);
+		while (answers.size() > 1) {
+			answers.get(answers.size() - 1).remove();
+		}
+		answers.get(0).resetContent();
+		answers.get(0).setCorrect(false);
+		resettingUI = false;
+		TestCoordinator.check(TTChecks.NEW_QUESTION_SUBMITTED);
+	}
 
-    private QuizQuestion extractQuizQuestion() {
-        String question = ((EditText) findViewById(R.id.editQuestionText))
-                .getText().toString();
+	public void updateSubmitButton() {
+		QuizQuestion quizQuestion = extractQuizQuestion();
+		if (quizQuestion.auditErrors() == 0) {
+			((Button) findViewById(R.id.buttonSubmitQuestion)).setEnabled(true);
+		} else {
+			((Button) findViewById(R.id.buttonSubmitQuestion))
+					.setEnabled(false);
+		}
+	}
 
-        ArrayList<String> answersText = new ArrayList<String>();
-        int solutionIndex = -1;
+	private QuizQuestion extractQuizQuestion() {
+		String question = ((EditText) findViewById(R.id.editQuestionText))
+				.getText().toString();
 
-        for (AnswerEditor answer : answers) {
-            answersText.add(answer.getContent());
-            if (answer.isCorrect()) {
-                solutionIndex = answers.indexOf(answer);
-            }
-        }
+		ArrayList<String> answersText = new ArrayList<String>();
+		int solutionIndex = -1;
 
-        String tagsText = ((EditText) findViewById(R.id.editTags)).getText()
-                .toString();
-        String[] tags = (tagsText.trim().isEmpty()) ? new String[0]
-                : cleanUp(tagsText.trim().split("\\W+"));
+		for (AnswerEditor answer : answers) {
+			answersText.add(answer.getContent());
+			if (answer.isCorrect()) {
+				solutionIndex = answers.indexOf(answer);
+			}
+		}
 
-        Set<String> tagsSet = new HashSet<String>();
-        for (String tag : tags) {
-            tagsSet.add(tag);
-        }
+		String tagsText = ((EditText) findViewById(R.id.editTags)).getText()
+				.toString();
+		String[] tags = (tagsText.trim().isEmpty()) ? new String[0]
+				: cleanUp(tagsText.trim().split("\\W+"));
 
-        QuizQuestion quizQuestion = new QuizQuestion(question, answersText,
-                solutionIndex, tagsSet, -1, null);
-        return quizQuestion;
-    }
+		Set<String> tagsSet = new HashSet<String>();
+		for (String tag : tags) {
+			tagsSet.add(tag);
+		}
 
-    private String[] cleanUp(String[] strArray) {
-        ArrayList<String> result = new ArrayList<String>();
-        for (int i = 0; i < strArray.length; i++) {
-            if (strArray[i] != null && !strArray[i].equals("")) {
-                result.add(strArray[i]);
-            }
-        }
+		QuizQuestion quizQuestion = new QuizQuestion(question, answersText,
+				solutionIndex, tagsSet, -1, null);
+		return quizQuestion;
+	}
 
-        return result.toArray(new String[result.size()]);
-    }
+	private String[] cleanUp(String[] strArray) {
+		ArrayList<String> result = new ArrayList<String>();
+		for (int i = 0; i < strArray.length; i++) {
+			if (strArray[i] != null && !strArray[i].equals("")) {
+				result.add(strArray[i]);
+			}
+		}
 
-    @Override
-    protected void serverFailure() {
-        Toast.makeText(this, R.string.submit_server_failure, Toast.LENGTH_LONG)
-                .show();
-        TestCoordinator.check(TTChecks.NEW_QUESTION_SUBMITTED);
+		return result.toArray(new String[result.size()]);
+	}
 
-    }
+	@Override
+	protected void serverFailure() {
+		Toast.makeText(this, R.string.submit_server_failure, Toast.LENGTH_LONG)
+				.show();
+		TestCoordinator.check(TTChecks.NEW_QUESTION_SUBMITTED);
 
-    /**
-     * Test when texts change
-     */
-    private final class EditTextWatcher implements TextWatcher {
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before,
-                int count) {
-            // Nothing to do
+	}
 
-        }
+	/**
+	 * Test when texts change
+	 */
+	private final class EditTextWatcher implements TextWatcher {
+		@Override
+		public void onTextChanged(CharSequence s, int start, int before,
+				int count) {
+			// Nothing to do
 
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count,
-                int after) {
-            // Nothing to do
+		}
 
-        }
+		@Override
+		public void beforeTextChanged(CharSequence s, int start, int count,
+				int after) {
+			// Nothing to do
 
-        @Override
-        public void afterTextChanged(Editable s) {
-            if (!resettingUI) {
-                updateSubmitButton();
-                TestCoordinator.check(TTChecks.QUESTION_EDITED);
-            }
+		}
 
-        }
-    }
+		@Override
+		public void afterTextChanged(Editable s) {
+			if (!resettingUI) {
+				updateSubmitButton();
+				TestCoordinator.check(TTChecks.QUESTION_EDITED);
+			}
 
+		}
+	}
 
 	public int auditErrors() {
 		int errors = 0;
-		
+
 		errors += auditAnswers();
 		errors += auditButtons();
 		errors += auditEditTexts();
 		errors += auditSubmitButton();
-		
+
 		return errors;
 	}
-	
+
 	private int auditButtons() {
 		int errors = 0;
 
@@ -268,27 +265,34 @@ public class EditQuestionActivity extends QuestionActivity {
 
 	private int auditEditTexts() {
 		int totalErrors = 0;
-		
+
 		EditText questionText = (EditText) findViewById(R.id.editQuestionText);
 		EditText tagsText = (EditText) findViewById(R.id.editTags);
-		
+
 		if (questionText == null
-				|| !questionText.getHint().equals(getResources().getText(R.string.hint_question_text))
+				|| !questionText.getHint().equals(
+						getResources().getText(R.string.hint_question_text))
 				|| questionText.getVisibility() != View.VISIBLE) {
 			totalErrors++;
 		}
-		
-		if (tagsText == null || !tagsText.getHint().equals(getResources().getText(R.string.edit_tags))
+
+		if (tagsText == null
+				|| !tagsText.getHint().equals(
+						getResources().getText(R.string.edit_tags))
 				|| tagsText.getVisibility() != View.VISIBLE) {
 			totalErrors++;
 		}
-		
+
 		// TODO : control that is useful and that is what is asked
 		if (answers.size() < 0) {
 			totalErrors++;
 		} else {
 			for (AnswerEditor answer : answers) {
-				if (!answer.getEditText().getHint().equals(getResources().getText(R.string.edit_answer_text))
+				if (!answer
+						.getEditText()
+						.getHint()
+						.equals(getResources().getText(
+								R.string.edit_answer_text))
 						|| answer.getEditText().getVisibility() != View.VISIBLE) {
 					totalErrors++;
 				}
@@ -296,27 +300,29 @@ public class EditQuestionActivity extends QuestionActivity {
 		}
 		return totalErrors;
 	}
-	
+
 	private int auditSubmitButton() {
 		int errors = 0;
 		QuizQuestion quizQuestion = extractQuizQuestion();
-		
-		if (findViewById(R.id.buttonSubmitQuestion).isEnabled() && quizQuestion.auditErrors() != 0) {
+
+		if (findViewById(R.id.buttonSubmitQuestion).isEnabled()
+				&& quizQuestion.auditErrors() != 0) {
 			errors = 1;
 		}
-		if (!findViewById(R.id.buttonSubmitQuestion).isEnabled() && quizQuestion.auditErrors() == 0) {
+		if (!findViewById(R.id.buttonSubmitQuestion).isEnabled()
+				&& quizQuestion.auditErrors() == 0) {
 			errors = 1;
 		}
-		
+
 		return errors;
 	}
 
-    public QuizQuestion getQuestion() {
-        QuizQuestion quizQuestion = extractQuizQuestion();
-        if (quizQuestion.auditErrors() == 0) {
-            return quizQuestion;
-        } else {
-            return null;
-        }
-    }
+	public QuizQuestion getQuestion() {
+		QuizQuestion quizQuestion = extractQuizQuestion();
+		if (quizQuestion.auditErrors() == 0) {
+			return quizQuestion;
+		} else {
+			return null;
+		}
+	}
 }

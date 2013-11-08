@@ -5,12 +5,20 @@ import epfl.sweng.showquestions.ShowQuestionsActivity;
 
 public class ServiceFactory {
 
+	private static QuestionPublisherService publisher = null;
+	private static QuestionFetcherService fetcher = null;
     public static Service getServiceFor(EditQuestionActivity activity) {
-        return new QuestionPublisherService(activity);
+    	if(publisher == null){
+    		publisher = new QuestionPublisherService(activity);
+    	}
+        return publisher;
     }
 
     public static Service getServiceFor(ShowQuestionsActivity activity) {
-        return new QuestionFetcherService(activity);
+    	if(fetcher == null){
+    		fetcher = new QuestionFetcherService(activity);
+    	}
+        return fetcher;
     }
 
 }
