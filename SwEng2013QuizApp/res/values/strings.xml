@@ -21,9 +21,10 @@
     <string name="successful_submit">Successful submit</string>
     <string name="error_server_comm">Server is unreachable.</string>
     <string name="error_failure">Failure</string>
+    <string name="nothing_in_cache">Nothing in cache</string>
     <string name="next_question">Next question</string>
-    <string name="fetch_server_failure">There was an error retrieving the question</string>
-    <string name="submit_server_failure">Could not upload the question to the server</string>
+    <string name="fetch_server_failure">There was an error retrieving the question, switched to offline mode.</string>
+    <string name="submit_server_failure">Could not upload the question to the server, switched to offline mode.</string>
     <string name="log_button">Log in using Tequila</string>
     <string name="title_activity_authentication">AuthenticationActivity</string>
     <string name="log_out">Log out</string>

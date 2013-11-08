@@ -1,7 +1,5 @@
 package epfl.sweng.showquestions;
 
-import org.json.JSONException;
-
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
@@ -17,10 +15,12 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import epfl.sweng.quizquestions.QuizQuestion;
 import epfl.sweng.R;
-import epfl.sweng.servercomm.ServerCommunicator;
-import epfl.sweng.servercomm.ServerResponse;
+import epfl.sweng.quizquestions.QuizQuestion;
+import epfl.sweng.services.NothingInCacheEvent;
+import epfl.sweng.services.Service;
+import epfl.sweng.services.ServiceFactory;
+import epfl.sweng.services.ShowQuestionEvent;
 import epfl.sweng.testing.TestCoordinator;
 import epfl.sweng.testing.TestCoordinator.TTChecks;
 import epfl.sweng.ui.QuestionActivity;
@@ -42,6 +42,7 @@ public class ShowQuestionsActivity extends QuestionActivity {
     private TextView mCorrectness;
     private LinearLayout mLinearLayout;
     private ListView mAnswersList;
+    private Service mService;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -57,17 +58,6 @@ public class ShowQuestionsActivity extends QuestionActivity {
         getQuestion();
     }
 
-    @Override
-    protected void processDownloadedData(Object data) {
-        String strRandomQuestion = ((ServerResponse) data).getEntity();
-        try {
-            mRandomQuestion = new QuizQuestion(strRandomQuestion);
-        } catch (JSONException e) {
-            Toast.makeText(this, e.getMessage(), TOAST_DISPLAY_TIME).show();
-        }
-        showQuestion();
-    }
-
     private void getQuestion() {
         // creates the main layout
         mLinearLayout = new LinearLayout(this);
@@ -75,16 +65,22 @@ public class ShowQuestionsActivity extends QuestionActivity {
         mLinearLayout.setLayoutParams(new LayoutParams(
                 LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         // downloads a random question from the server
-        super.getRequestContext().setServerURL(
-                ServerCommunicator.SWENG_GET_RANDOM_QUESTION_URL);
-        ServerCommunicator.getInstance().doHttpGet(super.getRequestContext(),
-                new ReceivedQuestionEvent());
-        // show a progress dialog while waiting for question
+        mService = ServiceFactory.getServiceFor(this);
+        mService.execute();
         showProgressDialog();
     }
 
-    public void on(ReceivedQuestionEvent event) {
-        super.processEvent(event);
+    public void on(NothingInCacheEvent event) {
+        hideProgressDialog();
+        Toast.makeText(this, R.string.nothing_in_cache, Toast.LENGTH_LONG)
+                .show();
+        TestCoordinator.check(TTChecks.QUESTION_SHOWN);
+    }
+
+    public void on(ShowQuestionEvent event) {
+        hideProgressDialog();
+        mRandomQuestion = event.getQuizQuestion();
+        showQuestion();
     }
 
     private void showQuestion() {
@@ -201,6 +197,5 @@ public class ShowQuestionsActivity extends QuestionActivity {
         Toast.makeText(this, R.string.fetch_server_failure, Toast.LENGTH_LONG)
                 .show();
         TestCoordinator.check(TTChecks.QUESTION_SHOWN);
-
     }
 }

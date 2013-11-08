@@ -1,11 +1,8 @@
 package epfl.sweng.editquestions;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
-
-import org.apache.http.entity.StringEntity;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -19,9 +16,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import epfl.sweng.R;
-import epfl.sweng.quizquestions.MalformedQuestionException;
 import epfl.sweng.quizquestions.QuizQuestion;
-import epfl.sweng.servercomm.ServerCommunicator;
+import epfl.sweng.services.Service;
+import epfl.sweng.services.ServiceFactory;
+import epfl.sweng.services.SuccessfulSubmitEvent;
 import epfl.sweng.testing.TestCoordinator;
 import epfl.sweng.testing.TestCoordinator.TTChecks;
 import epfl.sweng.ui.AnswerEditor;
@@ -35,6 +33,7 @@ import epfl.sweng.ui.QuestionActivity;
 public class EditQuestionActivity extends QuestionActivity {
     private ArrayList<AnswerEditor> answers;
     private boolean resettingUI = false;
+    private Service mService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,8 +71,7 @@ public class EditQuestionActivity extends QuestionActivity {
         tryAudit();
     }
 
-    public ArrayList<AnswerEditor> getAnswers()
-            throws MalformedEditorButtonException {
+    public ArrayList<AnswerEditor> getAnswers() throws MalformedEditorButtonException {
         return answers;
     }
 
@@ -88,27 +86,29 @@ public class EditQuestionActivity extends QuestionActivity {
                 getCurrentFocus().getWindowToken(),
                 InputMethodManager.HIDE_NOT_ALWAYS);
 
-        QuizQuestion quizQuestion = extractQuizQuestion();
-        try {
-            super.getRequestContext().setServerURL(
-                    ServerCommunicator.SWENG_SUBMIT_QUESTION_URL);
-            super.getRequestContext().setEntity(
-                    new StringEntity(quizQuestion.toJSON()));
-            super.getRequestContext().addHeader("Content-type",
-                    "application/json");
-            ServerCommunicator.getInstance().doHttpPost(
-                    super.getRequestContext(), new PostedQuestionEvent());
-        } catch (MalformedQuestionException e) {
-            Toast.makeText(this, e.getMessage(), TOAST_DISPLAY_TIME).show();
-        } catch (UnsupportedEncodingException e) {
-            Toast.makeText(this, e.getMessage(), TOAST_DISPLAY_TIME).show();
-        }
+        mService = ServiceFactory.getServiceFor(this);
+        mService.execute();
 
         showProgressDialog();
     }
 
-    public void on(PostedQuestionEvent event) {
-        super.processEvent(event);
+    public void on(SuccessfulSubmitEvent event) {
+        hideProgressDialog();
+        Toast.makeText(this, R.string.successful_submit, TOAST_DISPLAY_TIME)
+                .show();
+
+        // Reset UI
+        resettingUI = true;
+        ((EditText) findViewById(R.id.editQuestionText)).setText("");
+        ((EditText) findViewById(R.id.editTags)).setText("");
+        ((Button) findViewById(R.id.buttonSubmitQuestion)).setEnabled(false);
+        while (answers.size() > 1) {
+            answers.get(answers.size() - 1).remove();
+        }
+        answers.get(0).resetContent();
+        answers.get(0).setCorrect(false);
+        resettingUI = false;
+        TestCoordinator.check(TTChecks.NEW_QUESTION_SUBMITTED);
     }
 
     public void tryAudit() {
@@ -160,25 +160,6 @@ public class EditQuestionActivity extends QuestionActivity {
         }
 
         return result.toArray(new String[result.size()]);
-    }
-
-    @Override
-    protected void processDownloadedData(Object data) {
-        Toast.makeText(this, R.string.successful_submit, TOAST_DISPLAY_TIME)
-                .show();
-
-        // Reset UI
-        resettingUI = true;
-        ((EditText) findViewById(R.id.editQuestionText)).setText("");
-        ((EditText) findViewById(R.id.editTags)).setText("");
-        ((Button) findViewById(R.id.buttonSubmitQuestion)).setEnabled(false);
-        while (answers.size() > 1) {
-            answers.get(answers.size() - 1).remove();
-        }
-        answers.get(0).resetContent();
-        answers.get(0).setCorrect(false);
-        resettingUI = false;
-        TestCoordinator.check(TTChecks.NEW_QUESTION_SUBMITTED);
     }
 
     @Override
