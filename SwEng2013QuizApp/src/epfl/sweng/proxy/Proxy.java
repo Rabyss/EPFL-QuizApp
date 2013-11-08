@@ -18,8 +18,13 @@ import epfl.sweng.servercomm.ServerResponse;
 import epfl.sweng.showquestions.ReceivedQuestionEvent;
 
 public final class Proxy extends EventEmitter implements IServer, EventListener {
+	public final static String SWENG_SERVER_URL = "https://sweng-quiz.appspot.com";
+	public final static String SWENG_SUBMIT_QUESTION_URL = SWENG_SERVER_URL
+			+ "/quizquestions/";
+	public final static String SWENG_GET_RANDOM_QUESTION_URL = SWENG_SUBMIT_QUESTION_URL
+			+ "random";
+	
 	private final static int HTTP_ERROR_THRESHOLD = 400;
-
 	private ServerCommunicator serverComm;
 	private ArrayList<QuestionToSubmit> postQuestion;
 	private ArrayList<ServerResponse> getQuestion;

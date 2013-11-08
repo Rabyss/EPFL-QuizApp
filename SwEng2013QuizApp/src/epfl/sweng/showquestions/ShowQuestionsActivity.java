@@ -25,6 +25,7 @@ import epfl.sweng.testing.TestCoordinator;
 import epfl.sweng.testing.TestCoordinator.TTChecks;
 import epfl.sweng.ui.QuestionActivity;
 
+
 /**
  * Activity to download a question and display it
  */
