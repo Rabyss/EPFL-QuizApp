@@ -118,7 +118,6 @@ public class EditQuestionActivity extends QuestionActivity {
     public void updateSubmitButton() {
         QuizQuestion quizQuestion = extractQuizQuestion();
         if (quizQuestion.auditErrors() == 0) {
-            System.err.println("AUDITING");
             ((Button) findViewById(R.id.buttonSubmitQuestion)).setEnabled(true);
         } else {
             ((Button) findViewById(R.id.buttonSubmitQuestion))
