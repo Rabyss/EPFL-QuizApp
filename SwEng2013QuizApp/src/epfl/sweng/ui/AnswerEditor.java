@@ -107,7 +107,7 @@ public class AnswerEditor {
 		return mContent.getText().toString();
 	}
 	
-	public EditText getEditText(){
+	public EditText getEditText() {
 		return mContent;
 	}
 
