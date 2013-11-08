@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import epfl.sweng.authentication.UserStorage;
+import epfl.sweng.context.AppContext;
 import epfl.sweng.entry.MainActivity;
 import epfl.sweng.events.EventListener;
 import epfl.sweng.servercomm.RequestContext;
@@ -22,7 +23,6 @@ public abstract class QuestionActivity extends Activity implements
 
     protected final static int TOAST_DISPLAY_TIME = 2000;
     private final static int HTTP_ERROR_THRESHOLD = 400;
-    private String mSessionID;
     private RequestContext mReqContext;
 
     @Override
@@ -35,11 +35,10 @@ public abstract class QuestionActivity extends Activity implements
         progressDialog.setCancelable(true);
         
         mReqContext = new RequestContext();
-        
-        mSessionID = UserStorage.getInstance(this).getSessionID();
-        mReqContext.addHeader("Authorization", "Tequila "+mSessionID);
-        
-        
+
+        AppContext.getContext().setSessionID(UserStorage.getInstance(this).getSessionID());
+        mReqContext.addHeader("Authorization", "Tequila "+AppContext.getContext().getSessionID());
+
         ServerCommunicator.getInstance().addListener(this);
     }
 

@@ -1,7 +1,7 @@
 package epfl.sweng.context;
 
-import epfl.sweng.context.conn_state.ConnectionState;
-import epfl.sweng.context.conn_state.IdleOfflineConnectionState;
+import epfl.sweng.context.conn_states.ConnectionState;
+import epfl.sweng.context.conn_states.IdleOfflineConnectionState;
 import epfl.sweng.events.EventListener;
 
 

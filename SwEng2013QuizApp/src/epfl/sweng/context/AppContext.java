@@ -1,6 +1,13 @@
 package epfl.sweng.context;
 
-import epfl.sweng.context.conn_state.ConnectionState;
+import epfl.sweng.context.conn_states.ConnectionState;
+import epfl.sweng.events.EventEmitter;
+import epfl.sweng.events.EventEmitterInterface;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Singleton used to carry the global state of the program at a given time.
@@ -33,7 +40,24 @@ public enum AppContext {
         return mConnectionStateMachine.isOnline();
     }
 
-    public ConnectionState getCurrentConnexionState() {
+    public final ConnectionState getCurrentConnectionState() {
         return mConnectionStateMachine.getCurrentConnectionState();
     }
+
+    // HELPERS TO DEAL WITH LISTENERS
+
+    public void addAsListener(EventEmitter eventEmitter) {
+        eventEmitter.addListener(mConnectionStateMachine);
+    }
+
+    public void addAsListeners(Collection<EventEmitter> eventEmitters) {
+        for (EventEmitter eventEmitter : eventEmitters) {
+            addAsListener(eventEmitter);
+        }
+    }
+
+    public void removeAsListener(EventEmitter eventEmitter) {
+        eventEmitter.removeListener(mConnectionStateMachine);
+    }
+
 }
