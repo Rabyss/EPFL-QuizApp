@@ -11,7 +11,7 @@ public class ServiceFactory {
     	if(publisher == null){
     		publisher = new QuestionPublisherService(activity);
     	} else {
-    		publisher.setListener(activity);
+    		publisher.setActivity(activity);
     	}
         return publisher;
     }
@@ -20,7 +20,7 @@ public class ServiceFactory {
     	if(fetcher == null){
     		fetcher = new QuestionFetcherService(activity);
     	} else {
-    		fetcher.setListener(activity);
+    		fetcher.setActivity(activity);
     	}
         return fetcher;
     }

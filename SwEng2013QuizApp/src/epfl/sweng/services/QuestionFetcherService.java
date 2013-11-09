@@ -4,7 +4,6 @@ import org.apache.http.HttpStatus;
 import org.json.JSONException;
 
 import epfl.sweng.context.AppContext;
-import epfl.sweng.events.EventEmitter;
 import epfl.sweng.events.EventListener;
 import epfl.sweng.proxy.Proxy;
 import epfl.sweng.quizquestions.QuizQuestion;
@@ -12,14 +11,13 @@ import epfl.sweng.servercomm.RequestContext;
 import epfl.sweng.servercomm.ServerCommunicator;
 import epfl.sweng.servercomm.ServerResponse;
 import epfl.sweng.showquestions.ReceivedQuestionEvent;
+import epfl.sweng.showquestions.ShowQuestionsActivity;
 
-public class QuestionFetcherService extends EventEmitter implements Service,
-		EventListener {
-	private EventListener mListener;
-	public QuestionFetcherService(EventListener listener) {
-		addListener(listener);
-		this.mListener = listener;
-		Proxy.getInstance().addListener(this);
+public class QuestionFetcherService extends QuestionActivityService implements
+		Service, EventListener {
+
+	public QuestionFetcherService(ShowQuestionsActivity activity) {
+		super(activity);
 	}
 
 	@Override
@@ -52,12 +50,11 @@ public class QuestionFetcherService extends EventEmitter implements Service,
 				e.printStackTrace();
 			}
 		}
-		
-		removeListener(this.mListener);
+
+		removeListener(super.getActivity());
 	}
-	
-	 public void setListener(EventListener listener){
-		 mListener = listener;
-		 addListener(listener);
-	 }
+
+	public void setActivity(ShowQuestionsActivity activity) {
+		super.setActivity(activity);
+	}
 }
