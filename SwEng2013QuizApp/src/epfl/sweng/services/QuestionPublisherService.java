@@ -60,8 +60,9 @@ public class QuestionPublisherService extends EventEmitter implements Service,
         removeListener(this.mListener);
     }
     
-	 public void setListener(EventListener listener){
+	 public void setListener(EditQuestionActivity listener){
 		 mListener = listener;
+		 mActivity = listener;
 		 addListener(listener);
 	 }
 }

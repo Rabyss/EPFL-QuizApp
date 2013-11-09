@@ -125,17 +125,21 @@ public class EditQuestionActivity extends QuestionActivity {
 	private QuizQuestion extractQuizQuestion() {
 		String question = ((EditText) findViewById(R.id.editQuestionText))
 				.getText().toString();
+		
+		System.out.println("Question : " + question);
 
 		ArrayList<String> answersText = new ArrayList<String>();
 		int solutionIndex = -1;
-
 		for (AnswerEditor answer : answers) {
 			answersText.add(answer.getContent());
 			if (answer.isCorrect()) {
 				solutionIndex = answers.indexOf(answer);
 			}
 		}
-
+		
+		System.out.println(solutionIndex);
+		
+		System.out.println(answersText);
 		String tagsText = ((EditText) findViewById(R.id.editTags)).getText()
 				.toString();
 		String[] tags = (tagsText.trim().isEmpty()) ? new String[0]
@@ -145,6 +149,8 @@ public class EditQuestionActivity extends QuestionActivity {
 		for (String tag : tags) {
 			tagsSet.add(tag);
 		}
+		
+		System.out.println(tagsSet);
 
 		QuizQuestion quizQuestion = new QuizQuestion(question, answersText,
 				solutionIndex, tagsSet, -1, null);

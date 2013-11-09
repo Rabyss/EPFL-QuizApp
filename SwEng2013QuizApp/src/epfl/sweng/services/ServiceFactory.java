@@ -11,7 +11,7 @@ public class ServiceFactory {
     	if(publisher == null){
     		publisher = new QuestionPublisherService(activity);
     	} else {
-    		fetcher.setListener(activity);
+    		publisher.setListener(activity);
     	}
         return publisher;
     }
