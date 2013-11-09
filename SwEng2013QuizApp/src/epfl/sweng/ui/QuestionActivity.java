@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import epfl.sweng.authentication.UserStorage;
 import epfl.sweng.context.AppContext;
 import epfl.sweng.entry.MainActivity;
@@ -18,7 +17,6 @@ public abstract class QuestionActivity extends Activity implements
         EventListener {
 
     private ProgressDialog progressDialog;
-    private Handler handler;
 
     protected final static int TOAST_DISPLAY_TIME = 2000;
 
@@ -30,16 +28,10 @@ public abstract class QuestionActivity extends Activity implements
         progressDialog.setIndeterminate(false);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progressDialog.setCancelable(true);
-        
-        handler = new Handler();
 
         AppContext.getContext().setSessionID(
                 UserStorage.getInstance(this).getSessionID());
     }
-    
-    public Handler getHandler() {
-		return handler;
-	}
 
     @Override
     public void onBackPressed() {
@@ -50,16 +42,14 @@ public abstract class QuestionActivity extends Activity implements
     protected abstract void serverFailure();
 
     protected void showProgressDialog() {
-        progressDialog.show();
+    	progressDialog.show();
+    	System.out.println("Triggered: " + progressDialog.isShowing());
     }
 
     protected void hideProgressDialog() {
-    	getHandler().post(new Runnable() {
-			@Override
-			public void run() {
-				progressDialog.dismiss();
-			}
-		});
+    	System.out.println("Before: " + progressDialog.isShowing());
+    	progressDialog.dismiss();
+    	System.out.println("After: " + progressDialog.isShowing());
     }
 
     public void on(ConnexionErrorEvent event) {

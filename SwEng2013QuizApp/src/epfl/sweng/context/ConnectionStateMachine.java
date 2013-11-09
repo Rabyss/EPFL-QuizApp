@@ -21,6 +21,7 @@ public final class ConnectionStateMachine implements EventListener {
     public void on(ConnectionEvent event) {
         try {
             mCurrentState = mCurrentState.getNextState(event);
+            System.out.println("On " + event.getType() + " switched to " + mCurrentState);
         } catch (ConnectionState.UnknownTransitionException e) {
             //TODO : think about this part
         }
