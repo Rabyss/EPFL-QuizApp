@@ -19,12 +19,13 @@ import epfl.sweng.servercomm.ServerResponse;
 
 public class QuestionPublisherService extends EventEmitter implements Service,
         EventListener {
-
+	private EventListener mListener;
     private EditQuestionActivity mActivity;
 
     public QuestionPublisherService(EditQuestionActivity activity) {
         addListener(activity);
         mActivity = activity;
+        this.mListener = activity;
         Proxy.getInstance().addListener(this);
     }
 
@@ -56,5 +57,11 @@ public class QuestionPublisherService extends EventEmitter implements Service,
         } else {
             this.emit(new SuccessfulSubmitEvent());
         }
+        removeListener(this.mListener);
     }
+    
+	 public void setListener(EventListener listener){
+		 mListener = listener;
+		 addListener(listener);
+	 }
 }

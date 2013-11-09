@@ -42,13 +42,13 @@ public abstract class QuestionActivity extends Activity implements
     protected abstract void serverFailure();
 
     protected void showProgressDialog() {
-    	//progressDialog.show();
+    	progressDialog.show();
     	System.out.println("Triggered: " + progressDialog.isShowing());
     }
 
     protected void hideProgressDialog() {
     	System.out.println("Before: " + progressDialog.isShowing());
-    	//progressDialog.dismiss();
+    	progressDialog.dismiss();
     	System.out.println("After: " + progressDialog.isShowing());
     }
 

@@ -15,9 +15,10 @@ import epfl.sweng.showquestions.ReceivedQuestionEvent;
 
 public class QuestionFetcherService extends EventEmitter implements Service,
 		EventListener {
-
+	private EventListener mListener;
 	public QuestionFetcherService(EventListener listener) {
 		addListener(listener);
+		this.mListener = listener;
 		Proxy.getInstance().addListener(this);
 	}
 
@@ -51,6 +52,12 @@ public class QuestionFetcherService extends EventEmitter implements Service,
 				e.printStackTrace();
 			}
 		}
+		
+		removeListener(this.mListener);
 	}
-
+	
+	 public void setListener(EventListener listener){
+		 mListener = listener;
+		 addListener(listener);
+	 }
 }

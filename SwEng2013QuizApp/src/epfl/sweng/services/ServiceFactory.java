@@ -10,6 +10,8 @@ public class ServiceFactory {
     public static Service getServiceFor(EditQuestionActivity activity) {
     	if(publisher == null){
     		publisher = new QuestionPublisherService(activity);
+    	} else {
+    		fetcher.setListener(activity);
     	}
         return publisher;
     }
@@ -17,6 +19,8 @@ public class ServiceFactory {
     public static Service getServiceFor(ShowQuestionsActivity activity) {
     	if(fetcher == null){
     		fetcher = new QuestionFetcherService(activity);
+    	} else {
+    		fetcher.setListener(activity);
     	}
         return fetcher;
     }
