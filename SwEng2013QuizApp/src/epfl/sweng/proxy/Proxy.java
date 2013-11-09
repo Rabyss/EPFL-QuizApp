@@ -23,7 +23,7 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 			+ "/quizquestions/";
 	public final static String SWENG_GET_RANDOM_QUESTION_URL = SWENG_SUBMIT_QUESTION_URL
 			+ "random";
-	
+
 	private final static int HTTP_ERROR_THRESHOLD = 400;
 	private ServerCommunicator serverComm;
 	private ArrayList<QuestionToSubmit> postQuestion;
@@ -50,7 +50,7 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 	public void doHttpGet(RequestContext reqContext, ServerEvent event) {
 		this.emit(new ConnectionEvent(Type.ADD_OR_RETRIEVE_QUESTION));
 		if (isOnline()) {
-			
+
 			serverComm.doHttpGet(reqContext, event);
 		} else {
 			// TODO : envoyer un bon event au service!!
@@ -70,7 +70,11 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 		} else {
 			// TODO : envoyer un event au service!
 			postQuestion.add(questionToSubmit);
-			this.emit(new PostedQuestionEvent());
+			// TODO Send other status code to display different toast ?
+			PostedQuestionEvent pqe = new PostedQuestionEvent();
+			pqe.setResponse(new ServerResponse(questionToSubmit.reqContext
+					.getEntity().toString(), HttpStatus.SC_OK));
+			this.emit(pqe);
 		}
 
 	}
@@ -89,23 +93,22 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 		}
 	}
 
-	
 	public void on(OnlineEvent event) {
 		if (!postQuestion.isEmpty()) {
-			RequestContext reqContext= postQuestion.get(0).getReqContext();
-			ServerEvent postEvent= postQuestion.get(0).getEvent();
+			RequestContext reqContext = postQuestion.get(0).getReqContext();
+			ServerEvent postEvent = postQuestion.get(0).getEvent();
 			postQuestion.remove(0);
 			doHttpPost(reqContext, postEvent);
 		} else {
 			this.emit(new ConnectionEvent(Type.COMMUNICATION_SUCCESS));
 		}
-		
+
 	}
-	
+
 	public void on(ReceivedQuestionEvent event) {
 		ServerResponse data = event.getResponse();
 		if (data != null && data.getStatusCode() < HTTP_ERROR_THRESHOLD) {
-			
+
 			getQuestion.add(data);
 			this.emit(new ConnectionEvent(Type.COMMUNICATION_SUCCESS));
 		} else {
@@ -117,20 +120,21 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 	public void on(PostedQuestionEvent event) {
 		ServerResponse data = event.getResponse();
 		if (data != null && data.getStatusCode() < HTTP_ERROR_THRESHOLD) {
-			ServerResponse serverResponse = new ServerResponse(data.getEntity(), data.getStatusCode());
+			ServerResponse serverResponse = new ServerResponse(
+					data.getEntity(), data.getStatusCode());
 			getQuestion.add(serverResponse);
 			this.emit(new ConnectionEvent(Type.COMMUNICATION_SUCCESS));
 			this.emit(event);
-			//post other cached questions that wait to be posted
+			// post other cached questions that wait to be posted
 			on(new OnlineEvent());
-			
+
 		} else {
 			postQuestion.add(0, questionToSubmit);
 			this.emit(new ConnectionEvent(Type.COMMUNICATION_ERROR));
 			this.emit(event);
 
 		}
-		
+
 	}
 
 	private class QuestionToSubmit {

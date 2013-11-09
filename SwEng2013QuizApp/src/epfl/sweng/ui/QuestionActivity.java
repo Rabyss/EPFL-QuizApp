@@ -43,13 +43,10 @@ public abstract class QuestionActivity extends Activity implements
 
     protected void showProgressDialog() {
     	progressDialog.show();
-    	System.out.println("Triggered: " + progressDialog.isShowing());
     }
 
     protected void hideProgressDialog() {
-    	System.out.println("Before: " + progressDialog.isShowing());
     	progressDialog.dismiss();
-    	System.out.println("After: " + progressDialog.isShowing());
     }
 
     public void on(ConnexionErrorEvent event) {

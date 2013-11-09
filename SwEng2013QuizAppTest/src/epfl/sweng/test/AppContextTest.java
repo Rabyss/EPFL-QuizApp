@@ -30,6 +30,7 @@ public class AppContextTest extends AndroidTestCase {
         EventEmitter eventEmitter = new EventEmitter() {};
         AppContext.getContext().addAsListener(eventEmitter);
 
+        eventEmitter.emit(new ConnectionEvent(ConnectionEvent.Type.OFFLINE_CHECKBOX_CLICKED));
         connectFromIdleOffline(eventEmitter);
 
         //must turn offline

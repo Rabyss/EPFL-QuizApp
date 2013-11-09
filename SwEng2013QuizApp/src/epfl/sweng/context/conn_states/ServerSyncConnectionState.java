@@ -18,6 +18,6 @@ public class ServerSyncConnectionState extends ConnectionState {
 
     @Override
     public boolean isOnline() {
-        return false;
+        return true;
     }
 }
