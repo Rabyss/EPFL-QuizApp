@@ -144,9 +144,13 @@ public class QuizQuestion {
 		if (!containsNonWhitespaceCharacters(mQuestion) || mQuestion.length() > MAX_QUESTION_LENGTH) {
 			errors++;
 		}
+		
+		System.out.println("Errors: " + errors);
 
         errors += mAnswers.auditErrors();
+        System.out.println("Errors: " + errors);
         errors += mTags.auditErrors();
+        System.out.println("Errors: " + errors);
 
 		return errors;
 	}
@@ -236,5 +240,10 @@ public class QuizQuestion {
             return errors;
         }
 
+    }
+    
+    @Override
+    public String toString() {
+    	return "" + mId + mQuestion + mAnswers + mSolutionIndex + mTags + mOwner;
     }
 }

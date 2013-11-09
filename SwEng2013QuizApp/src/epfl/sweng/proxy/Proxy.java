@@ -29,7 +29,6 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 	private ArrayList<QuestionToSubmit> postQuestion;
 	private ArrayList<ServerResponse> getQuestion;
 	private static Proxy sInstance = null;
-	private String questionEntity;
 	private QuestionToSubmit questionToSubmit;
 
 	private Proxy() {
@@ -66,7 +65,7 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 	public void doHttpPost(RequestContext reqContext, ServerEvent event) {
 		questionToSubmit = new QuestionToSubmit(reqContext, event);
 		if (isOnline()) {
-			questionEntity = reqContext.getEntity().toString();
+			reqContext.getEntity().toString();
 			serverComm.doHttpPost(reqContext, event);
 		} else {
 			// TODO : envoyer un event au service!
@@ -83,7 +82,7 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 	private ServerResponse offlineRandomQuestion() {
 		Random r = new Random();
 		if (getQuestion.isEmpty()) {
-			// TODO retourné un ServerResponse différent?
+			// TODO retourn�� un ServerResponse diff��rent?
 			return new ServerResponse(null, HttpStatus.SC_NOT_FOUND);
 		} else {
 			return getQuestion.get(r.nextInt(getQuestion.size()));
@@ -116,7 +115,7 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 	public void on(PostedQuestionEvent event) {
 		ServerResponse data = event.getResponse();
 		if (data != null && data.getStatusCode() < HTTP_ERROR_THRESHOLD) {
-			ServerResponse serverResponse = new ServerResponse(questionEntity, data.getStatusCode());
+			ServerResponse serverResponse = new ServerResponse(data.getEntity(), data.getStatusCode());
 			getQuestion.add(serverResponse);
 			this.emit(new ConnectionEvent(Type.COMMUNICATION_SUCCESS));
 			this.emit(event);

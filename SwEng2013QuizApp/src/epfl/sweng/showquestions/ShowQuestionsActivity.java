@@ -57,9 +57,11 @@ public class ShowQuestionsActivity extends QuestionActivity {
 	}
 
 	private void getQuestion() {
+		
 		showProgressDialog(); // PUT THIS BEFORE EXECUTE
 		// downloads a random question from the server
 		ServiceFactory.getServiceFor(this).execute();
+		
 	}
 
 	public void on(NothingInCacheEvent event) {
