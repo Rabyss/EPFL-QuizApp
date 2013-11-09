@@ -69,8 +69,7 @@ public class EditQuestionActivity extends QuestionActivity {
 		updateSubmitButton();
 	}
 
-	public ArrayList<AnswerEditor> getAnswers()
-			throws MalformedEditorButtonException {
+	public ArrayList<AnswerEditor> getAnswers() throws MalformedEditorButtonException {
 		return answers;
 	}
 
@@ -324,7 +323,6 @@ public class EditQuestionActivity extends QuestionActivity {
 
 	public QuizQuestion getQuestion() {
 		QuizQuestion quizQuestion = extractQuizQuestion();
-		System.out.println(quizQuestion);
 		if (quizQuestion.auditErrors() == 0) {
 			return quizQuestion;
 		} else {

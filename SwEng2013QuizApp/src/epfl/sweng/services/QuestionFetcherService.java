@@ -44,11 +44,7 @@ public class QuestionFetcherService extends QuestionActivityService implements
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
-			try {
-				this.emit(new ShowQuestionEvent(quizQuestion));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			this.emit(new ShowQuestionEvent(quizQuestion));
 		}
 
 		removeListener(super.getActivity());

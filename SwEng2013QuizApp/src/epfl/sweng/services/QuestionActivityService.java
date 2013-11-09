@@ -16,11 +16,11 @@ public abstract class QuestionActivityService extends EventEmitter implements
 		Proxy.getInstance().addListener(this);
 	}
 	
-	protected QuestionActivity getActivity(){
+	protected QuestionActivity getActivity() {
 		return mActivity;
 	}
 	
-	protected void setActivity(QuestionActivity activity){
+	protected void setActivity(QuestionActivity activity) {
 		mActivity = activity;
 		addListener(activity);
 	}

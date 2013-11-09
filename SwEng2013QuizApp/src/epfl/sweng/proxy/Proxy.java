@@ -96,6 +96,8 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 			ServerEvent postEvent= postQuestion.get(0).getEvent();
 			postQuestion.remove(0);
 			doHttpPost(reqContext, postEvent);
+		} else {
+			this.emit(new ConnectionEvent(Type.COMMUNICATION_SUCCESS));
 		}
 		
 	}

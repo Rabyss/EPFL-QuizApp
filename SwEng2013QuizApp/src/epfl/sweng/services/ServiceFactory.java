@@ -8,7 +8,7 @@ public class ServiceFactory {
 	private static QuestionPublisherService publisher = null;
 	private static QuestionFetcherService fetcher = null;
     public static Service getServiceFor(EditQuestionActivity activity) {
-    	if(publisher == null){
+    	if (publisher == null) {
     		publisher = new QuestionPublisherService(activity);
     	} else {
     		publisher.setActivity(activity);
@@ -17,7 +17,7 @@ public class ServiceFactory {
     }
 
     public static Service getServiceFor(ShowQuestionsActivity activity) {
-    	if(fetcher == null){
+    	if (fetcher == null) {
     		fetcher = new QuestionFetcherService(activity);
     	} else {
     		fetcher.setActivity(activity);
