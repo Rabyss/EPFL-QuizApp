@@ -16,6 +16,8 @@ import epfl.sweng.servercomm.ServerCommunicator;
 import epfl.sweng.servercomm.ServerEvent;
 import epfl.sweng.servercomm.ServerResponse;
 import epfl.sweng.showquestions.ReceivedQuestionEvent;
+import epfl.sweng.testing.TestCoordinator;
+import epfl.sweng.testing.TestCoordinator.TTChecks;
 
 public final class Proxy extends EventEmitter implements IServer, EventListener {
 	public final static String SWENG_SERVER_URL = "https://sweng-quiz.appspot.com";
@@ -100,7 +102,9 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 			postQuestion.remove(0);
 			doHttpPost(reqContext, postEvent);
 		} else {
+			TestCoordinator.check(TTChecks.OFFLINE_CHECKBOX_DISABLED);
 			this.emit(new ConnectionEvent(ConnectionEventType.COMMUNICATION_SUCCESS));
+			
 		}
 
 	}
