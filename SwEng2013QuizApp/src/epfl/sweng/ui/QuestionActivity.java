@@ -8,7 +8,7 @@ import epfl.sweng.authentication.UserStorage;
 import epfl.sweng.context.AppContext;
 import epfl.sweng.entry.MainActivity;
 import epfl.sweng.events.EventListener;
-import epfl.sweng.services.ConnexionErrorEvent;
+import epfl.sweng.services.ConnectionErrorEvent;
 
 /**
  * Contains common treatments of activities dealing with quiz questions.
@@ -49,7 +49,7 @@ public abstract class QuestionActivity extends Activity implements
     	progressDialog.dismiss();
     }
 
-    public void on(ConnexionErrorEvent event) {
+    public void on(ConnectionErrorEvent event) {
         hideProgressDialog();
         serverFailure();
     }

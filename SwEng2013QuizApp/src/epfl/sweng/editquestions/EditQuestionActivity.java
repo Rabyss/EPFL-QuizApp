@@ -163,7 +163,7 @@ public class EditQuestionActivity extends QuestionActivity {
 	protected void serverFailure() {
 		Toast.makeText(this, R.string.submit_server_failure, Toast.LENGTH_LONG)
 				.show();
-		TestCoordinator.check(TTChecks.NEW_QUESTION_SUBMITTED);
+		//TestCoordinator.check(TTChecks.NEW_QUESTION_SUBMITTED);
 
 	}
 

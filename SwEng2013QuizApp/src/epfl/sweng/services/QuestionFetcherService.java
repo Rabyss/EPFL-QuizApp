@@ -11,6 +11,7 @@ import epfl.sweng.servercomm.RequestContext;
 import epfl.sweng.servercomm.ServerCommunicator;
 import epfl.sweng.servercomm.ServerResponse;
 import epfl.sweng.showquestions.ReceivedQuestionEvent;
+import epfl.sweng.showquestions.ReceivedQuestionWithError;
 import epfl.sweng.showquestions.ShowQuestionsActivity;
 
 public class QuestionFetcherService extends QuestionActivityService implements
@@ -35,8 +36,6 @@ public class QuestionFetcherService extends QuestionActivityService implements
 		int status = response.getStatusCode();
 		if (status == HttpStatus.SC_NOT_FOUND) {
 			this.emit(new NothingInCacheEvent());
-		} else if (status >= HttpStatus.SC_BAD_REQUEST) {
-			this.emit(new ConnexionErrorEvent());
 		} else {
 			QuizQuestion quizQuestion = null;
 			try {
@@ -48,6 +47,19 @@ public class QuestionFetcherService extends QuestionActivityService implements
 		}
 
 		removeListener(super.getActivity());
+	}
+	
+	public void on(ReceivedQuestionWithError event) {
+	    ServerResponse response = event.getResponse();
+	    QuizQuestion quizQuestion = null;
+        try {
+            quizQuestion = new QuizQuestion(response.getEntity().toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        this.emit(new ShowQuestionEvent(quizQuestion));
+        this.emit(new ConnectionErrorEvent());
+        removeListener(super.getActivity());
 	}
 
 	public void setActivity(ShowQuestionsActivity activity) {
