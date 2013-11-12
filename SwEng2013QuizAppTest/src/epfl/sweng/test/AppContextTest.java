@@ -30,20 +30,20 @@ public class AppContextTest extends AndroidTestCase {
         EventEmitter eventEmitter = new EventEmitter() {};
         AppContext.getContext().addAsListener(eventEmitter);
 
-        eventEmitter.emit(new ConnectionEvent(ConnectionEvent.Type.OFFLINE_CHECKBOX_CLICKED));
+        eventEmitter.emit(new ConnectionEvent(ConnectionEvent.ConnectionEventType.OFFLINE_CHECKBOX_CLICKED));
         connectFromIdleOffline(eventEmitter);
 
         //must turn offline
-        eventEmitter.emit(new ConnectionEvent(ConnectionEvent.Type.OFFLINE_CHECKBOX_CLICKED));
+        eventEmitter.emit(new ConnectionEvent(ConnectionEvent.ConnectionEventType.OFFLINE_CHECKBOX_CLICKED));
         assertEquals("must be in idle (offline) state", getCurrentConnectionState(), IdleOfflineConnectionState.class);
 
         connectFromIdleOffline(eventEmitter);
 
-        eventEmitter.emit(new ConnectionEvent(ConnectionEvent.Type.ADD_OR_RETRIEVE_QUESTION));
+        eventEmitter.emit(new ConnectionEvent(ConnectionEvent.ConnectionEventType.ADD_OR_RETRIEVE_QUESTION));
         assertEquals("must be in server comm state", getCurrentConnectionState(),
         		ServerInCommunicationConnectionState.class);
 
-        eventEmitter.emit(new ConnectionEvent(ConnectionEvent.Type.COMMUNICATION_ERROR));
+        eventEmitter.emit(new ConnectionEvent(ConnectionEvent.ConnectionEventType.COMMUNICATION_ERROR));
         assertEquals("must be in idle (offline) state", getCurrentConnectionState(), IdleOfflineConnectionState.class);
 
         AppContext.getContext().removeAsListener(eventEmitter);
@@ -51,9 +51,9 @@ public class AppContextTest extends AndroidTestCase {
 
     private void connectFromIdleOffline(EventEmitter eventEmitter) {
         assertEquals("state must be idle (offline)", getCurrentConnectionState(), IdleOfflineConnectionState.class);
-        eventEmitter.emit(new ConnectionEvent(ConnectionEvent.Type.OFFLINE_CHECKBOX_CLICKED));
+        eventEmitter.emit(new ConnectionEvent(ConnectionEvent.ConnectionEventType.OFFLINE_CHECKBOX_CLICKED));
         assertEquals("state must be server sync", getCurrentConnectionState(), ServerSyncConnectionState.class);
-        eventEmitter.emit(new ConnectionEvent(ConnectionEvent.Type.COMMUNICATION_SUCCESS));
+        eventEmitter.emit(new ConnectionEvent(ConnectionEvent.ConnectionEventType.COMMUNICATION_SUCCESS));
         assertEquals("must be in idle (online) state", getCurrentConnectionState(), IdleOnlineConnectionState.class);
     }
 

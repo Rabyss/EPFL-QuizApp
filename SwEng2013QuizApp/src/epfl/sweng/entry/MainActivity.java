@@ -17,7 +17,7 @@ import epfl.sweng.authentication.AuthenticationActivity;
 import epfl.sweng.authentication.UserStorage;
 import epfl.sweng.context.AppContext;
 import epfl.sweng.context.ConnectionEvent;
-import epfl.sweng.context.ConnectionEvent.Type;
+import epfl.sweng.context.ConnectionEvent.ConnectionEventType;
 import epfl.sweng.editquestions.EditQuestionActivity;
 import epfl.sweng.events.EventEmitter;
 import epfl.sweng.proxy.OnlineEvent;
@@ -164,7 +164,7 @@ public class MainActivity extends Activity {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				
-				emitter.emit(new ConnectionEvent(Type.OFFLINE_CHECKBOX_CLICKED));
+				emitter.emit(new ConnectionEvent(ConnectionEventType.OFFLINE_CHECKBOX_CLICKED));
 				// offline
 				if (!isChecked) {
 					emitter.emit(new OnlineEvent());
