@@ -7,7 +7,7 @@ import org.apache.http.HttpStatus;
 
 import epfl.sweng.context.AppContext;
 import epfl.sweng.context.ConnectionEvent;
-import epfl.sweng.context.ConnectionEvent.Type;
+import epfl.sweng.context.ConnectionEvent.ConnectionEventType;
 import epfl.sweng.editquestions.PostedQuestionEvent;
 import epfl.sweng.events.EventEmitter;
 import epfl.sweng.events.EventListener;
@@ -48,7 +48,7 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 
 	@Override
 	public void doHttpGet(RequestContext reqContext, ServerEvent event) {
-		this.emit(new ConnectionEvent(Type.ADD_OR_RETRIEVE_QUESTION));
+		this.emit(new ConnectionEvent(ConnectionEventType.ADD_OR_RETRIEVE_QUESTION));
 		if (isOnline()) {
 
 			serverComm.doHttpGet(reqContext, event);
@@ -100,7 +100,7 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 			postQuestion.remove(0);
 			doHttpPost(reqContext, postEvent);
 		} else {
-			this.emit(new ConnectionEvent(Type.COMMUNICATION_SUCCESS));
+			this.emit(new ConnectionEvent(ConnectionEventType.COMMUNICATION_SUCCESS));
 		}
 
 	}
@@ -110,9 +110,9 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 		if (data != null && data.getStatusCode() < HTTP_ERROR_THRESHOLD) {
 
 			getQuestion.add(data);
-			this.emit(new ConnectionEvent(Type.COMMUNICATION_SUCCESS));
+			this.emit(new ConnectionEvent(ConnectionEventType.COMMUNICATION_SUCCESS));
 		} else {
-			this.emit(new ConnectionEvent(Type.COMMUNICATION_ERROR));
+			this.emit(new ConnectionEvent(ConnectionEventType.COMMUNICATION_ERROR));
 		}
 		this.emit(event);
 	}
@@ -123,14 +123,14 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 			ServerResponse serverResponse = new ServerResponse(
 					data.getEntity(), data.getStatusCode());
 			getQuestion.add(serverResponse);
-			this.emit(new ConnectionEvent(Type.COMMUNICATION_SUCCESS));
+			this.emit(new ConnectionEvent(ConnectionEventType.COMMUNICATION_SUCCESS));
 			this.emit(event);
 			// post other cached questions that wait to be posted
 			on(new OnlineEvent());
 
 		} else {
 			postQuestion.add(0, questionToSubmit);
-			this.emit(new ConnectionEvent(Type.COMMUNICATION_ERROR));
+			this.emit(new ConnectionEvent(ConnectionEventType.COMMUNICATION_ERROR));
 			this.emit(event);
 
 		}
