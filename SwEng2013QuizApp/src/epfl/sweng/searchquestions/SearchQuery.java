@@ -1,12 +1,12 @@
 package epfl.sweng.searchquestions;
 
 import static epfl.sweng.util.StringHelper.containsNonWhitespaceCharacters;
-import epfl.sweng.util.StringHelper;
 
 public class SearchQuery {
     private final String mQuery;
 
     private static final String QUERY_CHAR_CLASS_REGEX = "^[a-zA-Z0-9\\(\\)\\*\\+ ]+$";
+    private static final int MAX_QUERY_LENGTH = 500;
 
     public SearchQuery(final String query) throws UnvalidSearchQueryException {
         
@@ -31,7 +31,7 @@ public class SearchQuery {
             errors++;
         }
 
-        if (query.length() >= 500) {
+        if (query.length() >= MAX_QUERY_LENGTH) {
             errors++;
         }
 

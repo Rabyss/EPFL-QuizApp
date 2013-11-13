@@ -8,7 +8,6 @@ import android.view.Menu;
 import android.widget.Button;
 import android.widget.EditText;
 import epfl.sweng.R;
-import epfl.sweng.searchquestions.SearchQuery.UnvalidSearchQueryException;
 import epfl.sweng.testing.TestCoordinator;
 import epfl.sweng.testing.TestCoordinator.TTChecks;
 
@@ -45,6 +44,8 @@ public class SearchActivity extends Activity {
             // we activate the Search button if the query is a valid one
             if (SearchQuery.auditQueryStr(editable.toString()) == 0) {
                 mSearchButton.setEnabled(true);
+            } else {
+                mSearchButton.setEnabled(false);
             }
             TestCoordinator.check(TTChecks.QUERY_EDITED);
         }
