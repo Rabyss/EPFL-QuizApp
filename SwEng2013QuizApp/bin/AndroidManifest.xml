@@ -10,7 +10,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -27,18 +27,22 @@
         </activity>
         <activity
             android:name="epfl.sweng.showquestions.ShowQuestionsActivity"
-            android:label="@string/title_activity_show_questions"
-            android:configChanges="orientation|keyboardHidden|screenSize" >
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_show_questions" >
         </activity>
         <activity
             android:name="epfl.sweng.editquestions.EditQuestionActivity"
-            android:label="@string/title_activity_edit_question"
-            android:configChanges="orientation|keyboardHidden|screenSize" >
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_edit_question" >
         </activity>
         <activity
             android:name="epfl.sweng.authentication.AuthenticationActivity"
-            android:label="@string/title_activity_authentication"
-            android:configChanges="orientation|keyboardHidden|screenSize" >
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_authentication" >
+        </activity>
+        <activity
+            android:name="epfl.sweng.SearchActivity"
+            android:label="@string/title_activity_search" >
         </activity>
     </application>
 
