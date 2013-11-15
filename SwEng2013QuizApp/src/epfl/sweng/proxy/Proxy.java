@@ -33,7 +33,7 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 	private ArrayList<ServerResponse> getQuestion;
 	private static Proxy sInstance = null;
 	private QuestionToSubmit questionToSubmit;
-	private boolean offlineToOnline = false;
+//	private boolean offlineToOnline = false;
 
 	private Proxy() {
 		serverComm = ServerCommunicator.getInstance();
@@ -100,18 +100,18 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 
 	public void on(OnlineEvent event) {
 		if (!postQuestion.isEmpty()) {
-			offlineToOnline = true;
+//			offlineToOnline = true;
 			RequestContext reqContext = postQuestion.get(0).getReqContext();
 			ServerEvent postEvent = postQuestion.get(0).getEvent();
 			postQuestion.remove(0);
 			doHttpPost(reqContext, postEvent);
 		} else {
-			if (offlineToOnline) {
-				offlineToOnline = false;
-				TestCoordinator.check(TTChecks.OFFLINE_CHECKBOX_DISABLED);
-				this.emit(new ConnectionEvent(
+//			if (offlineToOnline) {
+//				offlineToOnline = false;
+//			TestCoordinator.check(TTChecks.OFFLINE_CHECKBOX_DISABLED);
+			this.emit(new ConnectionEvent(
 						ConnectionEventType.COMMUNICATION_SUCCESS));
-			}
+//			}
 		}
 
 	}
