@@ -12,6 +12,7 @@ import org.apache.http.client.methods.HttpPost;
 
 import android.os.AsyncTask;
 import epfl.sweng.events.EventEmitter;
+import epfl.sweng.events.EventListener;
 import epfl.sweng.proxy.GetConnectionErrorEvent;
 import epfl.sweng.proxy.IServer;
 import epfl.sweng.proxy.PostConnectionErrorEvent;
@@ -21,7 +22,7 @@ import epfl.sweng.proxy.PostConnectionErrorEvent;
  * Handles communication with the server.
  * 
  */
-public final class ServerCommunicator extends EventEmitter implements IServer {
+public final class ServerCommunicator extends EventEmitter implements IServer, EventListener {
 
     private static ServerCommunicator sInstance = null;
     public final static String SWENG_SERVER_URL = "https://sweng-quiz.appspot.com";
