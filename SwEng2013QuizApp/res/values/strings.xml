@@ -34,4 +34,5 @@
     <string name="title_activity_search">SearchActivity</string>
     <string name="hint_search_query">Type in the search query</string>
 	<string name="search_button_text">Search</string>
+	<string name="client_error">An error occurred on the client side.</string>
 </resources>
