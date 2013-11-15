@@ -1,9 +1,19 @@
 package epfl.sweng.test;
 
+import epfl.sweng.context.AppContext;
 import epfl.sweng.searchquestions.SearchQuery;
 import android.test.AndroidTestCase;
 
 public class SearchQueryTest extends AndroidTestCase {
+	
+	@Override
+	protected void setUp() throws Exception {
+		super.setUp();
+		
+		AppContext.getContext().resetState();
+	}
+	
+	
     public void testExprNesting() {
         String validExpr = "(())";
         String invalidExpr = "()(";
@@ -15,7 +25,7 @@ public class SearchQueryTest extends AndroidTestCase {
     public void testQueryCharClass() {
         String firstInvalidQuery = "     ";
         String secInvalidQuery = "(hey) (')";
-        String thirdInvalidQuery = "à";
+        String thirdInvalidQuery = "��";
         String fourthInvalidQuery = "\t";
         String validQuery = "       a     ";
         

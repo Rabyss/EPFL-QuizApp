@@ -1,6 +1,7 @@
 package epfl.sweng.test;
 
 import epfl.sweng.authentication.UserStorage;
+import epfl.sweng.context.AppContext;
 import epfl.sweng.entry.MainActivity;
 import epfl.sweng.testing.TestCoordinator;
 import epfl.sweng.testing.TestingTransaction;
@@ -21,6 +22,7 @@ public class UserStorageTest extends ActivityInstrumentationTestCase2<MainActivi
 
 		getActivityAndWaitFor(TTChecks.MAIN_ACTIVITY_SHOWN);
 		mContext = getInstrumentation().getTargetContext();
+		AppContext.getContext().resetState();
 	}
 	
 	public void testStoreAndGetSession() {

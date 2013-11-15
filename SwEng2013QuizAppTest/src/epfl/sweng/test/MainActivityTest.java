@@ -7,6 +7,7 @@ import com.jayway.android.robotium.solo.Solo;
 import android.test.ActivityInstrumentationTestCase2;
 import android.widget.EditText;
 import epfl.sweng.authentication.UserStorage;
+import epfl.sweng.context.AppContext;
 import epfl.sweng.entry.MainActivity;
 import epfl.sweng.servercomm.SwengHttpClientFactory;
 import epfl.sweng.test.minimalmock.MockHttpClient;
@@ -32,6 +33,7 @@ public class MainActivityTest extends
 		if (solo.searchButton("Log out")) {
 			solo.clickOnButton("Log out");
 		}
+		//AppContext.getContext().resetState();
 	}
 
 	@Override

@@ -7,6 +7,7 @@ import android.widget.Button;
 
 import com.jayway.android.robotium.solo.Solo;
 
+import epfl.sweng.context.AppContext;
 import epfl.sweng.servercomm.SwengHttpClientFactory;
 import epfl.sweng.showquestions.ShowQuestionsActivity;
 import epfl.sweng.test.minimalmock.MockHttpClient;
@@ -33,6 +34,7 @@ public class ShowQuestionsActivityTest extends
         pushLifeQuestion();
         getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
 		solo = new Solo(getInstrumentation(), getActivity());
+		AppContext.getContext().resetState();
 	}
 	
 	@Override

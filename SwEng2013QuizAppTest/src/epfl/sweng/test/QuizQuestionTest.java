@@ -4,6 +4,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import epfl.sweng.context.AppContext;
 import epfl.sweng.quizquestions.QuizQuestion;
 import android.test.AndroidTestCase;
 
@@ -23,6 +24,7 @@ public class QuizQuestionTest extends AndroidTestCase {
 		tagsExamples = new JSONArray();
 		tagsExamples.put("A");
 		tagsExamples.put("B");
+		AppContext.getContext().resetState();
 	}
 
 	public void testJSONConstruction() {

@@ -6,8 +6,17 @@ import org.json.JSONException;
 import android.test.AndroidTestCase;
 
 import epfl.sweng.authentication.JSONToken;
+import epfl.sweng.context.AppContext;
 
 public class JSONTokenTest extends AndroidTestCase {
+	
+	@Override
+	protected void setUp() throws Exception {
+		super.setUp();
+		AppContext.getContext().resetState();
+	}
+	
+	
 	public void testConstruction() {
 		String response = "{ message: \"Here's your authentication token.\", " +
 							"token: \"5jiju5n4edckf6264u6kd5w7gpx73zdb\" }";

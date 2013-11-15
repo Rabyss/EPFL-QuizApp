@@ -11,6 +11,12 @@ import epfl.sweng.context.conn_states.ServerSyncConnectionState;
 import epfl.sweng.events.EventEmitter;
 
 public class AppContextTest extends AndroidTestCase {
+	
+	@Override
+	protected void setUp() throws Exception {
+		super.setUp();
+		AppContext.getContext().resetState();
+	}
 
 
     public void testSetAndGetSessionID() {

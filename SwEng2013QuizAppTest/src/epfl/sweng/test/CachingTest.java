@@ -37,9 +37,11 @@ public class CachingTest extends
         if (solo.searchButton("Log out")) {
             solo.clickOnButton("Log out");
         }
+        
+        AppContext.getContext().resetState();
     }
 
-    public void cacheInActionTest() {
+    public void testCacheInAction() {
         login();
         
         String randomQuestionButton = getActivity().getString(R.string.show_random_question);

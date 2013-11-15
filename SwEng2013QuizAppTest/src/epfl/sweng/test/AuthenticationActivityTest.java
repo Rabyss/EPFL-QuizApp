@@ -3,6 +3,7 @@ package epfl.sweng.test;
 import com.jayway.android.robotium.solo.Solo;
 
 import epfl.sweng.authentication.AuthenticationActivity;
+import epfl.sweng.context.AppContext;
 import epfl.sweng.servercomm.SwengHttpClientFactory;
 import epfl.sweng.test.minimalmock.MockHttpClient;
 import epfl.sweng.testing.TestCoordinator;
@@ -27,7 +28,7 @@ public class AuthenticationActivityTest extends ActivityInstrumentationTestCase2
 	protected void setUp() {
 		getActivityAndWaitFor(TTChecks.AUTHENTICATION_ACTIVITY_SHOWN);
 		solo = new Solo(getInstrumentation(), getActivity());
-		
+		AppContext.getContext().resetState();
 	}
 	
 	@Override

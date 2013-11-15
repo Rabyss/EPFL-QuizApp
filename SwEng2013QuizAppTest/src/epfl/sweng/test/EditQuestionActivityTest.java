@@ -14,6 +14,7 @@ import com.jayway.android.robotium.solo.Solo;
 
 import epfl.sweng.quizquestions.MalformedQuestionException;
 import epfl.sweng.quizquestions.QuizQuestion;
+import epfl.sweng.context.AppContext;
 import epfl.sweng.editquestions.EditQuestionActivity;
 import epfl.sweng.servercomm.SwengHttpClientFactory;
 import epfl.sweng.test.minimalmock.MockHttpClient;
@@ -51,6 +52,7 @@ public class EditQuestionActivityTest
         
         mockHttpClient = new MockHttpClient();
         SwengHttpClientFactory.setInstance(mockHttpClient);
+        AppContext.getContext().resetState();
     }
     
     public void testSubmit() {
