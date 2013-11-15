@@ -89,8 +89,16 @@ public class SearchQuery {
     }
     
     public void query() {
+    	query("");
+    }
+    
+    public void query(String from) {
 		ArrayList<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
 		params.add(new BasicNameValuePair("query", this.mQuery));
+		
+		if (!from.equals("")) {
+			params.add(new BasicNameValuePair("from", from));
+		}
 		
 		try {
 			UrlEncodedFormEntity entity;
@@ -109,6 +117,7 @@ public class SearchQuery {
 		
 		if (status == SWENG_OK) {
 			try {
+				// questions
 				String json = event.getJSONQuestions();
 				JSONObject jsonObj = new JSONObject(json);
 		        
@@ -118,6 +127,13 @@ public class SearchQuery {
 				for (int i = 0; i<questionArray.length(); i++) {
 					JSONQuestion jsonQuestion = new JSONQuestion(questionArray.getJSONObject(i));
 					questionSet.add(jsonQuestion.getQuizQuestion());
+				}
+				
+				// next
+				String next = jsonObj.optString("next");
+				
+				if (next.equals("")) {
+					// TODO your application must use to request the next batch of questions from the server
 				}
 				
 		        // this.emit(new XXXEvent(questionSet));
