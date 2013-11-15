@@ -1,6 +1,7 @@
 package epfl.sweng.patterns;
 
-import android.net.Proxy;
+
+import epfl.sweng.proxy.Proxy;
 import epfl.sweng.servercomm.ServerCommunicator;
 
 public class CheckProxyHelper implements ICheckProxyHelper {
