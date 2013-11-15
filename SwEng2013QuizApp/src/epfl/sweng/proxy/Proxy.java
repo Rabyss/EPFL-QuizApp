@@ -28,7 +28,7 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 			+ "random";
 
 	private final static int HTTP_ERROR_THRESHOLD = 400;
-	public final ServerCommunicator serverComm;
+	private final IServer serverComm;
 	private ArrayList<QuestionToSubmit> postQuestion;
 	private ArrayList<ServerResponse> getQuestion;
 	private static Proxy sInstance = null;
