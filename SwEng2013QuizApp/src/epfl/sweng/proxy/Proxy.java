@@ -108,7 +108,7 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 		} else {
 //			if (offlineToOnline) {
 //				offlineToOnline = false;
-			TestCoordinator.check(TTChecks.OFFLINE_CHECKBOX_DISABLED);
+//			TestCoordinator.check(TTChecks.OFFLINE_CHECKBOX_DISABLED);
 			this.emit(new ConnectionEvent(
 						ConnectionEventType.COMMUNICATION_SUCCESS));
 //			}
