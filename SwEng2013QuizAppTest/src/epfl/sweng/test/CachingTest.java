@@ -1,5 +1,7 @@
 package epfl.sweng.test;
 
+import org.apache.http.HttpStatus;
+
 import android.test.ActivityInstrumentationTestCase2;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -40,17 +42,24 @@ public class CachingTest extends
     public void cacheInActionTest() {
         login();
         
+        String randomQuestionButton = getActivity().getString(R.string.show_random_question);
         
-        solo.clickOnButton(R.string.show_random_question);
+        solo.clickOnButton(randomQuestionButton);
         getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
         QuizQuestion cachedQuiz = ((ShowQuestionsActivity) solo.getCurrentActivity()).getCurrentQuizQuestion();
         
         //now there is a question in the cache
         solo.goBack();
         getActivityAndWaitFor(TTChecks.MAIN_ACTIVITY_SHOWN);
+        
+        httpClient.popCannedResponse();
+        httpClient.popCannedResponse();
+        httpClient.popCannedResponse();
+        httpClient.popCannedResponse();
+        
         setOfflineMode();
         
-        solo.clickOnButton(R.string.show_random_question);
+        solo.clickOnButton(randomQuestionButton);
         getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
         QuizQuestion displayedQuiz = ((ShowQuestionsActivity) solo.getCurrentActivity()).getCurrentQuizQuestion();
         
@@ -81,7 +90,7 @@ public class CachingTest extends
         System.out.println(cBox.isChecked());
         if (!cBox.isChecked()) {
             solo.clickOnView(cBox); //check the offline-mode checkbox if unchecked
-            getActivityAndWaitFor(TTChecks.OFFLINE_CHECKBOX_DISABLED);
+            getActivityAndWaitFor(TTChecks.OFFLINE_CHECKBOX_ENABLED);
         }
         
         assertFalse("The app must be in offline mode after checking the check box.", AppContext.getContext().isOnline());
@@ -93,7 +102,7 @@ public class CachingTest extends
         getActivityAndWaitFor(TTChecks.AUTHENTICATION_ACTIVITY_SHOWN);
         httpClient = new MockHttpClient();
         SwengHttpClientFactory.setInstance(httpClient);
-
+        
         httpClient
                 .pushCannedResponse(
                         "POST https://sweng-quiz.appspot.com/login",
@@ -123,13 +132,20 @@ public class CachingTest extends
                                 + "  \"message\": \"Here's your authentication token. Please validate it "
                                 + "              with Tequila at https://tequila.epfl.ch/cgi-bin/tequila/login\" }",
                         "application/json");
+        httpClient
+        .pushCannedResponse(
+                "GET (?:https?://[^/]+|[^/]+)?/+quizquestions/random\\b",
+                HttpStatus.SC_OK,
+                "{\"question\": \"What is the answer to life, the universe, and everything?\","
+                        + " \"answers\": [\"Forty-two\", \"Twenty-seven\"], \"owner\": \"sweng\","
+                        + " \"solutionIndex\": 0, \"tags\": [\"h2g2\", \"trivia\"], \"id\": \"1\" }",
+                "application/json");
         EditText username = solo.getEditText("GASPAR Username");
         EditText password = solo.getEditText("GASPAR Password");
         solo.typeText(username, "SnowWhite");
         solo.typeText(password, "SevenDwarfs");
         solo.clickOnButton("Log in using Tequila");
         getActivityAndWaitFor(TTChecks.MAIN_ACTIVITY_SHOWN);
-
     }
 
     private void getActivityAndWaitFor(final TestCoordinator.TTChecks expected) {
