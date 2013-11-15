@@ -321,4 +321,9 @@ public class EditQuestionActivity extends QuestionActivity {
 			return null;
 		}
 	}
+
+    @Override
+    protected void clientFailure() {
+        TestCoordinator.check(TTChecks.NEW_QUESTION_SUBMITTED);
+    }
 }

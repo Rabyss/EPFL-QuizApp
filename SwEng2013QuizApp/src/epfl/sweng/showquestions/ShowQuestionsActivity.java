@@ -201,4 +201,9 @@ public class ShowQuestionsActivity extends QuestionActivity {
                 .show();
         TestCoordinator.check(TTChecks.QUESTION_SHOWN);
     }
+
+    @Override
+    protected void clientFailure() {
+        TestCoordinator.check(TTChecks.QUESTION_SHOWN);
+    }
 }

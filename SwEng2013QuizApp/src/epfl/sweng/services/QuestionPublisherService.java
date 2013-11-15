@@ -44,7 +44,11 @@ public class QuestionPublisherService extends QuestionActivityService implements
     }
 
     public void on(PostedQuestionEvent event) {
-        this.emit(new SuccessfulSubmitEvent());
+        if (event.getResponse() == null) {
+            this.emit(new ClientErrorEvent());
+        } else {
+            this.emit(new SuccessfulSubmitEvent());
+        }
         removeListener(super.getActivity());
     }
 

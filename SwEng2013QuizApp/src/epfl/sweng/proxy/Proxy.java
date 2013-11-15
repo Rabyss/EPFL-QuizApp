@@ -27,7 +27,8 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 	public final static String SWENG_GET_RANDOM_QUESTION_URL = SWENG_SUBMIT_QUESTION_URL
 			+ "random";
 
-	private final static int HTTP_ERROR_THRESHOLD = 400;
+	private final static int HTTP_ERROR_THRESHOLD = 500;
+    private final static int HTTP_ERROR_INTERMEDIATE_THRESHOLD = 400;
 	private final IServer serverComm;
 	private ArrayList<QuestionToSubmit> postQuestion;
 	private ArrayList<ServerResponse> getQuestion;
@@ -115,11 +116,19 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 
 	public void on(ReceivedQuestionEvent event) {
 		ServerResponse data = event.getResponse();
-		if (data != null && data.getStatusCode() < HTTP_ERROR_THRESHOLD) {
-
-			getQuestion.add(data);
-			this.emit(new ConnectionEvent(
-					ConnectionEventType.COMMUNICATION_SUCCESS));
+		if (data != null && data.getStatusCode() <= HTTP_ERROR_THRESHOLD) {
+		    if (data.getStatusCode() >= HTTP_ERROR_INTERMEDIATE_THRESHOLD) {
+		        
+		        event = new ReceivedQuestionEvent();
+		        event.setResponse(null);
+		        
+		        this.emit(new ConnectionEvent(
+	                        ConnectionEventType.COMMUNICATION_SUCCESS));
+		    } else {
+    			getQuestion.add(data);
+    			this.emit(new ConnectionEvent(
+    					ConnectionEventType.COMMUNICATION_SUCCESS));
+		    }
 		} else {
 			this.on(new GetConnectionErrorEvent());
 		}
@@ -129,11 +138,15 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 	public void on(PostedQuestionEvent event) {
 		ServerResponse data = event.getResponse();
 		if (data != null && data.getStatusCode() < HTTP_ERROR_THRESHOLD) {
-			ServerResponse serverResponse = new ServerResponse(
-					data.getEntity(), data.getStatusCode());
-			getQuestion.add(serverResponse);
-			this.emit(new ConnectionEvent(
-					ConnectionEventType.COMMUNICATION_SUCCESS));
+		    if (data.getStatusCode() >= HTTP_ERROR_INTERMEDIATE_THRESHOLD) {
+		        event.setResponse(null);
+		    } else {
+                ServerResponse serverResponse = new ServerResponse(
+                        data.getEntity(), data.getStatusCode());
+                getQuestion.add(serverResponse);
+    		}
+		    this.emit(new ConnectionEvent(
+                    ConnectionEventType.COMMUNICATION_SUCCESS));
 			this.emit(event);
 			// post other cached questions that wait to be posted
 			on(new OnlineEvent());

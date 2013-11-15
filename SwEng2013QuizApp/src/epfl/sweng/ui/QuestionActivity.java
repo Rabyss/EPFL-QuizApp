@@ -4,10 +4,13 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Toast;
+import epfl.sweng.R;
 import epfl.sweng.authentication.UserStorage;
 import epfl.sweng.context.AppContext;
 import epfl.sweng.entry.MainActivity;
 import epfl.sweng.events.EventListener;
+import epfl.sweng.services.ClientErrorEvent;
 import epfl.sweng.services.ConnectionErrorEvent;
 
 /**
@@ -19,7 +22,7 @@ public abstract class QuestionActivity extends Activity implements
     private ProgressDialog progressDialog;
 
     protected final static int TOAST_DISPLAY_TIME = 2000;
-
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,7 +43,8 @@ public abstract class QuestionActivity extends Activity implements
     }
 
     protected abstract void serverFailure();
-
+    protected abstract void clientFailure();
+    
     protected void showProgressDialog() {
     	progressDialog.show();
     }
@@ -52,5 +56,11 @@ public abstract class QuestionActivity extends Activity implements
     public void on(ConnectionErrorEvent event) {
         hideProgressDialog();
         serverFailure();
+    }
+    
+    public void on(ClientErrorEvent event) {
+        hideProgressDialog();
+        Toast.makeText(this, getString(R.string.client_error), TOAST_DISPLAY_TIME).show();
+        clientFailure();
     }
 }

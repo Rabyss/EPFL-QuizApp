@@ -106,6 +106,20 @@ public class ShowQuestionsActivityTest extends
 		assertFalse("Next question button is disabled",
 				nextQuestionButton.isEnabled());
 	}
+	
+	public void testBadRequest() {
+	    httpClient.pushCannedResponse(
+	            "GET (?:https?://[^/]+|[^/]+)?/+quizquestions/random\\b", 
+	            HttpStatus.SC_BAD_REQUEST, 
+	            "", 
+	            "application/json");
+	    solo.clickOnText("Forty-two");
+        getActivityAndWaitFor(TTChecks.ANSWER_SELECTED);
+	    solo.clickOnText("Next question");
+	    getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
+	    assertTrue("Client is not notified of the error.", 
+	            solo.searchText(getActivity().getString(epfl.sweng.R.string.client_error)));
+	}
 
 	private void pushLifeQuestion() {
 		httpClient
@@ -116,6 +130,7 @@ public class ShowQuestionsActivityTest extends
 								+ " \"answers\": [\"Forty-two\", \"Twenty-seven\"], \"owner\": \"sweng\","
 								+ " \"solutionIndex\": 0, \"tags\": [\"h2g2\", \"trivia\"], \"id\": \"1\" }",
 						"application/json");
+		
 	}
 	
 	private void pushCalculQuestion() {
@@ -128,7 +143,7 @@ public class ShowQuestionsActivityTest extends
 								+ " \"solutionIndex\": 1, \"tags\": [\"h2g2\", \"trivia\"], \"id\": \"1\" }",
 						"application/json");
 	}
-
+	
 	private void getActivityAndWaitFor(final TestCoordinator.TTChecks expected) {
 		TestCoordinator.run(getInstrumentation(), new TestingTransaction() {
 			@Override

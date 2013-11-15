@@ -33,19 +33,22 @@ public class QuestionFetcherService extends QuestionActivityService implements
 
 	public void on(ReceivedQuestionEvent event) {
 		ServerResponse response = event.getResponse();
-		int status = response.getStatusCode();
-		if (status == HttpStatus.SC_NOT_FOUND) {
-			this.emit(new NothingInCacheEvent());
+		if (response == null) {
+		    this.emit(new ClientErrorEvent());
 		} else {
-			QuizQuestion quizQuestion = null;
-			try {
-				quizQuestion = new QuizQuestion(response.getEntity().toString());
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-			this.emit(new ShowQuestionEvent(quizQuestion));
+    		int status = response.getStatusCode();
+    		if (status == HttpStatus.SC_NOT_FOUND) {
+    			this.emit(new NothingInCacheEvent());
+    		} else {
+    			QuizQuestion quizQuestion = null;
+    			try {
+    				quizQuestion = new QuizQuestion(response.getEntity().toString());
+    			} catch (JSONException e) {
+    				e.printStackTrace();
+    			}
+    			this.emit(new ShowQuestionEvent(quizQuestion));
+    		}
 		}
-
 		removeListener(super.getActivity());
 	}
 	

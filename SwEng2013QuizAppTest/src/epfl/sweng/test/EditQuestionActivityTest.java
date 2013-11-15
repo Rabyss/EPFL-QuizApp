@@ -124,7 +124,7 @@ public class EditQuestionActivityTest
         EditText tagsEditor = solo.getEditText(TAGS_EDITOR_TEXT);
         solo.typeText(tagsEditor, tags);
         
-        mockHttpClient.pushCannedResponse("/*/",  HttpStatus.SC_BAD_REQUEST, 
+        mockHttpClient.pushCannedResponse("/*/",  HttpStatus.SC_BAD_GATEWAY, 
                 null, "application/json");
         
         assertTrue("Submit button not found.", solo.searchButton(SUBMIT_BUTTON_TEXT));
@@ -139,6 +139,38 @@ public class EditQuestionActivityTest
         assertTrue("Tags body has changed after bad submit.", solo.searchEditText(tags));
         assertTrue("The checked answer does no longer exist after bad submit.",
         		solo.searchButton(TRUE_ANSWER_BUTTON_TEXT));
+    }
+    
+    public void testBadRequest() {
+        final String questionBody = "Question body";
+        final String firstAnswerBody = "Answer A";
+        final String scdAnswerBody = "Answer B";
+        final String tags = "A B";
+        
+        fillQuestionBody(questionBody);
+        fillNextAnswerBody(firstAnswerBody);
+        
+        assertTrue("+ button cannot be found.", solo.searchButton(PLUS_BUTTON_TEXT));
+        solo.clickOnButton(PLUS_BUTTON_TEXT);
+        waitForChange();
+        
+        fillNextAnswerBody(scdAnswerBody);
+        
+        assertTrue(FALSE_ANSWER_BUTTON + " buttons cannot be found.", solo.searchButton(FALSE_ANSWER_BUTTON, 2));
+        solo.clickOnButton(FALSE_ANSWER_BUTTON);
+        
+        assertTrue("Tags editor cannot be found.", solo.searchEditText(TAGS_EDITOR_TEXT));
+        EditText tagsEditor = solo.getEditText(TAGS_EDITOR_TEXT);
+        solo.typeText(tagsEditor, tags);
+        
+        mockHttpClient.pushCannedResponse("/*/",  HttpStatus.SC_BAD_REQUEST, 
+                null, "application/json");
+        
+        solo.clickOnButton(SUBMIT_BUTTON_TEXT);
+        getActivityAndWaitFor(TTChecks.NEW_QUESTION_SUBMITTED);
+        assertTrue("Client error not notified.", 
+                solo.searchText(getActivity().getString(epfl.sweng.R.string.client_error)));
+        
     }
     
     public void testTags() {
