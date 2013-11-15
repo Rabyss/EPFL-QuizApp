@@ -31,4 +31,7 @@ public final class ConnectionStateMachine implements EventListener {
         return mCurrentState;
     }
 
+    public void reset() {
+        mCurrentState = STARTING_STATE;
+    }
 }

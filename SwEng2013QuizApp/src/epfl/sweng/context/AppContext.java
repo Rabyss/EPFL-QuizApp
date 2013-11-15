@@ -55,5 +55,9 @@ public enum AppContext {
     public void removeAsListener(EventEmitter eventEmitter) {
         eventEmitter.removeListener(mConnectionStateMachine);
     }
+    
+    public void resetState() {
+        mConnectionStateMachine.reset();
+    }
 
 }

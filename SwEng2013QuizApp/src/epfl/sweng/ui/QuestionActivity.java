@@ -21,7 +21,7 @@ public abstract class QuestionActivity extends Activity implements
 
     private ProgressDialog progressDialog;
 
-    protected final static int TOAST_DISPLAY_TIME = 2000;
+    protected final static int TOAST_DISPLAY_TIME = 4000;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
