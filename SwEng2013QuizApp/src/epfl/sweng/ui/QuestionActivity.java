@@ -60,7 +60,7 @@ public abstract class QuestionActivity extends Activity implements
     
     public void on(ClientErrorEvent event) {
         hideProgressDialog();
-        Toast.makeText(this, getString(R.string.client_error), TOAST_DISPLAY_TIME).show();
         clientFailure();
+        Toast.makeText(this, getString(R.string.client_error), TOAST_DISPLAY_TIME).show();
     }
 }
