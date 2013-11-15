@@ -105,7 +105,7 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 			postQuestion.remove(0);
 			doHttpPost(reqContext, postEvent);
 		} else {
-			TestCoordinator.check(TTChecks.OFFLINE_CHECKBOX_DISABLED);
+			
 			this.emit(new ConnectionEvent(
 						ConnectionEventType.COMMUNICATION_SUCCESS));
 
