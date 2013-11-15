@@ -178,6 +178,7 @@ public class MainActivity extends Activity {
 						// offline to online
 						if (!isChecked) {
 							emitter.emit(new OnlineEvent());
+							TestCoordinator.check(TTChecks.OFFLINE_CHECKBOX_DISABLED);
 						} else {
 							TestCoordinator.check(TTChecks.OFFLINE_CHECKBOX_ENABLED);
 						}

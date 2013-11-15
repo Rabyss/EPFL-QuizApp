@@ -33,7 +33,7 @@ public class EditQuestionActivityTest
     private static final String TAGS_EDITOR_TEXT = "Type in the question's tags";
     private static final String FALSE_ANSWER_BUTTON = "\u2718";
     private static final String TRUE_ANSWER_BUTTON_TEXT = "\u2714";
-    private static final String FETCHING_ERROR_MESSAGE = "Could not upload the question to the server";
+    private static final String FETCHING_ERROR_MESSAGE = "Could not upload the question to the server, switched to offline mode.";
     private static final String FETCHING_SUCCESS_MESSAGE = "Successful submit";
     private static final int THREE = 3;
 	private static final int QUIZ_QUEST_ID = 1234;
@@ -129,7 +129,8 @@ public class EditQuestionActivityTest
         
         assertTrue("Submit button not found.", solo.searchButton(SUBMIT_BUTTON_TEXT));
         solo.clickOnButton(SUBMIT_BUTTON_TEXT);
-        getActivityAndWaitFor(TTChecks.NEW_QUESTION_SUBMITTED);
+     
+        getActivityAndWaitFor(TTChecks.OFFLINE_CHECKBOX_ENABLED);
         assertTrue("Error message not found.", solo.searchText(FETCHING_ERROR_MESSAGE));
         
         assertTrue("Question body has changed after bad submit.", solo.searchEditText(questionBody));
