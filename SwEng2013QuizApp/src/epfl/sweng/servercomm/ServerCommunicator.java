@@ -17,136 +17,166 @@ import epfl.sweng.proxy.IServer;
 import epfl.sweng.proxy.PostConnectionErrorEvent;
 
 /**
- * 
- * Handles communication with the server.
- * 
+ * Handles network communication with the app server. This class implements the
+ * Singleton Pattern.
  */
 public final class ServerCommunicator extends EventEmitter implements IServer {
 
-    private static ServerCommunicator sInstance = null;
-    public final static String SWENG_SERVER_URL = "https://sweng-quiz.appspot.com";
-    public final static String SWENG_SUBMIT_QUESTION_URL = SWENG_SERVER_URL
-            + "/quizquestions/";
-    public final static String SWENG_GET_RANDOM_QUESTION_URL = SWENG_SUBMIT_QUESTION_URL
-            + "random";
+	/**
+	 * Singleton instance
+	 */
+	private static ServerCommunicator sInstance = null;
 
-    private ServerCommunicator() {
+	/**
+	 * Base server URL
+	 */
+	public final static String SWENG_SERVER_URL = "https://sweng-quiz.appspot.com";
 
-    }
+	/**
+	 * Server URL for submitting a new question
+	 */
+	public final static String SWENG_SUBMIT_QUESTION_URL = SWENG_SERVER_URL
+			+ "/quizquestions/";
 
-    public static synchronized ServerCommunicator getInstance() {
-        if (sInstance == null) {
-            sInstance = new ServerCommunicator();
-        }
-        return sInstance;
-    }
+	/**
+	 * Server URL for retrieving a random question
+	 */
+	public final static String SWENG_GET_RANDOM_QUESTION_URL = SWENG_SUBMIT_QUESTION_URL
+			+ "random";
 
-    public void doHttpGet(RequestContext reqContext, ServerEvent event) {
-        assert !reqContext.getServerURL().equals("")
-                && reqContext.getServerURL() != null : "No URL found !";
-        assert event != null : "Event is null";
-        // Creates an asynchronous task to send a GET request.
-        new GetTask(event).execute(reqContext);
-    }
+	/**
+	 * Get the singleton instance of ServerCommunicator
+	 * 
+	 * @return the singleton instance
+	 */
+	public static synchronized ServerCommunicator getInstance() {
+		if (sInstance == null) {
+			sInstance = new ServerCommunicator();
+		}
+		return sInstance;
+	}
 
-    public void doHttpPost(RequestContext reqContext, ServerEvent event) {
-        assert !reqContext.getServerURL().equals("")
-                && reqContext.getServerURL() != null : "No URL found !";
-        assert reqContext.getEntity() != null : "No HttpEntity found !";
-        assert !reqContext.getHeaders().isEmpty() : "No Header found !";
-        assert event != null : "Event is null";
-        // Creates an asynchronous task to send a POST request.
-        new PostTask(event).execute(reqContext);
-    }
+	@Override
+	public void doHttpGet(RequestContext reqContext, ServerEvent event) {
+		assert !reqContext.getServerURL().equals("")
+				&& reqContext.getServerURL() != null : "No URL found !";
+		assert event != null : "Event is null";
+		// Creates an asynchronous task to send a GET request.
+		new GetTask(event).execute(reqContext);
+	}
 
-    private void exctractHeaders(HttpRequest request, RequestContext reqContext) {
-        Iterator<Entry<String, String>> headersIterator = reqContext
-                .getHeaders().entrySet().iterator();
-        while (headersIterator.hasNext()) {
-            Map.Entry<String, String> header = headersIterator.next();
-            request.setHeader(header.getKey(), header.getValue());
-            headersIterator.remove();
-        }
-    }
+	public void doHttpPost(RequestContext reqContext, ServerEvent event) {
+		assert !reqContext.getServerURL().equals("")
+				&& reqContext.getServerURL() != null : "No URL found !";
+		assert reqContext.getEntity() != null : "No HttpEntity found !";
+		assert !reqContext.getHeaders().isEmpty() : "No Header found !";
+		assert event != null : "Event is null";
+		// Creates an asynchronous task to send a POST request.
+		new PostTask(event).execute(reqContext);
+	}
 
-    /**
-     * 
-     * Asynchronous task used to send POST requests.
-     * 
-     */
-    private final class PostTask extends
-            AsyncTask<RequestContext, Void, ServerResponse> {
-        private ServerEvent mEvent;
+	private ServerCommunicator() {
 
-        public PostTask(ServerEvent event) {
-            mEvent = event;
-        }
+	}
 
-        @Override
-        protected ServerResponse doInBackground(RequestContext... params) {
-            RequestContext reqContext = params[0];
-            HttpPost post = new HttpPost(reqContext.getServerURL());
-            exctractHeaders(post, reqContext);
-            ResponseHandler<ServerResponse> handler = new CustomResponseHandler();
-            try {
-                post.setEntity(reqContext.getEntity());
-                return SwengHttpClientFactory.getInstance().execute(post,
-                        handler);
-            } catch (IOException e) {
-                return null;
-            }
-        }
+	private void exctractHeaders(HttpRequest request, RequestContext reqContext) {
+		Iterator<Entry<String, String>> headersIterator = reqContext
+				.getHeaders().entrySet().iterator();
+		while (headersIterator.hasNext()) {
+			Map.Entry<String, String> header = headersIterator.next();
+			request.setHeader(header.getKey(), header.getValue());
+			headersIterator.remove();
+		}
+	}
 
-        @Override
-        protected void onPostExecute(ServerResponse result) {
-            super.onPostExecute(result);
-            if (result != null) {
-                mEvent.setResponse(result);
-                ServerCommunicator.getInstance().emit(mEvent);
-            } else {
-                ServerCommunicator.getInstance().emit(new PostConnectionErrorEvent());
-            }
-        }
-    }
+	/**
+	 * 
+	 * Asynchronous task used to send POST requests.
+	 * 
+	 */
+	private final class PostTask extends
+			AsyncTask<RequestContext, Void, ServerResponse> {
+		private ServerEvent mEvent;
 
-    /**
-     * 
-     * Asynchronous task used to send GET requests.
-     * 
-     */
-    private final class GetTask extends
-            AsyncTask<RequestContext, Void, ServerResponse> {
-        private ServerEvent mEvent;
+		/**
+		 * Create a PostTask with the callback event to call
+		 * @param event the callback event to call
+		 */
+		public PostTask(ServerEvent event) {
+			mEvent = event;
+		}
 
-        public GetTask(ServerEvent event) {
-            mEvent = event;
-        }
+		@Override
+		protected ServerResponse doInBackground(RequestContext... params) {
+			RequestContext reqContext = params[0];
+			HttpPost post = new HttpPost(reqContext.getServerURL());
+			exctractHeaders(post, reqContext);
+			ResponseHandler<ServerResponse> handler = new CustomResponseHandler();
+			try {
+				post.setEntity(reqContext.getEntity());
+				return SwengHttpClientFactory.getInstance().execute(post,
+						handler);
+			} catch (IOException e) {
+				return null;
+			}
+		}
 
-        @Override
-        protected ServerResponse doInBackground(RequestContext... params) {
-            RequestContext reqContext = params[0];
-            // Construct the request
-            HttpGet get = new HttpGet(reqContext.getServerURL());
-            ResponseHandler<ServerResponse> questionFetchHandler = new CustomResponseHandler();
-            exctractHeaders(get, reqContext);
-            try {
-                return SwengHttpClientFactory.getInstance().execute(get,
-                        questionFetchHandler);
-            } catch (IOException e) {
-                return null;
-            }
-        }
+		@Override
+		protected void onPostExecute(ServerResponse result) {
+			super.onPostExecute(result);
+			// Server responds something (was reachable)
+			if (result != null) {
+				mEvent.setResponse(result);
+				ServerCommunicator.getInstance().emit(mEvent);
+			// In case Of IOException, i.e. Server unreachable
+			} else {
+				ServerCommunicator.getInstance().emit(
+						new PostConnectionErrorEvent());
+			}
+		}
+	}
 
-        @Override
-        protected void onPostExecute(ServerResponse result) {
-            super.onPostExecute(result);
-            if (result != null) {
-                mEvent.setResponse(result);
-                ServerCommunicator.getInstance().emit(mEvent);
-            } else {
-                ServerCommunicator.getInstance().emit(new GetConnectionErrorEvent());
-            }
-        }
-    }
+	/**
+	 * 
+	 * Asynchronous task used to send GET requests.
+	 * 
+	 */
+	private final class GetTask extends
+			AsyncTask<RequestContext, Void, ServerResponse> {
+		private ServerEvent mEvent;
+
+		public GetTask(ServerEvent event) {
+			mEvent = event;
+		}
+
+		@Override
+		protected ServerResponse doInBackground(RequestContext... params) {
+			RequestContext reqContext = params[0];
+			// Construct the request
+			HttpGet get = new HttpGet(reqContext.getServerURL());
+			ResponseHandler<ServerResponse> questionFetchHandler = new CustomResponseHandler();
+			exctractHeaders(get, reqContext);
+			try {
+				return SwengHttpClientFactory.getInstance().execute(get,
+						questionFetchHandler);
+			} catch (IOException e) {
+				return null;
+			}
+		}
+
+		@Override
+		protected void onPostExecute(ServerResponse result) {
+			super.onPostExecute(result);
+			// Server responds something, i.e. was reachable
+			if (result != null) {
+				mEvent.setResponse(result);
+				ServerCommunicator.getInstance().emit(mEvent);
+			// In case of IOException, i.e. server unreachable
+			} else {
+				ServerCommunicator.getInstance().emit(
+						new GetConnectionErrorEvent());
+			}
+		}
+	}
 
 }
