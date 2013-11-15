@@ -1,7 +1,6 @@
 package epfl.sweng.test;
 
 import org.apache.http.HttpStatus;
-import org.apache.http.impl.client.AbstractHttpClient;
 
 import android.test.ActivityInstrumentationTestCase2;
 import android.widget.CheckBox;
@@ -52,6 +51,12 @@ public class CachingTest extends
         //now there is a question in the cache
         solo.goBack();
         getActivityAndWaitFor(TTChecks.MAIN_ACTIVITY_SHOWN);
+        
+        httpClient.popCannedResponse();
+        httpClient.popCannedResponse();
+        httpClient.popCannedResponse();
+        httpClient.popCannedResponse();
+        
         setOfflineMode();
         
         solo.clickOnButton(randomQuestionButton);
