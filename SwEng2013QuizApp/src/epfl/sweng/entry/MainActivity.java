@@ -38,22 +38,19 @@ public class MainActivity extends Activity {
 	private LinearLayout mLinearLayout;
 	private MainActivity mThis;
 	private CheckBox isOfflineCheckBox;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		String sessionID = UserStorage.getInstance(this).getSessionID();
-		
+
 		mIsLogged = sessionID != null;
-		emitter= new MainActivityEventEmitter();
+		emitter = new MainActivityEventEmitter();
 		AppContext.getContext().addAsListener(emitter);
 		emitter.addListener(Proxy.getInstance());
 		displayInit();
-		
-		// let the testing infrastructure know that entry point has been
-		// initialized
-		TestCoordinator.check(TTChecks.MAIN_ACTIVITY_SHOWN);
+
 	}
 
 	@Override
@@ -62,6 +59,15 @@ public class MainActivity extends Activity {
 		getMenuInflater().inflate(R.menu.main, menu);
 
 		return true;
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+		// let the testing infrastructure know that entry point has been
+		// initialized
+		TestCoordinator.check(TTChecks.MAIN_ACTIVITY_SHOWN);
+
 	}
 
 	public void displayShowQuestion(View view) {
@@ -75,9 +81,10 @@ public class MainActivity extends Activity {
 				EditQuestionActivity.class);
 		startActivity(displayEditQuestionsIntent);
 	}
-	
+
 	public void displayAuthentication(View view) {
-		Intent displayAuthenticationIntent = new Intent(this, AuthenticationActivity.class);
+		Intent displayAuthenticationIntent = new Intent(this,
+				AuthenticationActivity.class);
 		startActivity(displayAuthenticationIntent);
 	}
 
@@ -88,17 +95,17 @@ public class MainActivity extends Activity {
 		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		startActivity(intent);
 	}
-	
+
 	public void displayInit() {
 		mLinearLayout = new LinearLayout(this);
-        mLinearLayout.setOrientation(LinearLayout.VERTICAL);
-        mLinearLayout.setLayoutParams(new LayoutParams(
-                LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-        
-        displayButton();
-        setContentView(mLinearLayout);
+		mLinearLayout.setOrientation(LinearLayout.VERTICAL);
+		mLinearLayout.setLayoutParams(new LayoutParams(
+				LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+
+		displayButton();
+		setContentView(mLinearLayout);
 	}
-	
+
 	public void displayButton() {
 		mLogButton = new Button(this);
 		mShowQuestionButton = new Button(this);
@@ -108,7 +115,7 @@ public class MainActivity extends Activity {
 		isOfflineCheckBox = new CheckBox(this);
 		isOfflineCheckBox.setText(R.string.offline_mode);
 		isOfflineCheckBox.setChecked(!AppContext.getContext().isOnline());
-		
+
 		if (mIsLogged) {
 			mLogButton.setText(R.string.log_out);
 			mShowQuestionButton.setEnabled(true);
@@ -120,65 +127,71 @@ public class MainActivity extends Activity {
 			mSubmitQuestionButton.setEnabled(false);
 			isOfflineCheckBox.setVisibility(View.INVISIBLE);
 		}
-		
+
 		mThis = this;
 		mLogButton.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				if (mIsLogged) {
 					mIsLogged = false;
 
 					UserStorage.getInstance(mThis).removeSessionID();
-					
+
 					displayInit();
-				
+
 					TestCoordinator.check(TTChecks.LOGGED_OUT);
 				} else {
 					displayAuthentication(v);
 				}
-					
+
 			}
 		});
-		
+
 		mShowQuestionButton.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				displayShowQuestion(v);
-				
+
 			}
 		});
-		
+
 		mSubmitQuestionButton.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				displayEditQuestions(v);
-				
+
 			}
 		});
-		
-		isOfflineCheckBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-			
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				
-				emitter.emit(new ConnectionEvent(ConnectionEventType.OFFLINE_CHECKBOX_CLICKED));
-				// offline
-				if (!isChecked) {
-					emitter.emit(new OnlineEvent());
-				}
-			}
-		});
+
+		isOfflineCheckBox
+				.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+					@Override
+					public void onCheckedChanged(CompoundButton buttonView,
+							boolean isChecked) {
+
+						emitter.emit(new ConnectionEvent(
+								ConnectionEventType.OFFLINE_CHECKBOX_CLICKED));
+						// offline to online
+						if (!isChecked) {
+							emitter.emit(new OnlineEvent());
+						} else {
+							TestCoordinator.check(TTChecks.OFFLINE_CHECKBOX_ENABLED);
+						}
+					}
+				});
 		mLinearLayout.addView(mLogButton);
 		mLinearLayout.addView(mShowQuestionButton);
 		mLinearLayout.addView(mSubmitQuestionButton);
 		mLinearLayout.addView(isOfflineCheckBox);
-		
+
 	}
+
 	public static void setIsLogged(boolean isLogged) {
 		mIsLogged = isLogged;
 	}
-	
+
 }

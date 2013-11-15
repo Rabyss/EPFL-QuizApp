@@ -1,20 +1,22 @@
 package epfl.sweng.quizquestions;
 
 
+import static epfl.sweng.util.StringHelper.containsNonWhitespaceCharacters;
+
+import java.util.AbstractCollection;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.List;
-import java.util.Set;
-import java.util.Map;
-import java.util.Collection;
-import java.util.AbstractCollection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
 
 /**
  * Represents a question of the quiz.
@@ -177,20 +179,6 @@ public class QuizQuestion {
             }
         };
 	}
-
-    private boolean containsNonWhitespaceCharacters(String str) {
-        if (str == null) {
-            return false;
-        }
-
-        for (int i = 0; i < str.length(); i++) {
-            if (!Character.isWhitespace(str.charAt(i))) {
-                return true;
-            }
-        }
-
-        return false;
-    }
 
     private class AnswersList extends LinkedList<String> {
 
