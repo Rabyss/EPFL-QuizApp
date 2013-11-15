@@ -81,6 +81,10 @@ public class ShowQuestionsActivity extends QuestionActivity {
         mRandomQuestion = event.getQuizQuestion();
         showQuestion();
     }
+    
+    public QuizQuestion getCurrentQuizQuestion() {
+        return mRandomQuestion;
+    }
 
     private void showQuestion() {
         // Display the text of the question
