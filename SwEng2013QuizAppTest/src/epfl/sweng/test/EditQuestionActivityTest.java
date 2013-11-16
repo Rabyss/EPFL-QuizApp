@@ -151,7 +151,7 @@ public class EditQuestionActivityTest
         assertTrue("Submit button not found.", solo.searchButton(SUBMIT_BUTTON_TEXT));
         solo.clickOnButton(SUBMIT_BUTTON_TEXT);
      
-        getActivityAndWaitFor(TTChecks.OFFLINE_CHECKBOX_ENABLED);
+        getActivityAndWaitFor(TTChecks.NEW_QUESTION_SUBMITTED);
         assertTrue("Error message not found.", solo.searchText(FETCHING_ERROR_MESSAGE));
        
         //subject to uncomment
