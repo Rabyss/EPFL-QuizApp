@@ -55,6 +55,11 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 		AppContext.getContext().addAsListener(this);
 	}
 
+	/**
+	 * Get the singleton instance of Proxy
+	 * 
+	 * @return the singleton instance
+	 */
 	public static synchronized Proxy getInstance() {
 		if (sInstance == null) {
 			sInstance = new Proxy();
@@ -66,8 +71,11 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 	public void doHttpGet(RequestContext reqContext, ServerEvent event) {
 
 		if (isOnline()) {
+			// state machine transition
 			this.emit(new ConnectionEvent(
 					ConnectionEventType.ADD_OR_RETRIEVE_QUESTION));
+			// Continue in on(ReceivedQuestionEvent) if server reachable
+			// else (IOException) continue in on(GetConnectionErrorEvent)
 			serverComm.doHttpGet(reqContext, event);
 		} else {
 			ReceivedQuestionEvent receiveEvent = new ReceivedQuestionEvent();
@@ -126,8 +134,11 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 	}
 
 	public void on(ReceivedQuestionEvent event) {
+		// data cannot be null because server answered something
 		ServerResponse data = event.getResponse();
-		if (data != null && data.getStatusCode() <= HTTP_ERROR_THRESHOLD) {
+		
+		
+		if (data.getStatusCode() <= HTTP_ERROR_THRESHOLD) {
 			if (data.getStatusCode() >= HTTP_ERROR_INTERMEDIATE_THRESHOLD) {
 
 				event = new ReceivedQuestionEvent();
@@ -140,10 +151,25 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 				this.emit(new ConnectionEvent(
 						ConnectionEventType.COMMUNICATION_SUCCESS));
 			}
+		
+		// Server answered >= 500 status, go to offline mode
 		} else {
 			this.on(new GetConnectionErrorEvent());
 		}
+		
 		this.emit(event);
+	}
+
+	/**
+	 * Server unreachable or answered >= 500 status code
+	 * @param event
+	 */
+	public void on(GetConnectionErrorEvent event) {
+		// transition for state machine
+		this.emit(new ConnectionEvent(ConnectionEventType.COMMUNICATION_ERROR));
+		ReceivedQuestionWithError receiveEvent = new ReceivedQuestionWithError();
+		receiveEvent.setResponse(offlineRandomQuestion());
+		this.emit(receiveEvent);
 	}
 
 	public void on(PostedQuestionEvent event) {
@@ -175,13 +201,6 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 		TestCoordinator.check(TTChecks.OFFLINE_CHECKBOX_ENABLED);
 		this.emit(new ConnectionEvent(ConnectionEventType.COMMUNICATION_ERROR));
 		this.emit(event);
-	}
-
-	public void on(GetConnectionErrorEvent event) {
-		this.emit(new ConnectionEvent(ConnectionEventType.COMMUNICATION_ERROR));
-		ReceivedQuestionWithError receiveEvent = new ReceivedQuestionWithError();
-		receiveEvent.setResponse(offlineRandomQuestion());
-		this.emit(receiveEvent);
 	}
 
 	private class QuestionToSubmit {

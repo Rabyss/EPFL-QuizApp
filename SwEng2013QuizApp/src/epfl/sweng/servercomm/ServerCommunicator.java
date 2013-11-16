@@ -19,6 +19,10 @@ import epfl.sweng.proxy.PostConnectionErrorEvent;
 /**
  * Handles network communication with the app server. This class implements the
  * Singleton Pattern.
+ * 
+ * On doHttpGet and doHttpPost emits a ServerEvent (containing ServerResponse)
+ * if the server was reachable and answered something.
+ * Otherwise emits a Get(/Post)ConnectionErrorEvent if server was unreachable.
  */
 public final class ServerCommunicator extends EventEmitter implements IServer {
 
