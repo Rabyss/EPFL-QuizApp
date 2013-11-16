@@ -9,6 +9,7 @@ import android.widget.EditText;
 import com.jayway.android.robotium.solo.Solo;
 
 import epfl.sweng.R;
+import epfl.sweng.authentication.UserStorage;
 import epfl.sweng.context.AppContext;
 import epfl.sweng.entry.MainActivity;
 import epfl.sweng.quizquestions.QuizQuestion;
@@ -25,7 +26,8 @@ public class CachingTest extends
     private MockHttpClient httpClient;
     private static final int STATUS_200 = 200;
     private static final int STATUS_302 = 302;
-
+    private String mRandomQuestionButton;
+    
     public CachingTest() {
         super(MainActivity.class);
     }
@@ -39,32 +41,39 @@ public class CachingTest extends
         }
         
         AppContext.getContext().resetState();
+        mRandomQuestionButton = getActivity().getString(R.string.show_random_question);
+        
     }
 
     public void testCacheInAction() {
         login();
-        
-        String randomQuestionButton = getActivity().getString(R.string.show_random_question);
-        
-        solo.clickOnButton(randomQuestionButton);
-        getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
-        QuizQuestion cachedQuiz = ((ShowQuestionsActivity) solo.getCurrentActivity()).getCurrentQuizQuestion();
-        
-        //now there is a question in the cache
-        solo.goBack();
-        getActivityAndWaitFor(TTChecks.MAIN_ACTIVITY_SHOWN);
-        
-        httpClient.popCannedResponse();
-        httpClient.popCannedResponse();
-        httpClient.popCannedResponse();
-        httpClient.popCannedResponse();
-        
+        QuizQuestion cachedQuiz = cacheAQuestion();
         setOfflineMode();
         
-        solo.clickOnButton(randomQuestionButton);
+        solo.clickOnButton(mRandomQuestionButton);
         getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
         QuizQuestion displayedQuiz = ((ShowQuestionsActivity) solo.getCurrentActivity()).getCurrentQuizQuestion();
+        compareQuizQuestion(cachedQuiz, displayedQuiz);
         
+    }
+    
+    @Override
+    public void tearDown() {
+        UserStorage.getInstance(getActivity()).removeSessionID();
+        solo.finishOpenedActivities();
+    }
+    
+    public void testWhenNoInternetAccess() {
+        login();
+        QuizQuestion cachedQuiz = cacheAQuestion();
+        
+        solo.clickOnButton(mRandomQuestionButton);
+        getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
+        QuizQuestion displayedQuiz = ((ShowQuestionsActivity) solo.getCurrentActivity()).getCurrentQuizQuestion();
+        compareQuizQuestion(cachedQuiz, displayedQuiz);
+    }
+    
+    private void compareQuizQuestion(QuizQuestion cachedQuiz, QuizQuestion displayedQuiz) {
         assertEquals("Cached question body and displayed are not the same.", cachedQuiz.getQuestion(), 
                 displayedQuiz.getQuestion());
         
@@ -83,6 +92,24 @@ public class CachingTest extends
         
         assertTrue("Tags are not the same between the cached and the displayed quiz.",
                 cachedQuiz.getTags().containsAll(displayedQuiz.getTags()));
+    }
+    
+    private QuizQuestion cacheAQuestion() {
+        
+        solo.clickOnButton(mRandomQuestionButton);
+        getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
+        QuizQuestion cachedQuiz = ((ShowQuestionsActivity) solo.getCurrentActivity()).getCurrentQuizQuestion();
+        
+        //now there is a question in the cache
+        solo.goBack();
+        getActivityAndWaitFor(TTChecks.MAIN_ACTIVITY_SHOWN);
+
+        httpClient.popCannedResponse();
+        httpClient.popCannedResponse();
+        httpClient.popCannedResponse();
+        httpClient.popCannedResponse();
+        
+        return cachedQuiz;
     }
     
     private void setOfflineMode() {
