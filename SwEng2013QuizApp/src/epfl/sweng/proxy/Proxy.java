@@ -20,21 +20,32 @@ import epfl.sweng.showquestions.ReceivedQuestionWithError;
 import epfl.sweng.testing.TestCoordinator;
 import epfl.sweng.testing.TestCoordinator.TTChecks;
 
+/**
+ * Proxy for ServerCommunicator class <br/>
+ * Handle offline mode with questions caching <br/>
+ * Implements Singleton Pattern <br/>
+ * Listen to: ServerCommunicator to handle callbacks. <br/>
+ * Emits events to AppContext to control state machine
+ */
 public final class Proxy extends EventEmitter implements IServer, EventListener {
-	public final static String SWENG_SERVER_URL = "https://sweng-quiz.appspot.com";
-	public final static String SWENG_SUBMIT_QUESTION_URL = SWENG_SERVER_URL
-			+ "/quizquestions/";
-	public final static String SWENG_GET_RANDOM_QUESTION_URL = SWENG_SUBMIT_QUESTION_URL
-			+ "random";
 
 	private final static int HTTP_ERROR_THRESHOLD = 500;
-    private final static int HTTP_ERROR_INTERMEDIATE_THRESHOLD = 400;
-	private final IServer serverComm;
-	private ArrayList<QuestionToSubmit> postQuestion;
-	private ArrayList<ServerResponse> getQuestion;
+	private final static int HTTP_ERROR_INTERMEDIATE_THRESHOLD = 400;
+	
+	/** Singleton Instance */
 	private static Proxy sInstance = null;
+	
+	/** ServerCommunicator for delegation */ 
+	private final IServer serverComm;
+	
+	/** Cache for questions to be submitted next time online */
+	private ArrayList<QuestionToSubmit> postQuestion;
+	
+	/** Cache for retrieving questions while offline */ 
+	private ArrayList<ServerResponse> getQuestion;
+	
+	/** Temporary for a question we tried to submit online but IOException */
 	private QuestionToSubmit questionToSubmit;
-
 
 	private Proxy() {
 		serverComm = ServerCommunicator.getInstance();
@@ -106,9 +117,9 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 			postQuestion.remove(0);
 			doHttpPost(reqContext, postEvent);
 		} else {
-			
+
 			this.emit(new ConnectionEvent(
-						ConnectionEventType.COMMUNICATION_SUCCESS));
+					ConnectionEventType.COMMUNICATION_SUCCESS));
 
 		}
 
@@ -117,18 +128,18 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 	public void on(ReceivedQuestionEvent event) {
 		ServerResponse data = event.getResponse();
 		if (data != null && data.getStatusCode() <= HTTP_ERROR_THRESHOLD) {
-		    if (data.getStatusCode() >= HTTP_ERROR_INTERMEDIATE_THRESHOLD) {
-		        
-		        event = new ReceivedQuestionEvent();
-		        event.setResponse(null);
-		        
-		        this.emit(new ConnectionEvent(
-	                        ConnectionEventType.COMMUNICATION_SUCCESS));
-		    } else {
-    			getQuestion.add(data);
-    			this.emit(new ConnectionEvent(
-    					ConnectionEventType.COMMUNICATION_SUCCESS));
-		    }
+			if (data.getStatusCode() >= HTTP_ERROR_INTERMEDIATE_THRESHOLD) {
+
+				event = new ReceivedQuestionEvent();
+				event.setResponse(null);
+
+				this.emit(new ConnectionEvent(
+						ConnectionEventType.COMMUNICATION_SUCCESS));
+			} else {
+				getQuestion.add(data);
+				this.emit(new ConnectionEvent(
+						ConnectionEventType.COMMUNICATION_SUCCESS));
+			}
 		} else {
 			this.on(new GetConnectionErrorEvent());
 		}
@@ -138,15 +149,15 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 	public void on(PostedQuestionEvent event) {
 		ServerResponse data = event.getResponse();
 		if (data != null && data.getStatusCode() < HTTP_ERROR_THRESHOLD) {
-		    if (data.getStatusCode() >= HTTP_ERROR_INTERMEDIATE_THRESHOLD) {
-		        event.setResponse(null);
-		    } else {
-                ServerResponse serverResponse = new ServerResponse(
-                        data.getEntity(), data.getStatusCode());
-                getQuestion.add(serverResponse);
-    		}
-		    this.emit(new ConnectionEvent(
-                    ConnectionEventType.COMMUNICATION_SUCCESS));
+			if (data.getStatusCode() >= HTTP_ERROR_INTERMEDIATE_THRESHOLD) {
+				event.setResponse(null);
+			} else {
+				ServerResponse serverResponse = new ServerResponse(
+						data.getEntity(), data.getStatusCode());
+				getQuestion.add(serverResponse);
+			}
+			this.emit(new ConnectionEvent(
+					ConnectionEventType.COMMUNICATION_SUCCESS));
 			this.emit(event);
 			// post other cached questions that wait to be posted
 			on(new OnlineEvent());

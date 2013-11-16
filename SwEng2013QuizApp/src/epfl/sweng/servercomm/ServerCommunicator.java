@@ -100,7 +100,9 @@ public final class ServerCommunicator extends EventEmitter implements IServer {
 
 		/**
 		 * Create a PostTask with the callback event to call
-		 * @param event the callback event to call
+		 * 
+		 * @param event
+		 *            the callback event to call
 		 */
 		public PostTask(ServerEvent event) {
 			mEvent = event;
@@ -124,11 +126,11 @@ public final class ServerCommunicator extends EventEmitter implements IServer {
 		@Override
 		protected void onPostExecute(ServerResponse result) {
 			super.onPostExecute(result);
-			// Server responds something (was reachable)
+			// Server responds something, i.e. server reachable
 			if (result != null) {
 				mEvent.setResponse(result);
 				ServerCommunicator.getInstance().emit(mEvent);
-			// In case Of IOException, i.e. Server unreachable
+				// In case Of IOException, i.e. Server unreachable
 			} else {
 				ServerCommunicator.getInstance().emit(
 						new PostConnectionErrorEvent());
@@ -171,7 +173,7 @@ public final class ServerCommunicator extends EventEmitter implements IServer {
 			if (result != null) {
 				mEvent.setResponse(result);
 				ServerCommunicator.getInstance().emit(mEvent);
-			// In case of IOException, i.e. server unreachable
+				// In case of IOException, i.e. server unreachable
 			} else {
 				ServerCommunicator.getInstance().emit(
 						new GetConnectionErrorEvent());
