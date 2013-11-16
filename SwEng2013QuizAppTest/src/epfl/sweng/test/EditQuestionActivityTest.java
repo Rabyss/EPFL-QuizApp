@@ -191,7 +191,7 @@ public class EditQuestionActivityTest
         solo.clickOnButton(SUBMIT_BUTTON_TEXT);
         getActivityAndWaitFor(TTChecks.NEW_QUESTION_SUBMITTED);
         assertTrue("Client error not notified.", 
-                solo.searchText(getActivity().getString(epfl.sweng.R.string.client_error)));
+                solo.searchText(getActivity().getString(epfl.sweng.R.string.submit_server_failure)));
         
     }
     

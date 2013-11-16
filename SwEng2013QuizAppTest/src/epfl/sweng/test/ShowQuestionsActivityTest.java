@@ -120,7 +120,7 @@ public class ShowQuestionsActivityTest extends
 	    solo.clickOnText("Next question");
 	    getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
 	    assertTrue("Client is not notified of the error.", 
-	            solo.searchText(getActivity().getString(epfl.sweng.R.string.client_error)));
+	            solo.searchText(getActivity().getString(epfl.sweng.R.string.fetch_server_failure)));
 	}
 
 	private void pushLifeQuestion() {

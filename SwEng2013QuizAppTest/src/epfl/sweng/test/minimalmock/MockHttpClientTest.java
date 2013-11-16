@@ -58,7 +58,7 @@ public class MockHttpClientTest extends ActivityInstrumentationTestCase2<ShowQue
                  null,
                  "application/json");
 		getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
-		assertTrue("An error message must be display", solo.searchText("An error occurred on the client side."));
+		assertTrue("An error message must be display", solo.searchText(getActivity().getString(epfl.sweng.R.string.fetch_server_failure)));
     }
     	
     
