@@ -17,8 +17,6 @@ import epfl.sweng.servercomm.ServerEvent;
 import epfl.sweng.servercomm.ServerResponse;
 import epfl.sweng.showquestions.ReceivedQuestionEvent;
 import epfl.sweng.showquestions.ReceivedQuestionWithError;
-import epfl.sweng.testing.TestCoordinator;
-import epfl.sweng.testing.TestCoordinator.TTChecks;
 
 /**
  * Proxy for ServerCommunicator class <br/>
@@ -198,7 +196,7 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 
 	public void on(PostConnectionErrorEvent event) {
 		postQuestion.add(0, questionToSubmit);
-		TestCoordinator.check(TTChecks.OFFLINE_CHECKBOX_ENABLED);
+		//TestCoordinator.check(TTChecks.OFFLINE_CHECKBOX_ENABLED);
 		this.emit(new ConnectionEvent(ConnectionEventType.COMMUNICATION_ERROR));
 		this.emit(event);
 	}
