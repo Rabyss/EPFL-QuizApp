@@ -205,5 +205,6 @@ public class ShowQuestionsActivity extends QuestionActivity {
     @Override
     protected void clientFailure() {
         TestCoordinator.check(TTChecks.QUESTION_SHOWN);
+        Toast.makeText(this, getString(R.string.fetch_server_failure), Toast.LENGTH_LONG).show();
     }
 }

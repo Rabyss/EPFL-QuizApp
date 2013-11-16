@@ -4,8 +4,6 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Toast;
-import epfl.sweng.R;
 import epfl.sweng.authentication.UserStorage;
 import epfl.sweng.context.AppContext;
 import epfl.sweng.entry.MainActivity;
@@ -61,6 +59,5 @@ public abstract class QuestionActivity extends Activity implements
     public void on(ClientErrorEvent event) {
         hideProgressDialog();
         clientFailure();
-        Toast.makeText(this, getString(R.string.client_error), TOAST_DISPLAY_TIME).show();
     }
 }

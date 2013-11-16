@@ -321,6 +321,7 @@ public class EditQuestionActivity extends QuestionActivity {
     @Override
     protected void clientFailure() {
         TestCoordinator.check(TTChecks.NEW_QUESTION_SUBMITTED);
+        Toast.makeText(this, getString(R.string.submit_server_failure), Toast.LENGTH_LONG).show();
     }
     
     private void clearFields() {
