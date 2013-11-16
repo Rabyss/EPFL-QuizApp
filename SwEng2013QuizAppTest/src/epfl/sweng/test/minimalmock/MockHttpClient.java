@@ -1,5 +1,6 @@
 package epfl.sweng.test.minimalmock;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
@@ -106,13 +107,14 @@ class MockRequestDirector implements RequestDirector {
 
     @Override
     public HttpResponse execute(HttpHost target, HttpRequest request,
-            HttpContext context) {
+            HttpContext context) throws IOException {
         Log.v("HTTP", request.getRequestLine().toString());
 
         HttpResponse response = httpClient.processRequest(request);
         if (response == null) {
             throw new AssertionError("Request \"" + request.getRequestLine().toString()
                     + "\" did not match any known pattern");
+            //throw new IOException();
         }
 
         Log.v("HTTP", response.getStatusLine().toString());

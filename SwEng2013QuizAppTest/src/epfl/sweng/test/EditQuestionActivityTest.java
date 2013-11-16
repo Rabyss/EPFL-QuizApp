@@ -55,6 +55,25 @@ public class EditQuestionActivityTest
         AppContext.getContext().resetState();
     }
     
+    /*
+    public void testNoResponse() {
+        fillQuestionBody("Question A");
+        fillNextAnswerBody("Answer A");
+        
+        solo.clickOnButton(PLUS_BUTTON_TEXT);
+        waitForChange();
+        fillNextAnswerBody("Answer B");
+        
+        solo.clickOnButton(FALSE_ANSWER_BUTTON);
+        
+        EditText tagsEditor = solo.getEditText(TAGS_EDITOR_TEXT);
+        solo.typeText(tagsEditor, "A B");
+        
+        solo.clickOnButton(SUBMIT_BUTTON_TEXT);
+        getActivityAndWaitFor(TTChecks.OFFLINE_CHECKBOX_ENABLED);
+        
+    }*/
+    
     public void testSubmit() {
         final String questionBody = "Question body";
         final String firstAnswerBody = "Answer A";

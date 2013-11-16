@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import epfl.sweng.R;
+import epfl.sweng.proxy.PostConnectionErrorEvent;
 import epfl.sweng.quizquestions.QuizQuestion;
 import epfl.sweng.services.ServiceFactory;
 import epfl.sweng.services.SuccessfulSubmitEvent;
@@ -97,20 +98,15 @@ public class EditQuestionActivity extends QuestionActivity {
 		Toast.makeText(this, R.string.successful_submit, TOAST_DISPLAY_TIME)
 				.show();
 
-		// Reset UI
-		resettingUI = true;
-		((EditText) findViewById(R.id.editQuestionText)).setText("");
-		((EditText) findViewById(R.id.editTags)).setText("");
-		((Button) findViewById(R.id.buttonSubmitQuestion)).setEnabled(false);
-		while (answers.size() > 1) {
-			answers.get(answers.size() - 1).remove();
-		}
-		answers.get(0).resetContent();
-		answers.get(0).setCorrect(false);
-		resettingUI = false;
+		clearFields();
 		TestCoordinator.check(TTChecks.NEW_QUESTION_SUBMITTED);
 	}
 
+	public void on(PostConnectionErrorEvent event) {
+	    super.on(event);
+	    clearFields();
+	}
+	
 	public void updateSubmitButton() {
 		QuizQuestion quizQuestion = extractQuizQuestion();
 		if (quizQuestion.auditErrors() == 0) {
@@ -325,5 +321,19 @@ public class EditQuestionActivity extends QuestionActivity {
     @Override
     protected void clientFailure() {
         TestCoordinator.check(TTChecks.NEW_QUESTION_SUBMITTED);
+    }
+    
+    private void clearFields() {
+     // Reset UI
+        resettingUI = true;
+        ((EditText) findViewById(R.id.editQuestionText)).setText("");
+        ((EditText) findViewById(R.id.editTags)).setText("");
+        ((Button) findViewById(R.id.buttonSubmitQuestion)).setEnabled(false);
+        while (answers.size() > 1) {
+            answers.get(answers.size() - 1).remove();
+        }
+        answers.get(0).resetContent();
+        answers.get(0).setCorrect(false);
+        resettingUI = false;
     }
 }
