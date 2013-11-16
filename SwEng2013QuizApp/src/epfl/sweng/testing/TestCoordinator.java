@@ -34,7 +34,7 @@ public final class TestCoordinator {
     private static final String TAG = "TestingTransaction";
 
     /** The maximum time we wait for a transaction to complete, in milliseconds */
-    private static final long TRANSACTION_TIMEOUT = 2000500;
+    private static final long TRANSACTION_TIMEOUT = 20500;
 
     /** The time when the current transaction was started */
     private long startTime;
@@ -62,7 +62,9 @@ public final class TestCoordinator {
         AUTHENTICATION_ACTIVITY_SHOWN,
         LOGGED_OUT,
         OFFLINE_CHECKBOX_ENABLED,
-        OFFLINE_CHECKBOX_DISABLED
+        OFFLINE_CHECKBOX_DISABLED,
+        SEARCH_ACTIVITY_SHOWN,
+        QUERY_EDITED
     };
 
     private TTChecks currentCheck = TTChecks.NONE;
