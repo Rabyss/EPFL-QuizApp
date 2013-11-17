@@ -36,6 +36,7 @@ public class QuizQuestion {
     private static final int MAX_ANSWERS_NUM = 10;
     private static final int MIN_TAGS_NUM = 1;
     private static final int MAX_TAGS_NUM = 20;
+    private static final int MAX_TAG_LEN = 20;
 
 	public QuizQuestion(final String question, final List<String> answers,
 			final int solutionIndex, final Set<String> tags, final int id,
@@ -197,7 +198,7 @@ public class QuizQuestion {
             }
 
             for (String answer : this) {
-                if (!containsNonWhitespaceCharacters(answer)) {
+                if (!containsNonWhitespaceCharacters(answer) || answer.length() > MAX_QUESTION_LENGTH) {
                     errors++;
                 }
             }
@@ -220,7 +221,7 @@ public class QuizQuestion {
             }
 
             for (String tag : this) {
-                if (!containsNonWhitespaceCharacters(tag)) {
+                if (!containsNonWhitespaceCharacters(tag) || tag.length() > MAX_TAG_LEN) {
                     errors++;
                 }
             }

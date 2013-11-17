@@ -208,16 +208,14 @@ public class EditQuestionActivity extends QuestionActivity {
 		if (!((Button) findViewById(R.id.buttonAddAnswer)).getText()
 				.equals("+")) {
 			errors++;
-		}
-		if ((findViewById(R.id.buttonAddAnswer)).getVisibility() != View.VISIBLE) {
+		} else if ((findViewById(R.id.buttonAddAnswer)).getVisibility() != View.VISIBLE) {
 			errors++;
 		}
 
 		if (!((Button) findViewById(R.id.buttonSubmitQuestion)).getText()
 				.equals("Submit")) {
 			errors++;
-		}
-		if ((findViewById(R.id.buttonSubmitQuestion)).getVisibility() != View.VISIBLE) {
+		} else if ((findViewById(R.id.buttonSubmitQuestion)).getVisibility() != View.VISIBLE) {
 			errors++;
 		}
 
@@ -225,17 +223,15 @@ public class EditQuestionActivity extends QuestionActivity {
 			Button removeBtn = answer.getRemoveButton();
 			Button correctBtn = answer.getCorrectButton();
 
-			if (removeBtn.getVisibility() != View.VISIBLE) {
-				errors++;
-			}
 			if (!removeBtn.getText().equals("-")) {
+				errors++;
+			} else if (removeBtn.getVisibility() != View.VISIBLE) {
 				errors++;
 			}
 
 			if (correctBtn.getVisibility() != View.VISIBLE) {
 				errors++;
-			}
-			if (!correctBtn.getText().equals("\u2718")
+			} else if (!correctBtn.getText().equals("\u2718")
 					&& !correctBtn.getText().equals("\u2714")) {
 				errors++;
 			}
@@ -248,7 +244,7 @@ public class EditQuestionActivity extends QuestionActivity {
 		int tickCount = 0;
 		for (AnswerEditor answer : answers) {
 			String answerText = answer.getCorrectButton().getText().toString();
-			if (answerText.equals(R.string.button_check)) {
+			if (answerText.equals(getString(R.string.button_check))) {
 				tickCount++;
 			}
 		}
