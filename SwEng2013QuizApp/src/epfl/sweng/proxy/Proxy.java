@@ -137,7 +137,7 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 		// data cannot be null because server answered something
 		ServerResponse data = event.getResponse();
 
-		if (data.getStatusCode() <= HTTP_ERROR_THRESHOLD) {
+		if (data.getStatusCode() < HTTP_ERROR_THRESHOLD) {
 			if (data.getStatusCode() >= HTTP_ERROR_INTERMEDIATE_THRESHOLD) {
 
 				event = new ReceivedQuestionEvent();
