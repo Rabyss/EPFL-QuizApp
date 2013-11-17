@@ -8,7 +8,9 @@ import org.apache.http.HttpStatus;
 import epfl.sweng.context.AppContext;
 import epfl.sweng.context.ConnectionEvent;
 import epfl.sweng.context.ConnectionEvent.ConnectionEventType;
+import epfl.sweng.context.conn_states.ServerSyncConnectionState;
 import epfl.sweng.editquestions.PostedQuestionEvent;
+import epfl.sweng.entry.SwitchSuccessfulEvent;
 import epfl.sweng.events.EventEmitter;
 import epfl.sweng.events.EventListener;
 import epfl.sweng.servercomm.RequestContext;
@@ -29,19 +31,19 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 
 	private final static int HTTP_ERROR_THRESHOLD = 500;
 	private final static int HTTP_ERROR_INTERMEDIATE_THRESHOLD = 400;
-	
+
 	/** Singleton Instance */
 	private static Proxy sInstance = null;
-	
-	/** ServerCommunicator for delegation */ 
+
+	/** ServerCommunicator for delegation */
 	private final IServer serverComm;
-	
+
 	/** Cache for questions to be submitted next time online */
 	private ArrayList<QuestionToSubmit> postQuestion;
-	
-	/** Cache for retrieving questions while offline */ 
+
+	/** Cache for retrieving questions while offline */
 	private ArrayList<ServerResponse> getQuestion;
-	
+
 	/** Temporary for a question we tried to submit online but IOException */
 	private QuestionToSubmit questionToSubmit;
 
@@ -123,7 +125,7 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 			postQuestion.remove(0);
 			doHttpPost(reqContext, postEvent);
 		} else {
-
+			this.emit(new SwitchSuccessfulEvent());
 			this.emit(new ConnectionEvent(
 					ConnectionEventType.COMMUNICATION_SUCCESS));
 
@@ -134,8 +136,7 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 	public void on(ReceivedQuestionEvent event) {
 		// data cannot be null because server answered something
 		ServerResponse data = event.getResponse();
-		
-		
+
 		if (data.getStatusCode() <= HTTP_ERROR_THRESHOLD) {
 			if (data.getStatusCode() >= HTTP_ERROR_INTERMEDIATE_THRESHOLD) {
 
@@ -149,17 +150,18 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 				this.emit(new ConnectionEvent(
 						ConnectionEventType.COMMUNICATION_SUCCESS));
 			}
-		
-		// Server answered >= 500 status, go to offline mode
+
+			// Server answered >= 500 status, go to offline mode
 		} else {
 			this.on(new GetConnectionErrorEvent());
 		}
-		
+
 		this.emit(event);
 	}
 
 	/**
 	 * Server unreachable or answered >= 500 status code
+	 * 
 	 * @param event
 	 */
 	public void on(GetConnectionErrorEvent event) {
@@ -180,11 +182,15 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 						data.getEntity(), data.getStatusCode());
 				getQuestion.add(serverResponse);
 			}
-			this.emit(new ConnectionEvent(
-					ConnectionEventType.COMMUNICATION_SUCCESS));
+
 			this.emit(event);
 			// post other cached questions that wait to be posted
-			on(new OnlineEvent());
+			if (AppContext.getContext().getCurrentConnectionState().getClass() == ServerSyncConnectionState.class) {
+				on(new OnlineEvent());
+			} else {
+				this.emit(new ConnectionEvent(
+						ConnectionEventType.COMMUNICATION_SUCCESS));
+			}
 
 		} else {
 
@@ -196,7 +202,7 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 
 	public void on(PostConnectionErrorEvent event) {
 		postQuestion.add(0, questionToSubmit);
-		//TestCoordinator.check(TTChecks.OFFLINE_CHECKBOX_ENABLED);
+		// TestCoordinator.check(TTChecks.OFFLINE_CHECKBOX_ENABLED);
 		this.emit(new ConnectionEvent(ConnectionEventType.COMMUNICATION_ERROR));
 		this.emit(event);
 	}

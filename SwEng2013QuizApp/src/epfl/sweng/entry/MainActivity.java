@@ -20,7 +20,9 @@ import epfl.sweng.context.ConnectionEvent;
 import epfl.sweng.context.ConnectionEvent.ConnectionEventType;
 import epfl.sweng.editquestions.EditQuestionActivity;
 import epfl.sweng.events.EventEmitter;
+import epfl.sweng.events.EventListener;
 import epfl.sweng.proxy.OnlineEvent;
+import epfl.sweng.proxy.PostConnectionErrorEvent;
 import epfl.sweng.proxy.Proxy;
 import epfl.sweng.showquestions.ShowQuestionsActivity;
 import epfl.sweng.testing.TestCoordinator;
@@ -29,7 +31,7 @@ import epfl.sweng.testing.TestCoordinator.TTChecks;
 /**
  * Entry Point of the SwEng2013QuizApp
  */
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements EventListener {
 	private static boolean mIsLogged = false;
 	private EventEmitter emitter;
 	private Button mLogButton;
@@ -49,6 +51,7 @@ public class MainActivity extends Activity {
 		emitter = new MainActivityEventEmitter();
 		AppContext.getContext().addAsListener(emitter);
 		emitter.addListener(Proxy.getInstance());
+		Proxy.getInstance().addListener(this);
 		displayInit();
 
 	}
@@ -59,6 +62,20 @@ public class MainActivity extends Activity {
 		getMenuInflater().inflate(R.menu.main, menu);
 
 		return true;
+	}
+
+	public void on(PostConnectionErrorEvent event) {
+		isOfflineCheckBox.setChecked(true);
+	}
+	
+	public void on(SwitchSuccessfulEvent event) {
+		TestCoordinator.check(TTChecks.OFFLINE_CHECKBOX_DISABLED);
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+		Proxy.getInstance().removeListener(this);
 	}
 
 	@Override
@@ -179,9 +196,9 @@ public class MainActivity extends Activity {
 						// offline to online
 						if (!isChecked) {
 							emitter.emit(new OnlineEvent());
-							TestCoordinator.check(TTChecks.OFFLINE_CHECKBOX_DISABLED);
 						} else {
-							TestCoordinator.check(TTChecks.OFFLINE_CHECKBOX_ENABLED);
+							TestCoordinator
+									.check(TTChecks.OFFLINE_CHECKBOX_ENABLED);
 						}
 					}
 				});

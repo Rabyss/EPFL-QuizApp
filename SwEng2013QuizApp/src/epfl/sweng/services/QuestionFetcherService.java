@@ -34,35 +34,40 @@ public class QuestionFetcherService extends QuestionActivityService implements
 	public void on(ReceivedQuestionEvent event) {
 		ServerResponse response = event.getResponse();
 		if (response == null) {
-		    this.emit(new ClientErrorEvent());
+			this.emit(new ClientErrorEvent());
 		} else {
-    		int status = response.getStatusCode();
-    		if (status == HttpStatus.SC_NOT_FOUND) {
-    			this.emit(new NothingInCacheEvent());
-    		} else {
-    			QuizQuestion quizQuestion = null;
-    			try {
-    				quizQuestion = new QuizQuestion(response.getEntity().toString());
-    			} catch (JSONException e) {
-    				e.printStackTrace();
-    			}
-    			this.emit(new ShowQuestionEvent(quizQuestion));
-    		}
+			int status = response.getStatusCode();
+			if (status == HttpStatus.SC_NOT_FOUND) {
+				this.emit(new NothingInCacheEvent());
+			} else {
+				QuizQuestion quizQuestion = null;
+				try {
+					quizQuestion = new QuizQuestion(response.getEntity()
+							.toString());
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+				this.emit(new ShowQuestionEvent(quizQuestion));
+			}
 		}
 		removeListener(super.getActivity());
 	}
-	
+
 	public void on(ReceivedQuestionWithError event) {
-	    ServerResponse response = event.getResponse();
-	    QuizQuestion quizQuestion = null;
-        try {
-            quizQuestion = new QuizQuestion(response.getEntity().toString());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        this.emit(new ShowQuestionEvent(quizQuestion));
-        this.emit(new ConnectionErrorEvent());
-        removeListener(super.getActivity());
+		ServerResponse response = event.getResponse();
+		if (response.getStatusCode() == HttpStatus.SC_NOT_FOUND) {
+			this.emit(new NothingInCacheEvent());
+		} else {
+			QuizQuestion quizQuestion = null;
+			try {
+				quizQuestion = new QuizQuestion(response.getEntity().toString());
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+			this.emit(new ShowQuestionEvent(quizQuestion));
+			this.emit(new ConnectionErrorEvent());
+		}
+		removeListener(super.getActivity());
 	}
 
 	public void setActivity(ShowQuestionsActivity activity) {
