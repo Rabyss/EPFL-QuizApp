@@ -174,7 +174,7 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 
 	public void on(PostedQuestionEvent event) {
 		ServerResponse data = event.getResponse();
-		if (data != null && data.getStatusCode() < HTTP_ERROR_THRESHOLD) {
+		if (data.getStatusCode() < HTTP_ERROR_THRESHOLD) {
 			if (data.getStatusCode() >= HTTP_ERROR_INTERMEDIATE_THRESHOLD) {
 				event.setResponse(null);
 			} else {
