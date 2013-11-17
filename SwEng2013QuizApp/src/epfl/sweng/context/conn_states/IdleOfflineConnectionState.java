@@ -1,8 +1,6 @@
 package epfl.sweng.context.conn_states;
 
 import epfl.sweng.context.ConnectionEvent;
-import epfl.sweng.testing.TestCoordinator;
-import epfl.sweng.testing.TestCoordinator.TTChecks;
 
 public class IdleOfflineConnectionState extends ConnectionState {
     @Override
