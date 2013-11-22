@@ -53,7 +53,14 @@ public class ShowQuestionsActivity extends QuestionActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mSelf = this;
-        getQuestion();
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            mRandomQuestion = (QuizQuestion) extras
+                    .getSerializable("question_to_show");
+            showQuestion();
+        } else {
+            getQuestion();
+        }
     }
 
     private void getQuestion() {
@@ -81,7 +88,7 @@ public class ShowQuestionsActivity extends QuestionActivity {
         mRandomQuestion = event.getQuizQuestion();
         showQuestion();
     }
-    
+
     public QuizQuestion getCurrentQuizQuestion() {
         return mRandomQuestion;
     }
@@ -205,6 +212,7 @@ public class ShowQuestionsActivity extends QuestionActivity {
     @Override
     protected void clientFailure() {
         TestCoordinator.check(TTChecks.QUESTION_SHOWN);
-        Toast.makeText(this, getString(R.string.fetch_server_failure), Toast.LENGTH_LONG).show();
+        Toast.makeText(this, getString(R.string.fetch_server_failure),
+                Toast.LENGTH_LONG).show();
     }
 }
