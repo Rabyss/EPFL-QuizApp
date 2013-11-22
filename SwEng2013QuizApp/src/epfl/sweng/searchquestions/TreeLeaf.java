@@ -1,5 +1,7 @@
 package epfl.sweng.searchquestions;
 
+import java.util.Set;
+
 public class TreeLeaf extends TreeNode {
 	private String tag;
 	
@@ -9,5 +11,9 @@ public class TreeLeaf extends TreeNode {
 	
 	public String getTag() {
 		return tag;
+	}
+	
+	public Set<Integer> getIDs() {
+		return null;
 	}
 }

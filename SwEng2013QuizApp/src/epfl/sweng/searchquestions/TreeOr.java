@@ -1,15 +1,13 @@
 package epfl.sweng.searchquestions;
 
+import java.util.HashSet;
 import java.util.Set;
 
-import epfl.sweng.quizquestions.QuizQuestion;
-
 public class TreeOr extends TreeBranch {
-
 	@Override
-	public Set<QuizQuestion> combine() {
-		// TODO Auto-generated method stub
-		return null;
+	public Set<Integer> combine() {
+		Set<Integer> or = new HashSet<Integer>(getLeftChild().getIDs());
+		or.addAll(getRightChild().getIDs());
+		return or;
 	}
-	
 }
