@@ -2,12 +2,10 @@ package epfl.sweng.searchquestions;
 
 import java.util.Set;
 
-import epfl.sweng.quizquestions.QuizQuestion;
-
 public abstract class TreeNode {
-	private Set<QuizQuestion> questions;
+	private Set<Integer> ids;
 	
-	public Set<QuizQuestion> getQuestions() {
-		return this.questions;
+	public Set<Integer> getIDs() {
+		return this.ids;
 	}
 }
