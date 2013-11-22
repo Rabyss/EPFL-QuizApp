@@ -49,11 +49,40 @@ public class ShowQuestionsActivity extends QuestionActivity {
         return true;
     }
 
+    /**
+     * This method can either get a new question from the proxy or one can pass
+     * a question as an extra in the intent to it, or maybe tell the activity
+     * that something went wrong and that it must display an error message. The
+     * status codes can be :
+     * <ul>
+     * <li>0 : the activity should display the question</li>
+     * <li>1 : the server encountered an error</li>
+     * <li>2 : there is nothing in the cache</li>
+     * <li>other : something went wrong on the client side</li>
+     * </ul>
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mSelf = this;
-        getQuestion();
+        Bundle extras = getIntent().getExtras();
+        // TODO : TTChecks ?
+        if (extras != null) {
+            int status = extras.getInt("status");
+            if (status == 0) {
+                mRandomQuestion = (QuizQuestion) extras
+                        .getSerializable("question_to_show");
+                showQuestion();
+            } else if (status == 1) {
+                serverFailure();
+            } else if (status == 2) {
+                nothingInCache();
+            } else {
+                clientFailure();
+            }
+        } else {
+            getQuestion();
+        }
     }
 
     private void getQuestion() {
@@ -66,6 +95,10 @@ public class ShowQuestionsActivity extends QuestionActivity {
 
     public void on(NothingInCacheEvent event) {
         hideProgressDialog();
+        nothingInCache();
+    }
+
+    private void nothingInCache() {
         Toast.makeText(this, R.string.nothing_in_cache, Toast.LENGTH_LONG)
                 .show();
         TestCoordinator.check(TTChecks.QUESTION_SHOWN);
@@ -81,7 +114,7 @@ public class ShowQuestionsActivity extends QuestionActivity {
         mRandomQuestion = event.getQuizQuestion();
         showQuestion();
     }
-    
+
     public QuizQuestion getCurrentQuizQuestion() {
         return mRandomQuestion;
     }
@@ -205,6 +238,7 @@ public class ShowQuestionsActivity extends QuestionActivity {
     @Override
     protected void clientFailure() {
         TestCoordinator.check(TTChecks.QUESTION_SHOWN);
-        Toast.makeText(this, getString(R.string.fetch_server_failure), Toast.LENGTH_LONG).show();
+        Toast.makeText(this, getString(R.string.fetch_server_failure),
+                Toast.LENGTH_LONG).show();
     }
 }
