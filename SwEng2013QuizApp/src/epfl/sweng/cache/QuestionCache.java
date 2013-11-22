@@ -1,16 +1,28 @@
 package epfl.sweng.cache;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.StreamCorruptedException;
+import java.util.HashSet;
 import java.util.Set;
 
 import android.content.Context;
 
 import epfl.sweng.quizquestions.QuizQuestion;
 
+/**
+ * Cache for questions
+ * 
+ * for each question q cached, there is a file questions/q.bin where the
+ * question is stored; and for each tag t in q, there is a file tags/t.bin where
+ * the id of q is stored (together with all other question's id with same tag t)
+ * 
+ */
 public final class QuestionCache {
 
 	/**
@@ -44,10 +56,10 @@ public final class QuestionCache {
 	}
 
 	public void cacheQuestion(QuizQuestion question) {
-		
+
 		// TODO Handle 1GB storage limit
 		// TODO append using writeObject may not work
-		
+
 		Integer id = question.hashCode();
 		File questionFile = new File(questionDir, id + ".bin");
 
@@ -91,13 +103,62 @@ public final class QuestionCache {
 	}
 
 	public Set<Integer> getQuestionSetByTag(String tag) {
-		// TODO implement this
-		return null;
+		
+		Set<Integer> ids = new HashSet<Integer>();
+		File tagFile = new File(tagDir, tag + ".bin");
+		
+		if (!tagFile.exists()) {
+			return ids; // empty set
+		}
+		
+		try {
+			ObjectInputStream is = new ObjectInputStream(new FileInputStream(tagFile));
+			while (is.available() != 0) { // TODO replace available with something that works
+				ids.add((Integer) is.readObject());
+			}
+			is.close();
+		} catch (StreamCorruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return ids;
 	}
 
 	public QuizQuestion getQuestionById(Integer id) {
-		// TODO implement this
-		return null;
-	}
+		File questionFile = new File(questionDir, id + ".bin");
+		if (!questionFile.exists()) {
+			return null; // TODO Handle bad id (ok for Sacha)
+		}
 
+		QuizQuestion question = null;
+		try {
+			ObjectInputStream is = new ObjectInputStream(new FileInputStream(
+					questionFile));
+			question = (QuizQuestion) is.readObject();
+			is.close();
+		} catch (StreamCorruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return question;
+	}
 }
