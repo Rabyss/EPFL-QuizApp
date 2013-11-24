@@ -161,4 +161,10 @@ public final class QuestionCache implements CacheInterface {
 		}
 		return question;
 	}
+	
+	//TODO : implements clearCache (clean the cache)
+	// certainly usefull for testing
+	public void clearCache(){
+		
+	}
 }

@@ -10,4 +10,6 @@ public interface CacheInterface {
 	Set<Integer> getQuestionSetByTag(String tag);
 	
 	QuizQuestion getQuestionById(Integer id);
+	
+	void clearCache();
 }

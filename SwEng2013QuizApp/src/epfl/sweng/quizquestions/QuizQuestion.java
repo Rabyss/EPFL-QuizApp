@@ -308,4 +308,8 @@ public class QuizQuestion implements Serializable {
                 + mAnswers + "\nsolution index : " + mSolutionIndex
                 + "\ntags : " + mTags + "\nowner : " + mOwner;
     }
+    // TODO : controller cette methode
+    public int toByteCount(){
+    	return this.toString().getBytes().length;
+    }
 }

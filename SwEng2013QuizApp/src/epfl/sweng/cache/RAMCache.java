@@ -3,7 +3,7 @@ package epfl.sweng.cache;
 import java.util.Set;
 
 import android.content.Context;
-import android.util.SparseArray;
+import android.util.LruCache;
 import epfl.sweng.quizquestions.QuizQuestion;
 
 /**
@@ -14,17 +14,25 @@ import epfl.sweng.quizquestions.QuizQuestion;
  *
  */
 public class RAMCache implements CacheInterface {
-	
+	//size of the cache : 50 MB;
+	public static int MAX_CACHE_SIZE = 50 * 1024 * 1024;
 	private static RAMCache instance;
 
-	//apparemment sparseArray est plus efficace que hashmap
-	//pour maper des integers avec des objets
-	private SparseArray<QuizQuestion> cacheMap ;
-
+	//private SparseArray<QuizQuestion> cacheMap ;
+	
+	//Cache where least recently is removed
+	private LruCache<Integer, QuizQuestion> ramCache;
 	private QuestionCache persistentCache;
 	
 	private RAMCache(Context context) {
-		cacheMap = new SparseArray<QuizQuestion>();
+		ramCache = new LruCache<Integer, QuizQuestion>(MAX_CACHE_SIZE){
+			
+			protected int sizeOf(Integer key, QuizQuestion value ){
+				// TODO : override sizeOf
+				return value.toByteCount();	
+			}
+		};
+		//cacheMap = new SparseArray<QuizQuestion>();
 		persistentCache = QuestionCache.getInstance(context);
 	}
 
@@ -38,8 +46,9 @@ public class RAMCache implements CacheInterface {
 	public void cacheQuestion(QuizQuestion question) {
 		Integer id = question.hashCode();
 		// TODO : controler que la hashMap ne dépasse pas 50 MB
-
-		cacheMap.append(id, question);
+		ramCache.put(id, question);
+	
+		//cacheMap.append(id, question);
 		persistentCache.cacheQuestion(question);
 		
 	}
@@ -51,12 +60,17 @@ public class RAMCache implements CacheInterface {
 
 	@Override
 	public QuizQuestion getQuestionById(Integer id) {
-		QuizQuestion question = cacheMap.get(id);
+		QuizQuestion question = ramCache.get(id);
+		//QuizQuestion question = cacheMap.get(id);
 		if(question != null){
 			return question;
 		} else {
 			return persistentCache.getQuestionById(id);
 		}
+	}
+	
+	public void clearCache(){
+		ramCache.evictAll();
 	}
 	
 }
