@@ -23,7 +23,7 @@ import epfl.sweng.quizquestions.QuizQuestion;
  * the id of q is stored (together with all other question's id with same tag t)
  * 
  */
-public final class QuestionCache {
+public final class QuestionCache implements CacheInterface {
 
 	/**
 	 * Singleton instance of QuestionCache
