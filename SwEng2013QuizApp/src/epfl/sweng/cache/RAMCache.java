@@ -13,9 +13,9 @@ import epfl.sweng.quizquestions.QuizQuestion;
  * RAMCache has the set of HashQuestion => Question
  *
  */
-public class RAMCache implements CacheInterface {
+public final class RAMCache implements CacheInterface {
 	//size of the cache : 50 MB;
-	public static int MAX_CACHE_SIZE = 50 * 1024 * 1024;
+	public static final int MAX_CACHE_SIZE = 50 * 1024 * 1024;
 	private static RAMCache instance;
 
 	//private SparseArray<QuizQuestion> cacheMap ;
@@ -27,9 +27,10 @@ public class RAMCache implements CacheInterface {
 	private RAMCache(Context context) {
 		ramCache = new LruCache<Integer, QuizQuestion>(MAX_CACHE_SIZE){
 			
-			protected int sizeOf(Integer key, QuizQuestion value ){
+			protected int sizeOf(Integer key, QuizQuestion value) {
 				// TODO : override sizeOf
-				return value.toByteCount();	
+				//return value.toByteCount();
+				return 1;
 			}
 		};
 		//cacheMap = new SparseArray<QuizQuestion>();
@@ -62,14 +63,14 @@ public class RAMCache implements CacheInterface {
 	public QuizQuestion getQuestionById(Integer id) {
 		QuizQuestion question = ramCache.get(id);
 		//QuizQuestion question = cacheMap.get(id);
-		if(question != null){
+		if (question != null) {
 			return question;
 		} else {
 			return persistentCache.getQuestionById(id);
 		}
 	}
 	
-	public void clearCache(){
+	public void clearCache() {
 		ramCache.evictAll();
 	}
 	
