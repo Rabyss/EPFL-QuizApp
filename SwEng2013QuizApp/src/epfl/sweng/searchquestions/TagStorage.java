@@ -7,6 +7,7 @@ import android.content.Context;
 
 import epfl.sweng.cache.QuestionCache;
 import epfl.sweng.quizquestions.QuizQuestion;
+import epfl.sweng.searchquestions.parser.tree.TreeNode;
 
 public class TagStorage {
 	private TreeNode tree;
@@ -24,7 +25,7 @@ public class TagStorage {
 		QuestionCache cache = QuestionCache.getInstance(context);
 		// TODO Parcourir l'arbre de Phil:
 		// cache.getQuestionSetByTag(tag);
-		// Créer mon arbre avec les questionIDs.
+		// Crï¿½er mon arbre avec les questionIDs.
 	}
 	
 	public Set<QuizQuestion> getQuestions() {
