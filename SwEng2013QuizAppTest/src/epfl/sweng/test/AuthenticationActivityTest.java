@@ -37,18 +37,15 @@ public class AuthenticationActivityTest extends ActivityInstrumentationTestCase2
 	}
 	
 	/**
-	 * Test if the AuthenticationActivity is correctly initialized
+	 * Test if the fields are cleared after a bad authentication
 	 */
-	public void testDisplayCorrectlyAuthenticationActivity() {
+	public void testBadAuthenticationDisplaying() {
+		// Check display
 		assertTrue("GASPAR username editText is displayed", solo.searchEditText("GASPAR Username"));
 		assertTrue("GASPAR password editText is displayed", solo.searchEditText("GASPAR Password"));
 		assertTrue("Button log in is displayed", solo.searchButton("Log in using Tequila"));
 		assertTrue("Button log in is enabled", solo.getButton("Log in using Tequila").isEnabled());
-	}
-	/**
-	 * Test if the fields are cleared after a bad authentication
-	 */
-	public void testBadAuthenticationDisplaying() {
+		
 		httpClient= new MockHttpClient();
 		SwengHttpClientFactory.setInstance(httpClient);
 		httpClient.pushCannedResponse("/*/", ERROR_400, 
