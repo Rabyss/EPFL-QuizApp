@@ -312,4 +312,9 @@ public class QuizQuestion implements Serializable {
    // public int toByteCount() {
     //	return this.toString().getBytes().length;
     //}
+
+	public int getSolution() {
+		
+		return mSolutionIndex;
+	}
 }

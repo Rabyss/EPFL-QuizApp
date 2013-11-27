@@ -13,7 +13,7 @@ import epfl.sweng.quizquestions.QuizQuestion;
  * RAMCache has the set of HashQuestion => Question
  *
  */
-public final class RAMCache implements CacheInterface {
+public final class RAMCache {
 	//size of the cache : 50 MB;
 	public static final int MAX_CACHE_SIZE = 50 * 1024 * 1024;
 	private static RAMCache instance;
@@ -43,7 +43,7 @@ public final class RAMCache implements CacheInterface {
 		}
 		return instance;
 	}
-	@Override
+	
 	public void cacheQuestion(QuizQuestion question) {
 		Integer id = question.hashCode();
 		// TODO : controler que la hashMap ne dépasse pas 50 MB
@@ -54,12 +54,12 @@ public final class RAMCache implements CacheInterface {
 		
 	}
 
-	@Override
+	
 	public Set<Integer> getQuestionSetByTag(String tag) {
 		return persistentCache.getQuestionSetByTag(tag);
 	}
 
-	@Override
+	
 	public QuizQuestion getQuestionById(Integer id) {
 		QuizQuestion question = ramCache.get(id);
 		//QuizQuestion question = cacheMap.get(id);
