@@ -1,9 +1,13 @@
 package epfl.sweng.cache;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -13,6 +17,8 @@ import epfl.sweng.quizquestions.QuizQuestion;
 
 public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
 
+	public static final String TAGS_SEL = "tagsSel";
+	
 	// Database version
 	private static final int DATABASE_VERSION = 1;
 	// Database name
@@ -23,7 +29,7 @@ public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
 
 	// Question table columns name
 	private static final String COL_ID = "id";
-	private static final String COL_QUESTION = "questions";
+	private static final String COL_QUESTION = "question";
 	private static final String COL_SOLUTION = "solution";
 	private static final String COL_OWNER = "owner";
 
@@ -38,21 +44,21 @@ public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
 	private static final String COL_ID_ANSWER = "id";
 	private static final String COL_ANSWER = "answer";
 	private static final String COL_INDEX = "index";
-
+	
 	private static final String CREATE_QUESTION_TABLE = "CREATE TABLE"
 			+ TABLE_QUESTION + "(" + COL_ID + " INTEGER PRIMARY KEY,"
 			+ COL_QUESTION + " TEXT," + COL_OWNER + " TEXT," + COL_SOLUTION
-			+ " INTEGER PRIMARY KEY" + ");";
+			+ " INTEGER" + ");";
 	private static final String CREATE_TAG_TABLE = "CREATE TABLE" + TABLE_TAG
-			+ "(" + COL_ID_TAG + " INTEGER PRIMARY KEY," + COL_TAG + " TEXT"
+			+ "(" + COL_ID_TAG + " INTEGER," + COL_TAG + " TEXT"
 			+ ");";
 	private static final String CREATE_ANSWER_TABLE = "CREATE TABLE"
-			+ TABLE_ANSWER + "(" + COL_ID_ANSWER + " INTEGER PRIMARY KEY,"
-			+ COL_ANSWER + " TEXT," + COL_INDEX + " INTEGER PRIMARY KEY" + ");";
-
+			+ TABLE_ANSWER + "(" + COL_ID_ANSWER + " INTEGER,"
+			+ COL_ANSWER + " TEXT," + COL_INDEX + " INTEGER" + ");";
+	
 	private static final int MAX_SQL_CACHE_SIZE = 100;
 	private static final long MAX_SQL_SIZE = 1024 * 1024 * 1024;
-
+	
 	public SQLiteCache(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
 	}
@@ -118,33 +124,63 @@ public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
 		db.close();
 	}
 
+	@SuppressLint("UseSparseArrays")
 	@Override
-	public Set<QuizQuestion> getQuestionSetByTag(String tagRegExp) {
-		Set<QuizQuestion> questionMatching = new HashSet<QuizQuestion>();
-		//TODO A completer la demande!!
-		String selectQuery = " SELECT *FROM " + TABLE_QUESTION + " INNER JOIN "
-				+ TABLE_TAG + " On " + COL_ID_TAG + " WHERE " + COL_TAG + " = "
-				+ tagRegExp;
-		SQLiteDatabase db = this.getReadableDatabase();
-		Cursor cursor = db.rawQuery(selectQuery, null);
+	public Set<QuizQuestion> getQuestionSetByTag(String tagsMark, String[] tagsSearch) {
+		Map<Integer, QuizQuestion> questionMatching = new HashMap<Integer, QuizQuestion>();
 
+		//TODO A completer la demande!!
+		
+		SQLiteDatabase db = this.getReadableDatabase();
+		// | INT id | STR question | STR owner | INT solution | STR tag | STR answer | INT index |
+		Cursor cursor = db.rawQuery("SELECT "+
+				TABLE_QUESTION+"."+COL_ID+
+				TABLE_QUESTION+"."+COL_QUESTION+
+				TABLE_QUESTION+"."+COL_OWNER+
+				TABLE_QUESTION+"."+COL_SOLUTION+
+				"tagsShow."+COL_TAG+
+				TABLE_ANSWER+"."+COL_ANSWER+
+				TABLE_ANSWER+"."+COL_INDEX+
+				" FROM "+TABLE_QUESTION+" INNER JOIN "+TABLE_TAG+
+				" AS tagsSel ON tagsSel."+COL_ID_TAG+"="+COL_ID+
+				" INNER JOIN "+TABLE_TAG+" AS tagsShow ON tagsShow."+
+				COL_ID_TAG+"="+COL_ID+" WHERE tagsSel."+COL_TAG+
+				" = "+tagsMark+" SORT ORDER BY "+COL_ID+", "+COL_INDEX+" ASC;", tagsSearch);
+		
 		if (cursor.moveToFirst()) {
 			do {
 				// TODO : initialiser les variables: faut-il faire plusieurs demandes?
+				int id = cursor.getInt(cursor.getColumnIndex(COL_ID));
 				
-				String question = null;
-				List<String> answers = null;
-				int solutionIndex = 0;
-				Set<String> tags = null;
-				int id = 0;
-				String owner = null;
+				if (!questionMatching.containsKey(id)) {
+					Set<String> tags = new HashSet<String>();
+					ArrayList<String> answers = new ArrayList<String>();
+					
+					String question = cursor.getString(cursor.getColumnIndex(COL_QUESTION));
+					String owner = cursor.getString(cursor.getColumnIndex(COL_OWNER));
+					int solutionIndex = cursor.getInt(cursor.getColumnIndex(COL_SOLUTION));
+					tags.add(cursor.getString(cursor.getColumnIndex(COL_TAG)));
+					answers.add(cursor.getString(cursor.getColumnIndex(COL_ANSWER)));
+					
+					QuizQuestion quizQuestion = new QuizQuestion(question, answers,
+							solutionIndex, tags, id, owner);
+
+					questionMatching.put(id, quizQuestion);
+				} else {
+					QuizQuestion quizQuestion = questionMatching.get(id);
+					
+					quizQuestion.addTag(cursor.getString(cursor.getColumnIndex(COL_TAG)));
+					quizQuestion.addAnswer(cursor.getString(cursor.getColumnIndex(COL_ANSWER)));
+				}
 				
-				QuizQuestion quizQuestion = new QuizQuestion(question, answers,
-						solutionIndex, tags, id, owner);
-				questionMatching.add(quizQuestion);
+				
+				
 			} while (cursor.moveToNext());
 		}
-		return questionMatching;
+		
+		cursor.close();
+		
+		return new HashSet<QuizQuestion>(questionMatching.values());
 	}
 
 	@Override
