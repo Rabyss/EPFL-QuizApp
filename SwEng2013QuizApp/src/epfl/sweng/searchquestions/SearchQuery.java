@@ -1,82 +1,69 @@
 package epfl.sweng.searchquestions;
 
-import static epfl.sweng.util.StringHelper.containsNonWhitespaceCharacters;
-
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
-
+import epfl.sweng.quizquestions.QuizQuestion;
+import epfl.sweng.searchquestions.parser.QueryParser.QueryParserResult;
+import epfl.sweng.servercomm.RequestContext;
+import epfl.sweng.servercomm.ServerCommunicator;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import epfl.sweng.quizquestions.QuizQuestion;
-import epfl.sweng.servercomm.RequestContext;
-import epfl.sweng.servercomm.ServerCommunicator;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+
+import static epfl.sweng.util.StringHelper.containsNonWhitespaceCharacters;
 
 public class SearchQuery {
     private final String mQuery;
+    private final QueryParserResult mParserResult;
 
     private static final String QUERY_CHAR_CLASS_REGEX = "^[a-zA-Z0-9\\(\\)\\*\\+ ]+$";
     private static final int MAX_QUERY_LENGTH = 500;
     
 	private static final int SWENG_OK = 200;
 
-    public SearchQuery(final String query) throws UnvalidSearchQueryException {
-        int errorsCount = auditQueryStr(query);
+    public SearchQuery(final String query, final QueryParserResult parserResult) throws UnvalidSearchQueryException {
+        mParserResult = parserResult;
+        mQuery = query;
+
+        int errorsCount = auditErrors();
         if (errorsCount > 0) {
             throw new UnvalidSearchQueryException(errorsCount);
         }
-        
-        mQuery = query;
     }
 
     public String getQuery() {
         return mQuery;
     }
 
-    public static int auditQueryStr(String query) {
+    public int auditErrors() {
         int errors = 0;
 
         // we make sure the query respects its char class
-        if (!query.matches(QUERY_CHAR_CLASS_REGEX)) {
-            System.err.println(query+": qccr");
+        if (!mQuery.matches(QUERY_CHAR_CLASS_REGEX)) {
             errors++;
         }
 
-        if (query.length() >= MAX_QUERY_LENGTH) {
+        if (mQuery.length() >= MAX_QUERY_LENGTH) {
             errors++;
         }
 
         // we make sure the query contains at least one alphanumeric char
-        if (!containsNonWhitespaceCharacters(query)) {
-            System.err.println(query+": aoacr");
+        if (!containsNonWhitespaceCharacters(mQuery)) {
             errors++;
         }
 
-        if (!isExpressionNestingCorrect(query)) {
+        if (mParserResult == null || !mParserResult.isDone()) {
             errors++;
         }
 
         return errors;
     }
 
-    private static boolean isExpressionNestingCorrect(String query) {
-        int openParenthesisCount = 0;
-        int closedParenthesisCount = 0;
-        for (int i = 0; i < query.length(); i++) {
-            char current = query.charAt(i);
-            if (current == '(') {
-                openParenthesisCount++;
-            } else if (current == ')') {
-                closedParenthesisCount++;
-            }
-        }
-        return openParenthesisCount == closedParenthesisCount;
-    }
 
     public class UnvalidSearchQueryException extends Exception {
 
