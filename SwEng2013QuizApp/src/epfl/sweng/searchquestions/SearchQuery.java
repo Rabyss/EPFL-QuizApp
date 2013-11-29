@@ -26,13 +26,13 @@ public class SearchQuery {
     
 	private static final int SWENG_OK = 200;
 
-    public SearchQuery(final String query, final QueryParserResult parserResult) throws UnvalidSearchQueryException {
+    public SearchQuery(final String query, final QueryParserResult parserResult) throws InvalidSearchQueryException {
         mParserResult = parserResult;
         mQuery = query;
 
         int errorsCount = auditErrors();
         if (errorsCount > 0) {
-            throw new UnvalidSearchQueryException(errorsCount);
+            throw new InvalidSearchQueryException(errorsCount);
         }
     }
 
@@ -65,11 +65,11 @@ public class SearchQuery {
     }
 
 
-    public class UnvalidSearchQueryException extends Exception {
+    public class InvalidSearchQueryException extends Exception {
 
         private static final long serialVersionUID = 6028719701104283474L;
 
-        public UnvalidSearchQueryException(int errorsCount) {
+        public InvalidSearchQueryException(int errorsCount) {
             super("invalid search query (" + errorsCount + " errors): '"
                     + mQuery + "'");
         }

@@ -10,7 +10,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import epfl.sweng.R;
-import epfl.sweng.searchquestions.SearchQuery.UnvalidSearchQueryException;
+import epfl.sweng.searchquestions.SearchQuery.InvalidSearchQueryException;
 import epfl.sweng.searchquestions.parser.QueryParser;
 import epfl.sweng.searchquestions.parser.QueryParser.QueryParserResult;
 import epfl.sweng.testing.TestCoordinator;
@@ -40,7 +40,7 @@ public class SearchActivity extends Activity {
                 SearchQuery query;
                 try {
                     query = new SearchQuery(mSearchButton.getText().toString(), mParserResult);
-                } catch (UnvalidSearchQueryException e) {
+                } catch (InvalidSearchQueryException e) {
                     throw new RuntimeException(shouldNotHappenMessage);
                 }
 
