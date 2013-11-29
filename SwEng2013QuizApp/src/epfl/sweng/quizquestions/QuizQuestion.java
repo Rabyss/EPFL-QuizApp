@@ -102,11 +102,19 @@ public class QuizQuestion implements Serializable {
     }
 
     public Set<String> getTags() {
-        return Collections.unmodifiableSet(mTags);
+    	return Collections.unmodifiableSet(mTags);
+    }
+    
+    public String getOwner() {
+    	return mOwner;
+    }
+    
+    public void addTag(String tag) {
+        mTags.add(tag);
     }
 
-    public String getOwner() {
-        return mOwner;
+    public void addAnswer(String answer) {
+        mAnswers.add(answer);
     }
 
     public int getSolution() {
