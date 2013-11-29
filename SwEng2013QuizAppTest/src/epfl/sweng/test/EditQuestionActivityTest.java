@@ -54,7 +54,10 @@ public class EditQuestionActivityTest
         SwengHttpClientFactory.setInstance(mockHttpClient);
         AppContext.getContext().resetState();
     }
-    
+    @Override
+    protected void tearDown() throws Exception {
+    	solo.finishOpenedActivities();
+    }
     /*
     public void testNoResponse() {
         fillQuestionBody("Question A");

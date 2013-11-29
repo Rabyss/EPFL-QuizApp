@@ -135,4 +135,9 @@ public class SearchQuery {
 	public void error(String err) {
 		// TODO implement error
 	}
+
+	public static int auditQueryStr(String invalidExpr) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }
