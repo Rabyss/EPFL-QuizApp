@@ -1,7 +1,4 @@
-package epfl.sweng.searchquestions;
-
-import epfl.sweng.searchquestions.parser.tree.ASTVisitor;
-import epfl.sweng.searchquestions.parser.tree.TreeNode;
+package epfl.sweng.searchquestions.parser.tree;
 
 import java.util.Set;
 

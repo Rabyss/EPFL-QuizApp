@@ -1,9 +1,9 @@
 package epfl.sweng.searchquestions.parser;
 
-import epfl.sweng.searchquestions.SingleChildTreeNode;
 import epfl.sweng.searchquestions.parser.entities.Tag;
 import epfl.sweng.searchquestions.parser.entities.Token;
 import epfl.sweng.searchquestions.parser.entities.TokenKind;
+import epfl.sweng.searchquestions.parser.tree.SingleChildTreeNode;
 import epfl.sweng.searchquestions.parser.tree.TreeAnd;
 import epfl.sweng.searchquestions.parser.tree.TreeLeaf;
 import epfl.sweng.searchquestions.parser.tree.TreeNode;

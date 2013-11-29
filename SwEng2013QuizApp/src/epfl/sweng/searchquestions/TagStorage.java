@@ -1,38 +1,36 @@
 package epfl.sweng.searchquestions;
 
+import android.content.Context;
+import epfl.sweng.cache.QuestionCache;
+import epfl.sweng.quizquestions.QuizQuestion;
+import epfl.sweng.searchquestions.parser.QueryParser;
+import epfl.sweng.searchquestions.parser.QueryParser.QueryParserResult;
+
 import java.util.HashSet;
 import java.util.Set;
 
-import android.content.Context;
-
-import epfl.sweng.cache.QuestionCache;
-import epfl.sweng.quizquestions.QuizQuestion;
-import epfl.sweng.searchquestions.parser.tree.TreeNode;
-
 public class TagStorage {
-	private TreeNode tree;
 	private Context context;
 	
 	public TagStorage(Context context) {
 		this.context = context;
 	}
 	
-	public Set<Integer> query(/* TODO */) {
-		return null; // TODO return something
+	public Set<QuizQuestion> query(String queryStr) {
+        QueryParserResult parserResult = QueryParser.parse(queryStr);
+        if (parserResult.isDone()) {
+            return getQuestions(parserResult.getAST().getIDs());
+        } else {
+            return new HashSet<QuizQuestion>(); //returns the empty set
+        }
 	}
+
 	
-	public void createTree() {
-		QuestionCache cache = QuestionCache.getInstance(context);
-		// TODO Parcourir l'arbre de Phil:
-		// cache.getQuestionSetByTag(tag);
-		// Cr�er mon arbre avec les questionIDs.
-	}
-	
-	public Set<QuizQuestion> getQuestions() {
-		QuestionCache cache = QuestionCache.getInstance(context);
+	private Set<QuizQuestion> getQuestions(Set<Integer> tagIDs) {
+        QuestionCache cache = QuestionCache.getInstance(context);
 		Set<QuizQuestion> questions = new HashSet<QuizQuestion>();
 		
-		for (Integer id : tree.getIDs()) {
+		for (Integer id : tagIDs) {
 			QuizQuestion question = cache.getQuestionById(id);
 			
 			if (question != null) {

@@ -1,6 +1,8 @@
 package epfl.sweng.quizquestions;
 
-import static epfl.sweng.util.StringHelper.containsNonWhitespaceCharacters;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.AbstractCollection;
@@ -14,9 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import static epfl.sweng.util.StringHelper.containsNonWhitespaceCharacters;
 
 /**
  * Represents a question of the quiz.
@@ -61,7 +61,6 @@ public class QuizQuestion implements Serializable {
      * Constructs the class from a JSONObject
      * 
      * @param jsonText
-     * @throws MalformedQuestionException
      * @throws MalformedQuestionException
      *             if the JSONObject is malformed
      */
@@ -108,6 +107,10 @@ public class QuizQuestion implements Serializable {
 
     public String getOwner() {
         return mOwner;
+    }
+
+    public int getSolution() {
+        return mSolutionIndex;
     }
 
     /**
@@ -186,58 +189,6 @@ public class QuizQuestion implements Serializable {
         };
     }
 
-    private class AnswersList extends LinkedList<String> {
-
-        private static final long serialVersionUID = 3821236061355668378L;
-
-        public int auditErrors() {
-            int errors = 0;
-            int numAnswers = size();
-
-            if (numAnswers < MIN_ANSWERS_NUM || numAnswers > MAX_ANSWERS_NUM) {
-                errors++;
-            }
-
-            if (mSolutionIndex < 0 || mSolutionIndex >= numAnswers) {
-                errors++;
-            }
-
-            for (String answer : this) {
-                if (!containsNonWhitespaceCharacters(answer)
-                        || answer.length() > MAX_QUESTION_LENGTH) {
-                    errors++;
-                }
-            }
-
-            return errors;
-        }
-
-    }
-
-    private class TagsSet extends HashSet<String> {
-
-        private static final long serialVersionUID = -3692725125179875656L;
-
-        public int auditErrors() {
-            int errors = 0;
-            int numTags = size();
-
-            if (numTags < MIN_TAGS_NUM || numTags > MAX_TAGS_NUM) {
-                errors++;
-            }
-
-            for (String tag : this) {
-                if (!containsNonWhitespaceCharacters(tag)
-                        || tag.length() > MAX_TAG_LEN) {
-                    errors++;
-                }
-            }
-
-            return errors;
-        }
-
-    }
-
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -309,12 +260,59 @@ public class QuizQuestion implements Serializable {
                 + "\ntags : " + mTags + "\nowner : " + mOwner;
     }
     // TODO : controller cette methode
-   // public int toByteCount() {
+    // public int toByteCount() {
     //	return this.toString().getBytes().length;
     //}
 
-	public int getSolution() {
-		
-		return mSolutionIndex;
-	}
+    private class AnswersList extends LinkedList<String> {
+
+        private static final long serialVersionUID = 3821236061355668378L;
+
+        public int auditErrors() {
+            int errors = 0;
+            int numAnswers = size();
+
+            if (numAnswers < MIN_ANSWERS_NUM || numAnswers > MAX_ANSWERS_NUM) {
+                errors++;
+            }
+
+            if (mSolutionIndex < 0 || mSolutionIndex >= numAnswers) {
+                errors++;
+            }
+
+            for (String answer : this) {
+                if (!containsNonWhitespaceCharacters(answer)
+                        || answer.length() > MAX_QUESTION_LENGTH) {
+                    errors++;
+                }
+            }
+
+            return errors;
+        }
+
+    }
+
+    private class TagsSet extends HashSet<String> {
+
+        private static final long serialVersionUID = -3692725125179875656L;
+
+        public int auditErrors() {
+            int errors = 0;
+            int numTags = size();
+
+            if (numTags < MIN_TAGS_NUM || numTags > MAX_TAGS_NUM) {
+                errors++;
+            }
+
+            for (String tag : this) {
+                if (!containsNonWhitespaceCharacters(tag)
+                        || tag.length() > MAX_TAG_LEN) {
+                    errors++;
+                }
+            }
+
+            return errors;
+        }
+
+    }
 }
