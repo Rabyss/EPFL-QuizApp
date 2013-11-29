@@ -50,8 +50,8 @@ public class MainActivity extends Activity implements EventListener {
 		mIsLogged = sessionID != null;
 		emitter = new MainActivityEventEmitter();
 		AppContext.getContext().addAsListener(emitter);
-		emitter.addListener(Proxy.getInstance());
-		Proxy.getInstance().addListener(this);
+		emitter.addListener(Proxy.getInstance(getApplicationContext()));
+		Proxy.getInstance(getApplicationContext()).addListener(this);
 		displayInit();
 
 	}
@@ -75,7 +75,7 @@ public class MainActivity extends Activity implements EventListener {
 	@Override
 	protected void onStop() {
 		super.onStop();
-		Proxy.getInstance().removeListener(this);
+		Proxy.getInstance(getApplicationContext()).removeListener(this);
 	}
 
 	@Override

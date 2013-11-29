@@ -28,7 +28,7 @@ public class QuestionFetcherService extends QuestionActivityService implements
 				+ AppContext.getContext().getSessionID());
 		reqContext
 				.setServerURL(ServerCommunicator.SWENG_GET_RANDOM_QUESTION_URL);
-		Proxy.getInstance().doHttpGet(reqContext, new ReceivedQuestionEvent());
+		Proxy.getInstance(super.getActivity().getApplicationContext()).doHttpGet(reqContext, new ReceivedQuestionEvent());
 	}
 
 	public void on(ReceivedQuestionEvent event) {

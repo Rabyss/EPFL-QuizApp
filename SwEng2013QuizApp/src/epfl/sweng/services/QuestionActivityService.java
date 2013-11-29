@@ -13,7 +13,7 @@ public abstract class QuestionActivityService extends EventEmitter implements
 	public QuestionActivityService(QuestionActivity activity) {
 		addListener(activity);
 		mActivity = activity;
-		Proxy.getInstance().addListener(this);
+		Proxy.getInstance(activity.getApplicationContext()).addListener(this);
 	}
 	
 	protected QuestionActivity getActivity() {

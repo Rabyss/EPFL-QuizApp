@@ -5,6 +5,7 @@ import java.util.Random;
 
 import org.apache.http.HttpStatus;
 
+import android.content.Context;
 import epfl.sweng.context.AppContext;
 import epfl.sweng.context.ConnectionEvent;
 import epfl.sweng.context.ConnectionEvent.ConnectionEventType;
@@ -47,7 +48,7 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 	/** Temporary for a question we tried to submit online but IOException */
 	private QuestionToSubmit questionToSubmit;
 
-	private Proxy() {
+	private Proxy(Context context) {
 		serverComm = ServerCommunicator.getInstance();
 		postQuestion = new ArrayList<Proxy.QuestionToSubmit>();
 		getQuestion = new ArrayList<ServerResponse>();
@@ -60,9 +61,9 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 	 * 
 	 * @return the singleton instance
 	 */
-	public static synchronized Proxy getInstance() {
+	public static synchronized Proxy getInstance(Context context) {
 		if (sInstance == null) {
-			sInstance = new Proxy();
+			sInstance = new Proxy(context);
 		}
 		return sInstance;
 	}

@@ -39,7 +39,7 @@ public class QuestionPublisherService extends QuestionActivityService implements
         }
         reqContext.addHeader("Content-type", "application/json");
 
-        Proxy.getInstance().doHttpPost(reqContext, new PostedQuestionEvent());
+        Proxy.getInstance(super.getActivity().getApplicationContext()).doHttpPost(reqContext, new PostedQuestionEvent());
 
     }
 
