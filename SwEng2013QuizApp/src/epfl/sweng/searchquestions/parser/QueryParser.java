@@ -187,7 +187,11 @@ public final class QueryParser {
             currentToken = nextToken;
             nextToken = (tokenizer.hasNextToken()) ? tokenizer.nextToken() : null;
 
-            if (currentToken != null && currentToken.isKind(SPACE)) {
+            if (currentToken != null &&
+                lastToken != null &&
+                nextToken != null &&
+                currentToken.isKind(SPACE)) {
+
                 if ((lastToken.isKind(CLOSE) || lastToken.isKind(TAG)) &&
                         (nextToken.isKind(OPEN) || nextToken.isKind(TAG))) {
                     currentToken = new Token(AND);
