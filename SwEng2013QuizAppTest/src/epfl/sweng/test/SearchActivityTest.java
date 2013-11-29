@@ -72,6 +72,7 @@ public class SearchActivityTest extends
 		solo.clickOnButton("Search");
 		getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
 	}
+	
 	public void testBadSubmitSearch(){
 		httpClient = new MockHttpClient();
 		SwengHttpClientFactory.setInstance(httpClient);

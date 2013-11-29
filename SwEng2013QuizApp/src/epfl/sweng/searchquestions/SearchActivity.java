@@ -11,7 +11,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import epfl.sweng.R;
-import epfl.sweng.searchquestions.SearchQuery.UnvalidSearchQueryException;
+import epfl.sweng.searchquestions.SearchQuery.InvalidSearchQueryException;
 import epfl.sweng.searchquestions.parser.QueryParser;
 import epfl.sweng.searchquestions.parser.QueryParser.QueryParserResult;
 import epfl.sweng.showquestions.ShowQuestionsActivity;
@@ -47,7 +47,7 @@ public class SearchActivity extends Activity {
 					query = new SearchQuery(mSearchButton.getText().toString(),
 							mParserResult, mSelf);
 					
-				} catch (UnvalidSearchQueryException e) {
+				} catch (InvalidSearchQueryException e) {
 					throw new RuntimeException(shouldNotHappenMessage);
 				}
 				displayShowQuestionActivity(view);
@@ -58,7 +58,7 @@ public class SearchActivity extends Activity {
 		});
 
 	}
-	public void displayShowQuestionActivity(View view){
+	public void displayShowQuestionActivity(View view) {
 		Intent showQuestionIntent = new Intent(this, ShowQuestionsActivity.class);
 		startActivity(showQuestionIntent);
 	}
@@ -108,5 +108,6 @@ public class SearchActivity extends Activity {
 		}
 
 	}
+
 
 }

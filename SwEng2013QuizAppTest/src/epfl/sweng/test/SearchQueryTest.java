@@ -1,43 +1,62 @@
 package epfl.sweng.test;
 
+import android.test.AndroidTestCase;
 import epfl.sweng.context.AppContext;
 import epfl.sweng.searchquestions.SearchQuery;
-import android.test.AndroidTestCase;
+import epfl.sweng.searchquestions.SearchQuery.InvalidSearchQueryException;
+import epfl.sweng.searchquestions.parser.QueryParser;
 
 public class SearchQueryTest extends AndroidTestCase {
-	
+
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		
+
 		AppContext.getContext().resetState();
 	}
-	
-	
-    public void testExprNesting() {
-        String validExpr = "(())";
-        String invalidExpr = "()(";
-        
-        assertEquals(validExpr + " is a valid expression nesting", SearchQuery.auditQueryStr(validExpr), 0);
-        assertTrue(invalidExpr + " is an invalid expression nesting", SearchQuery.auditQueryStr(invalidExpr) > 0);
-    }
-    
-    public void testQueryCharClass() {
-        String firstInvalidQuery = "     ";
-        String secInvalidQuery = "(hey) (')";
-        String thirdInvalidQuery = "��";
-        String fourthInvalidQuery = "\t";
-        String validQuery = "       a     ";
-        
 
-        assertTrue(generateErrorMessage(firstInvalidQuery), SearchQuery.auditQueryStr(firstInvalidQuery) > 0);
-        assertTrue(generateErrorMessage(secInvalidQuery), SearchQuery.auditQueryStr(secInvalidQuery) > 0);
-        assertTrue(generateErrorMessage(thirdInvalidQuery), SearchQuery.auditQueryStr(thirdInvalidQuery) > 0);
-        assertTrue(generateErrorMessage(fourthInvalidQuery), SearchQuery.auditQueryStr(fourthInvalidQuery) > 0);
-        assertEquals(validQuery + " is a valid query.", 0, SearchQuery.auditQueryStr(validQuery));
-    }
-    
-    private String generateErrorMessage(String invalidQuery) {
-        return invalidQuery + " is an invalid query.";
-    }
+	public void testExprNesting() {
+		String validExpr = "((a b))";
+		String invalidExpr = ")(";
+
+		assertValidity(validExpr);
+		assertInvalidity(invalidExpr);
+	}
+
+	public void testQueryCharClass() {
+		String firstInvalidQuery = "     ";
+		String secInvalidQuery = "(hey) (')";
+		String thirdInvalidQuery = "0à";
+		String fourthInvalidQuery = "\t";
+		String validQuery = "       a     ";
+
+		assertInvalidity(firstInvalidQuery);
+		assertInvalidity(secInvalidQuery);
+		assertInvalidity(thirdInvalidQuery);
+		assertInvalidity(fourthInvalidQuery);
+		assertValidity(validQuery);
+	}
+
+	private String generateErrorMessage(String invalidQuery) {
+		return invalidQuery + " is an invalid query.";
+	}
+
+	private void assertValidity(String queryStr) {
+		try {
+			SearchQuery q = new SearchQuery(queryStr,
+					QueryParser.parse(queryStr),getContext());
+		} catch (InvalidSearchQueryException e) {
+			fail(queryStr + " is valid.");
+		}
+	}
+
+	private void assertInvalidity(String queryStr) {
+		try {
+			SearchQuery q = new SearchQuery(queryStr,
+					QueryParser.parse(queryStr), getContext());
+			fail(queryStr + " is invalid.");
+		} catch (InvalidSearchQueryException e) {
+
+		}
+	}
 }

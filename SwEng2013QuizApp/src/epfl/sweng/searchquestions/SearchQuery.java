@@ -13,6 +13,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Context;
 import android.widget.Toast;
 import epfl.sweng.quizquestions.QuizQuestion;
 import epfl.sweng.searchquestions.parser.QueryParser.QueryParserResult;
@@ -27,23 +28,24 @@ public class SearchQuery {
 	private static final int MAX_QUERY_LENGTH = 500;
 
 	private static final int SWENG_OK = 200;
-	private SearchActivity activity;
+	private Context activity;
 
 	public SearchQuery(final String query,
-			final QueryParserResult parserResult, SearchActivity activity)
-		throws UnvalidSearchQueryException {
+			final QueryParserResult parserResult, Context activity)
+		throws InvalidSearchQueryException {
 		mParserResult = parserResult;
 		mQuery = query;
 		this.activity = activity;
 		int errorsCount = auditErrors();
 		if (errorsCount > 0) {
-			throw new UnvalidSearchQueryException(errorsCount);
+			throw new InvalidSearchQueryException(errorsCount);
 		}
 	}
 
 	public String getQuery() {
 		return mQuery;
 	}
+
 
 	public int auditErrors() {
 		int errors = 0;
@@ -69,15 +71,17 @@ public class SearchQuery {
 		return errors;
 	}
 
-	public class UnvalidSearchQueryException extends Exception {
+	public class InvalidSearchQueryException extends Exception {
 
 		private static final long serialVersionUID = 6028719701104283474L;
 
-		public UnvalidSearchQueryException(int errorsCount) {
+
+		public InvalidSearchQueryException(int errorsCount) {
 			super("invalid search query (" + errorsCount + " errors): '"
 					+ mQuery + "'");
 		}
 	}
+
 
 	public void query() {
 		query("");
