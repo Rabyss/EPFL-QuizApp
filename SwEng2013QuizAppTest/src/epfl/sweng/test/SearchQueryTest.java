@@ -44,7 +44,7 @@ public class SearchQueryTest extends AndroidTestCase {
 	private void assertValidity(String queryStr) {
 		try {
 			SearchQuery q = new SearchQuery(queryStr,
-					QueryParser.parse(queryStr));
+					QueryParser.parse(queryStr),getContext());
 		} catch (InvalidSearchQueryException e) {
 			fail(queryStr + " is valid.");
 		}
@@ -53,7 +53,7 @@ public class SearchQueryTest extends AndroidTestCase {
 	private void assertInvalidity(String queryStr) {
 		try {
 			SearchQuery q = new SearchQuery(queryStr,
-					QueryParser.parse(queryStr));
+					QueryParser.parse(queryStr), getContext());
 			fail(queryStr + " is invalid.");
 		} catch (InvalidSearchQueryException e) {
 

@@ -24,6 +24,7 @@ import epfl.sweng.events.EventListener;
 import epfl.sweng.proxy.OnlineEvent;
 import epfl.sweng.proxy.PostConnectionErrorEvent;
 import epfl.sweng.proxy.Proxy;
+import epfl.sweng.searchquestions.SearchActivity;
 import epfl.sweng.showquestions.ShowQuestionsActivity;
 import epfl.sweng.testing.TestCoordinator;
 import epfl.sweng.testing.TestCoordinator.TTChecks;
@@ -37,6 +38,7 @@ public class MainActivity extends Activity implements EventListener {
 	private Button mLogButton;
 	private Button mShowQuestionButton;
 	private Button mSubmitQuestionButton;
+	private Button mSearchButton;
 	private LinearLayout mLinearLayout;
 	private MainActivity mThis;
 	private CheckBox isOfflineCheckBox;
@@ -67,9 +69,9 @@ public class MainActivity extends Activity implements EventListener {
 	public void on(PostConnectionErrorEvent event) {
 		isOfflineCheckBox.setChecked(true);
 	}
-	
+
 	public void on(SwitchSuccessfulEvent event) {
-		//TestCoordinator.check(TTChecks.OFFLINE_CHECKBOX_DISABLED);
+		// TestCoordinator.check(TTChecks.OFFLINE_CHECKBOX_DISABLED);
 	}
 
 	@Override
@@ -105,6 +107,11 @@ public class MainActivity extends Activity implements EventListener {
 		startActivity(displayAuthenticationIntent);
 	}
 
+	public void displaySearchQuestion(View view) {
+		Intent displaySearchIntent = new Intent(this, SearchActivity.class);
+		startActivity(displaySearchIntent);
+	}
+
 	@Override
 	public void onBackPressed() {
 		Intent intent = new Intent(Intent.ACTION_MAIN);
@@ -129,6 +136,8 @@ public class MainActivity extends Activity implements EventListener {
 		mShowQuestionButton.setText(R.string.show_random_question);
 		mSubmitQuestionButton = new Button(this);
 		mSubmitQuestionButton.setText(R.string.submit_quiz);
+		mSearchButton = new Button(this);
+		mSearchButton.setText(R.string.search_button_text);
 		isOfflineCheckBox = new CheckBox(this);
 		isOfflineCheckBox.setId(R.id.onlineModeCheckBox);
 		isOfflineCheckBox.setText(R.string.offline_mode);
@@ -138,11 +147,13 @@ public class MainActivity extends Activity implements EventListener {
 			mLogButton.setText(R.string.log_out);
 			mShowQuestionButton.setEnabled(true);
 			mSubmitQuestionButton.setEnabled(true);
+			mSearchButton.setEnabled(true);
 			isOfflineCheckBox.setVisibility(View.VISIBLE);
 		} else {
 			mLogButton.setText(R.string.log_button);
 			mShowQuestionButton.setEnabled(false);
 			mSubmitQuestionButton.setEnabled(false);
+			mSearchButton.setEnabled(false);
 			isOfflineCheckBox.setVisibility(View.INVISIBLE);
 		}
 
@@ -183,6 +194,14 @@ public class MainActivity extends Activity implements EventListener {
 
 			}
 		});
+		mSearchButton.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				displaySearchQuestion(v);
+
+			}
+		});
 
 		isOfflineCheckBox
 				.setOnCheckedChangeListener(new OnCheckedChangeListener() {
@@ -197,13 +216,14 @@ public class MainActivity extends Activity implements EventListener {
 						if (!isChecked) {
 							emitter.emit(new OnlineEvent());
 						} else {
-							//TestCoordinator.check(TTChecks.OFFLINE_CHECKBOX_ENABLED);
+							// TestCoordinator.check(TTChecks.OFFLINE_CHECKBOX_ENABLED);
 						}
 					}
 				});
 		mLinearLayout.addView(mLogButton);
 		mLinearLayout.addView(mShowQuestionButton);
 		mLinearLayout.addView(mSubmitQuestionButton);
+		mLinearLayout.addView(mSearchButton);
 		mLinearLayout.addView(isOfflineCheckBox);
 
 	}
