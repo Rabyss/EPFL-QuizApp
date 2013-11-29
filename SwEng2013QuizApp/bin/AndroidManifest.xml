@@ -41,7 +41,8 @@
             android:label="@string/title_activity_authentication" >
         </activity>
         <activity
-            android:name="epfl.sweng.SearchActivity"
+            android:name="epfl.sweng.searchquestions.SearchActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_search" >
         </activity>
     </application>

@@ -61,6 +61,8 @@ public class MainActivityTest extends
 				solo.getButton("Submit a quiz question.").isEnabled());
 		assertTrue("Log in button is enabled",
 				solo.getButton("Log in using Tequila").isEnabled());
+		assertTrue("Search button is shown", solo.searchText("Search"));
+		assertFalse("Search Button is enabled", solo.getButton("Search").isEnabled());
 	}
 
 	/**
@@ -79,6 +81,8 @@ public class MainActivityTest extends
 				solo.getButton("Submit a quiz question.").isEnabled());
 		assertTrue("Log in button is enabled", solo.getButton("Log out")
 				.isEnabled());
+		assertTrue("Search button is shown", solo.searchText("Search"));
+		assertTrue("Search button is enabled", solo.getButton("Search").isEnabled());
 
 	}
 
@@ -105,6 +109,11 @@ public class MainActivityTest extends
 	public void testAuthenticateButton() {
 		solo.clickOnButton("Log in using Tequila");
 		getActivityAndWaitFor(TTChecks.AUTHENTICATION_ACTIVITY_SHOWN);
+	}
+	public void testSearchButton() {
+		login();
+		solo.clickOnButton("Search");
+		getActivityAndWaitFor(TTChecks.SEARCH_ACTIVITY_SHOWN);
 	}
 
 	private void login() {
