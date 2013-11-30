@@ -7,11 +7,15 @@ public class QueryParserTest extends AndroidTestCase {
 
     public void test() {
         assertTrue(QueryParser.parse("(a b) a").isDone());
+        assertTrue(QueryParser.parse("b").isDone());
         assertFalse(QueryParser.parse(")a b( a").isDone());
         assertTrue(QueryParser.parse("a (a + b)").isDone());
         assertTrue(QueryParser.parse("a b + c").isDone());
         assertTrue(QueryParser.parse("a + b c").isDone());
         assertFalse(QueryParser.parse("(a b+) a").isDone());
+
+        String queryStr = "(a b)";
+        assertEquals(queryStr, QueryParser.parse(queryStr).getQueryString());
 
     /*    assertEquals("(tag_text = 'd' AND (tag_text = 'a' OR tag_text = 'b'))",
                 new SQLQueryCompiler().toSQL(QueryParser.parse("d (a + b)").getAST())
