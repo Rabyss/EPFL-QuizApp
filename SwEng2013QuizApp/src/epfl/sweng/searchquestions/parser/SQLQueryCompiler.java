@@ -24,8 +24,8 @@ public class SQLQueryCompiler implements ASTVisitor {
 
     @Override
     public String visit(TreeAnd andNode) {
-        return "(EXISTS(SELECT 1 FROM table_tag WHERE question_id=tag_question_id AND "+andNode.getChild(0).accept(this)+") AND "+
-        "EXISTS(SELECT 1 FROM table_tag WHERE question_id=tag_question_id AND "+andNode.getChild(1).accept(this)+") )";
+        return "(EXISTS(SELECT 1 FROM "+  SQLiteCache.TABLE_TAG + " WHERE " + SQLiteCache.COL_ID + " = " + SQLiteCache.COL_ID_TAG + "  AND "+andNode.getChild(0).accept(this)+") AND "+
+        "EXISTS(SELECT 1 FROM "+ SQLiteCache.TABLE_TAG + " WHERE " + SQLiteCache.COL_ID + " = " + SQLiteCache.COL_ID_TAG + "  AND "+andNode.getChild(1).accept(this)+") )";
     }
 
     @Override

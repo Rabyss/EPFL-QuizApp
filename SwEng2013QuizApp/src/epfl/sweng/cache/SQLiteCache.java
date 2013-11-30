@@ -1,5 +1,10 @@
 package epfl.sweng.cache;
 
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
@@ -9,14 +14,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 import epfl.sweng.quizquestions.QuizQuestion;
 import epfl.sweng.searchquestions.parser.SQLQueryCompiler;
 import epfl.sweng.searchquestions.parser.tree.TreeNode;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
 
@@ -30,14 +27,14 @@ public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
     private static final String TABLE_QUESTION = "table_Question";
 
     // Question table columns name
-    private static final String COL_ID = "question_id";
+    public static final String COL_ID = "question_id";
     private static final String COL_QUESTION = "question_text";
     private static final String COL_SOLUTION = "question_solution_index";
     private static final String COL_OWNER = "question_owner";
 
     // Tab table name
-    private static final String TABLE_TAG = "table_tag";
-    private static final String COL_ID_TAG = "tag_question_id";
+    public static final String TABLE_TAG = "table_tag";
+    public static final String COL_ID_TAG = "tag_question_id";
     public static final String COL_TAG = "tag_text";
 
     // Answer table name
@@ -64,8 +61,8 @@ public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
 
     public SQLiteCache(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        onUpgrade(getWritableDatabase(), 0, 0);
-
+        // To delete the database on disk
+        //onUpgrade(getWritableDatabase(), 0, 0);
     }
 
     @Override
@@ -142,21 +139,7 @@ public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
                " FROM " +TABLE_QUESTION +
             " INNER JOIN " + TABLE_TAG + " ON " + COL_ID_TAG +"="+COL_ID + " WHERE " + compiler.toSQL(AST);
 
-        System.out.println(questionQuery);
-
         Cursor cursor = db.rawQuery(questionQuery, new String[0]);
-
-        /*  to print the tag db
-        String s = "SELECT * FROM "+TABLE_TAG;
-
-        Cursor t = db.rawQuery(s, null);
-        if (t.moveToFirst()) {
-            do {
-                String a = t.getString(t.getColumnIndex(COL_ID_TAG));
-                String b = t.getString(t.getColumnIndex(COL_TAG));
-                System.out.println(a + " | "+b);
-            } while(t.moveToNext());
-        } */
 
         if (cursor.moveToFirst()) { //if we get a question
             do {
