@@ -1,12 +1,5 @@
 package epfl.sweng.cache;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
@@ -14,6 +7,15 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import epfl.sweng.quizquestions.QuizQuestion;
+import epfl.sweng.searchquestions.parser.SQLQueryCompiler;
+import epfl.sweng.searchquestions.parser.tree.TreeNode;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
 
@@ -126,12 +128,13 @@ public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
 
 	@SuppressLint("UseSparseArrays")
 	@Override
-	public Set<QuizQuestion> getQuestionSetByTag(String tagsMark, String[] tagsSearch) {
+	public Set<QuizQuestion> getQuestionSetByTag(TreeNode AST) {
 		Map<Integer, QuizQuestion> questionMatching = new HashMap<Integer, QuizQuestion>();
 
 		//TODO A completer la demande!!
 		
 		SQLiteDatabase db = this.getReadableDatabase();
+        SQLQueryCompiler compiler = new SQLQueryCompiler();
 		// | INT id | STR question | STR owner | INT solution | STR tag | STR answer | INT index |
 		Cursor cursor = db.rawQuery("SELECT "+
 				TABLE_QUESTION+"."+COL_ID+
@@ -144,8 +147,9 @@ public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
 				" FROM "+TABLE_QUESTION+" INNER JOIN "+TABLE_TAG+
 				" AS tagsSel ON tagsSel."+COL_ID_TAG+"="+COL_ID+
 				" INNER JOIN "+TABLE_TAG+" AS tagsShow ON tagsShow."+
-				COL_ID_TAG+"="+COL_ID+" WHERE tagsSel."+COL_TAG+
-				" = "+tagsMark+" SORT ORDER BY "+COL_ID+", "+COL_INDEX+" ASC;", tagsSearch);
+				COL_ID_TAG+"="+COL_ID+" WHERE "+
+                compiler.toSQL(AST)
+                +" SORT ORDER BY "+COL_ID+", "+COL_INDEX+" ASC;", new String[0]);
 		
 		if (cursor.moveToFirst()) {
 			do {

@@ -3,7 +3,6 @@ package epfl.sweng.searchquestions.parser.tree;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Set;
 
 public abstract class TreeNode {
     private List<TreeNode> childs;

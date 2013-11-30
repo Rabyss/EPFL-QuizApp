@@ -1,5 +1,6 @@
 package epfl.sweng.searchquestions.parser;
 
+import epfl.sweng.cache.SQLiteCache;
 import epfl.sweng.searchquestions.parser.tree.ASTVisitor;
 import epfl.sweng.searchquestions.parser.tree.SingleChildTreeNode;
 import epfl.sweng.searchquestions.parser.tree.TreeAnd;
@@ -18,7 +19,7 @@ public class SQLQueryCompiler implements ASTVisitor {
 
     @Override
     public String visit(TreeLeaf leaf) {
-        return "tag = '"+leaf.getTag()+"'";
+        return SQLiteCache.TAGS_SEL+".tag = '"+leaf.getTag()+"'";
     }
 
     @Override
