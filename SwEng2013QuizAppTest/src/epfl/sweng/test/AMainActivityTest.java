@@ -14,19 +14,20 @@ import epfl.sweng.testing.TestCoordinator;
 import epfl.sweng.testing.TestingTransaction;
 import epfl.sweng.testing.TestCoordinator.TTChecks;
 
-public class MainActivityTest extends
+public class AMainActivityTest extends
 		ActivityInstrumentationTestCase2<MainActivity> {
 	private Solo solo;
 	private MockHttpClient httpClient;
 	private static final int STATUS_200 = 200;
 	private static final int STATUS_302 = 302;
 
-	public MainActivityTest() {
+	public AMainActivityTest() {
 		super(MainActivity.class);
 	}
 
 	@Override
-	protected void setUp() {
+	protected void setUp() throws Exception {
+		super.setUp();
 		getActivityAndWaitFor(TTChecks.MAIN_ACTIVITY_SHOWN);
 		solo = new Solo(getInstrumentation(), getActivity());
 
@@ -44,6 +45,22 @@ public class MainActivityTest extends
 	 */
 	public void testLogOut() {
 		login();
+		
+		assertTrue("Show question button is shown",
+				solo.searchButton("Show a random question.", 1));
+		assertTrue("Submit question button is shown",
+				solo.searchText("Submit a quiz question."));
+		assertTrue("Log out button is shown", solo.searchText("Log out"));
+		assertTrue("show question button is enabled",
+				solo.getButton("Show a random question.").isEnabled());
+		assertTrue("submit question button is enabled",
+				solo.getButton("Submit a quiz question.").isEnabled());
+		assertTrue("Log in button is enabled", solo.getButton("Log out")
+				.isEnabled());
+		assertTrue("Search button is shown", solo.searchText("Search"));
+		assertTrue("Search button is enabled", solo.getButton("Search")
+				.isEnabled());
+		
 		solo.clickOnButton("Log out");
 		getActivityAndWaitFor(TTChecks.LOGGED_OUT);
 		assertTrue("Show question button is shown",
@@ -63,27 +80,6 @@ public class MainActivityTest extends
 				.isEnabled());
 	}
 
-	/**
-	 * Test the main activity if an user is logged
-	 */
-	public void testALoggedUser() {
-		login();
-		assertTrue("Show question button is shown",
-				solo.searchButton("Show a random question.", 1));
-		assertTrue("Submit question button is shown",
-				solo.searchText("Submit a quiz question."));
-		assertTrue("Log out button is shown", solo.searchText("Log out"));
-		assertTrue("show question button is enabled",
-				solo.getButton("Show a random question.").isEnabled());
-		assertTrue("submit question button is enabled",
-				solo.getButton("Submit a quiz question.").isEnabled());
-		assertTrue("Log in button is enabled", solo.getButton("Log out")
-				.isEnabled());
-		assertTrue("Search button is shown", solo.searchText("Search"));
-		assertTrue("Search button is enabled", solo.getButton("Search")
-				.isEnabled());
-
-	}
 
 	public void testSubmitQuestionButton() {
 		login();
@@ -106,7 +102,7 @@ public class MainActivityTest extends
 	}
 
 	public void testAuthenticateButton() {
-		if (solo.searchButton("Log out")) {
+		if (MainActivity.isLogged()) {
 			solo.clickOnButton("Log out");
 			getActivityAndWaitFor(TTChecks.LOGGED_OUT);
 		}
@@ -121,7 +117,8 @@ public class MainActivityTest extends
 	}
 
 	private void login() {
-		if (!solo.searchButton("Log out")) {
+		if(solo.searchButton("Log in using Tequila")){
+		
 			solo.clickOnButton("Log in using Tequila");
 			getActivityAndWaitFor(TTChecks.AUTHENTICATION_ACTIVITY_SHOWN);
 			httpClient = new MockHttpClient();

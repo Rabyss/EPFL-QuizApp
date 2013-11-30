@@ -231,5 +231,8 @@ public class MainActivity extends Activity implements EventListener {
 	public static void setIsLogged(boolean isLogged) {
 		mIsLogged = isLogged;
 	}
+	public static boolean isLogged(){
+		return mIsLogged;
+	}
 
 }
