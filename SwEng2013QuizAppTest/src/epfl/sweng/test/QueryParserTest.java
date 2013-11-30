@@ -14,19 +14,19 @@ public class QueryParserTest extends AndroidTestCase {
         assertTrue(QueryParser.parse("a + b c").isDone());
         assertFalse(QueryParser.parse("(a b+) a").isDone());
 
-        assertEquals("(tagsSel.tag = 'd' AND (tagsSel.tag = 'a' OR tagsSel.tag = 'b'))",
+        assertEquals("(tag_text = 'd' AND (tag_text = 'a' OR tag_text = 'b'))",
                 new SQLQueryCompiler().toSQL(QueryParser.parse("d (a + b)").getAST())
         );
 
-        assertEquals("((tagsSel.tag = 'd' AND tagsSel.tag = 'a') OR tagsSel.tag = 'b')",
+        assertEquals("((tag_text = 'd' AND tag_text = 'a') OR tag_text = 'b')",
                 new SQLQueryCompiler().toSQL(QueryParser.parse("d a + b").getAST())
         );
 
-        assertEquals("((tagsSel.tag = 'd' AND (tagsSel.tag = 'a' AND (tagsSel.tag = 'r' AND tagsSel.tag = 'q'))) OR tagsSel.tag = 'b')",
+        assertEquals("((tag_text = 'd' AND (tag_text = 'a' AND (tag_text = 'r' AND tag_text = 'q'))) OR tag_text = 'b')",
                 new SQLQueryCompiler().toSQL(QueryParser.parse("d a r q + b").getAST())
         );
 
-        assertEquals("((tagsSel.tag = 'd' AND tagsSel.tag = 'a') OR (tagsSel.tag = 'g' AND tagsSel.tag = 'q'))",
+        assertEquals("((tag_text = 'd' AND tag_text = 'a') OR (tag_text = 'g' AND tag_text = 'q'))",
                 new SQLQueryCompiler().toSQL(QueryParser.parse("d * a + g * q").getAST())
         );
     }
