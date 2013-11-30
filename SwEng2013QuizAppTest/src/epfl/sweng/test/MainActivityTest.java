@@ -66,7 +66,7 @@ public class MainActivityTest extends
 	/**
 	 * Test the main activity if an user is logged
 	 */
-	public void testLoggedUser() {
+	public void testALoggedUser() {
 		login();
 		assertTrue("Show question button is shown",
 				solo.searchButton("Show a random question.", 1));
