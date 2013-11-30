@@ -45,7 +45,7 @@ public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
 
 	private static final String COL_ID_ANSWER = "id";
 	private static final String COL_ANSWER = "answer";
-	private static final String COL_INDEX = "index";
+	private static final String COL_INDEX = "index_";
 	
 	private static final String CREATE_QUESTION_TABLE = "CREATE TABLE "
 			+ TABLE_QUESTION + "(" + COL_ID + " INTEGER PRIMARY KEY,"
