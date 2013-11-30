@@ -18,7 +18,8 @@ public class TagStorage {
 	public Set<QuizQuestion> query(String queryStr) {
         QueryParserResult parserResult = QueryParser.parse(queryStr);
         if (parserResult.isDone()) {
-            return getQuestions(parserResult.getAST().getIDs());
+        	return null;
+            //return getQuestions(parserResult.getAST().getIDs());
         } else {
             return new HashSet<QuizQuestion>(); //returns the empty set
         }
