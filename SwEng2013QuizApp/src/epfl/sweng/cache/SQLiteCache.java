@@ -107,8 +107,10 @@ public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
         for (String tag : tagSet) {
             valuesTags.put(COL_ID_TAG, question.getId());
             valuesTags.put(COL_TAG, tag);
+            db.replace(TABLE_TAG, null, valuesTags);
+            valuesTags.clear();
         }
-        db.replace(TABLE_TAG, null, valuesTags);
+
 
         // Insert elements in the answers table
         ContentValues valuesAnswers = new ContentValues();
@@ -118,9 +120,11 @@ public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
             valuesAnswers.put(COL_ID_ANSWER, question.getId());
             valuesAnswers.put(COL_ANSWER, answer);
             valuesAnswers.put(COL_INDEX, index);
+            db.replace(TABLE_ANSWER, null, valuesAnswers);
+            valuesAnswers.clear();
             index++;
         }
-        db.replace(TABLE_ANSWER, null, valuesAnswers);
+
 
         db.close();
     }
