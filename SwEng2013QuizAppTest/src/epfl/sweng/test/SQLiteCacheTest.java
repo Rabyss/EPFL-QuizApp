@@ -16,6 +16,8 @@ public class SQLiteCacheTest extends AndroidTestCase {
 	private SQLiteCache cache;
 	private QuizQuestion qu1;
 	private QuizQuestion qu2;
+	private QuizQuestion qu3;
+	private QuizQuestion qu4;
 	
 	@Override
 	protected void setUp() throws Exception {
@@ -36,6 +38,9 @@ public class SQLiteCacheTest extends AndroidTestCase {
 		tags2.add("Taga"); tags2.add("Tagc");
 		qu2 = 
 				new QuizQuestion("Question 2", answers2, 1, tags2, 2424, "otherOwner");
+		
+		qu3 = new QuizQuestion("{\"id\": \"1000002\",\"owner\": \"fruitninja\",\"question\": \"How many calories are in a banana?\",\"answers\": [ \"Just enough\", \"Too many\" ],\"solutionIndex\": 0,\"tags\": [ \"tagGeneric\", \"tag31892\", \"tag34524\", \"tag48771\", \"tag64957\", \"tag43688\" ]}");
+		qu4 = new QuizQuestion("{\"id\": \"1000003\",\"owner\": \"fruitninja\",\"question\": \"How many calories are in a banana?\",\"answers\": [ \"Just enough\", \"Too many\" ],\"solutionIndex\": 0,\"tags\": [ \"tagGeneric\", \"tag57061\", \"tag34283\", \"tag49816\", \"tag55981\", \"tag8642\" ]}");
 	}
 	
 	public void testSearchOneTagOneQuestion() {
@@ -84,6 +89,19 @@ public class SQLiteCacheTest extends AndroidTestCase {
 		Set<QuizQuestion> set = cache.getQuestionSetByTag(res.getAST());
 		assertTrue(set.contains(qu1));
 		assertTrue(set.contains(qu2));
+	}
+	
+	public void testSearchBigExpression() {
+		cache.cacheQuestion(qu1);
+		cache.cacheQuestion(qu3);
+		cache.cacheQuestion(qu4);
+		QueryParserResult res = QueryParser.parse("Tagb + tag31892 (tag34524 tag64957 + nulltag) tag48771 + tag57061");
+		assertTrue(res.isDone());
+		Set<QuizQuestion> set = cache.getQuestionSetByTag(res.getAST());
+		assertTrue(set.contains(qu1));
+		assertFalse(set.contains(qu2));
+		assertTrue(set.contains(qu3));
+		assertTrue(set.contains(qu4));
 	}
 	
 	
