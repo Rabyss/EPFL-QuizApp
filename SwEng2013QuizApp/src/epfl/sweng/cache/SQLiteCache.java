@@ -17,7 +17,6 @@ import epfl.sweng.searchquestions.parser.tree.TreeNode;
 
 public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
 
-
     // Database version
     private static final int DATABASE_VERSION = 1;
     // Database name
@@ -126,6 +125,16 @@ public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
         db.close();
     }
 
+    @Override
+    public void clearCache() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_QUESTION, null, null);
+        db.delete(TABLE_TAG, null, null);
+        db.delete(TABLE_ANSWER, null, null);
+
+    }
+
+
     @SuppressLint("UseSparseArrays")
     @Override
     public Set<QuizQuestion> getQuestionSetByTag(TreeNode AST) {
@@ -143,18 +152,7 @@ public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
 
         if (cursor.moveToFirst()) { //if we get a question
             do {
-                int quizQuestionID = cursor.getInt(cursor.getColumnIndex(COL_ID_TAG)); //the id of the tag is the same as the one of the question
-
-                String quizQuestionBody = cursor.getString(cursor.getColumnIndex(COL_QUESTION));
-                int quizQuestionSolutionIndex = cursor.getInt(cursor.getColumnIndex(COL_SOLUTION));
-                String quizQuestionOwner = cursor.getString(cursor.getColumnIndex(COL_OWNER));
-
-                List<String> quizQuestionAnswers = getAnswersForQuizQuestionWithID(db, quizQuestionID);
-
-                Set<String> quizQuestionTags = getTagsForQuizQuestionWithID(db, quizQuestionID);
-
-                QuizQuestion quizQuestion =
-                        new QuizQuestion(quizQuestionBody, quizQuestionAnswers, quizQuestionSolutionIndex, quizQuestionTags, quizQuestionID, quizQuestionOwner);
+                QuizQuestion quizQuestion = constructQuizQuestion(db, cursor);
 
                 questions.add(quizQuestion);
 
@@ -162,6 +160,25 @@ public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
         }
 
         return questions;
+    }
+
+    public QuizQuestion getRandomQuestion() {
+        SQLiteDatabase db = getReadableDatabase();
+        return constructQuizQuestion(db, db.query(TABLE_QUESTION + " ORDER BY RANDOM() LIMIT 1", new String[] {"*"}, null, null, null, null, null));
+    }
+
+    private QuizQuestion constructQuizQuestion(SQLiteDatabase db, Cursor cursor) {
+        int quizQuestionID = cursor.getInt(cursor.getColumnIndex(COL_ID_TAG)); //the id of the tag is the same as the one of the question
+
+        String quizQuestionBody = cursor.getString(cursor.getColumnIndex(COL_QUESTION));
+        int quizQuestionSolutionIndex = cursor.getInt(cursor.getColumnIndex(COL_SOLUTION));
+        String quizQuestionOwner = cursor.getString(cursor.getColumnIndex(COL_OWNER));
+
+        List<String> quizQuestionAnswers = getAnswersForQuizQuestionWithID(db, quizQuestionID);
+
+        Set<String> quizQuestionTags = getTagsForQuizQuestionWithID(db, quizQuestionID);
+
+        return new QuizQuestion(quizQuestionBody, quizQuestionAnswers, quizQuestionSolutionIndex, quizQuestionTags, quizQuestionID, quizQuestionOwner);
     }
 
     private List<String> getAnswersForQuizQuestionWithID(SQLiteDatabase db, int quizQuestionID) {
@@ -194,13 +211,5 @@ public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
         return tags;
     }
 
-    @Override
-    public void clearCache() {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_QUESTION, null, null);
-        db.delete(TABLE_TAG, null, null);
-        db.delete(TABLE_ANSWER, null, null);
-
-    }
 
 }
