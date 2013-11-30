@@ -1,9 +1,13 @@
 package epfl.sweng.proxy;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 import org.apache.http.HttpStatus;
+import org.apache.http.entity.StringEntity;
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.content.Context;
 import epfl.sweng.cache.SQLiteCache;
@@ -17,7 +21,7 @@ import epfl.sweng.events.EventEmitter;
 import epfl.sweng.events.EventListener;
 import epfl.sweng.quizquestions.MalformedQuestionException;
 import epfl.sweng.quizquestions.QuizQuestion;
-import epfl.sweng.searchquestions.parser.tree.TreeNode;
+import epfl.sweng.searchquestions.parser.QueryParser.QueryParserResult;
 import epfl.sweng.servercomm.RequestContext;
 import epfl.sweng.servercomm.ServerCommunicator;
 import epfl.sweng.servercomm.ServerEvent;
@@ -51,9 +55,12 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 
 	/** Temporary for a question we tried to submit online but IOException */
 	private QuestionToSubmit questionToSubmit;
-	
-	private ProyState state = ProyState.NORMAL;
-	private TreeNode AST;
+
+	private ProxyState state = ProxyState.NORMAL;
+	private QueryParserResult query;
+
+	private ArrayList<ServerResponse> results;
+	private String next;
 
 	private Proxy(Context context) {
 		serverComm = ServerCommunicator.getInstance();
@@ -77,14 +84,37 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 
 	@Override
 	public void doHttpGet(RequestContext reqContext, ServerEvent event) {
-
 		if (isOnline()) {
-			// state machine transition
-			this.emit(new ConnectionEvent(
-					ConnectionEventType.ADD_OR_RETRIEVE_QUESTION));
-			// Continue in on(ReceivedQuestionEvent) if server reachable
-			// else (IOException) continue in on(GetConnectionErrorEvent)
-			serverComm.doHttpGet(reqContext, event);
+			if (state == ProxyState.SEARCH) {
+				reqContext
+						.setServerURL("https://sweng-quiz.appspot.com/search");
+				reqContext.addHeader("Content-type", "application/json");
+				StringEntity queryEntity = null;
+				try {
+					queryEntity = new StringEntity("{ \"query\": \""
+							+ query.getQueryString() + "\" }");
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+				}
+				reqContext.setEntity(queryEntity);
+				this.emit(new ConnectionEvent(
+						ConnectionEventType.ADD_OR_RETRIEVE_QUESTION));
+				serverComm.doHttpPost(reqContext, event);
+			} else if (state == ProxyState.NEXT) {
+				if (results.isEmpty()) {
+				} else {
+					ReceivedQuestionEvent receiveEvent = new ReceivedQuestionEvent();
+					receiveEvent.setResponse(results.get(0));
+					results.remove(0);
+				}
+			} else {
+				// state machine transition
+				this.emit(new ConnectionEvent(
+						ConnectionEventType.ADD_OR_RETRIEVE_QUESTION));
+				// Continue in on(ReceivedQuestionEvent) if server reachable
+				// else (IOException) continue in on(GetConnectionErrorEvent)
+				serverComm.doHttpGet(reqContext, event);
+			}
 		} else {
 			ReceivedQuestionEvent receiveEvent = new ReceivedQuestionEvent();
 			receiveEvent.setResponse(offlineRandomQuestion());
@@ -111,10 +141,10 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 		}
 
 	}
-	
-	public void giveAST(TreeNode AST) {
-		state = ProyState.SEARCH;
-		this.AST = AST;
+
+	public void giveQuery(QueryParserResult query) {
+		state = ProxyState.SEARCH;
+		this.query = query;
 	}
 
 	public boolean isOnline() {
@@ -168,10 +198,32 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 				this.emit(new ConnectionEvent(
 						ConnectionEventType.COMMUNICATION_SUCCESS));
 			} else {
-
+				String json = "";
+				if (state == ProxyState.SEARCH) {
+					try {
+						JSONObject o = new JSONObject(data.getEntity()
+								.toString());
+						JSONArray array = o.getJSONArray("questions");
+						json = array.getJSONObject(0).toString();
+						for (int i = 1; i < array.length(); i++) {
+							results.add(new ServerResponse(array.getJSONObject(
+									i).toString(), HttpStatus.SC_OK));
+						}
+						next = o.getString("next");
+					} catch (JSONException e) {
+						next = "";
+					}
+					if (next.equals("") || next == null || next.equals("null")) {
+						state = ProxyState.NORMAL;
+					} else {
+						state = ProxyState.NEXT;
+					}
+				} else {
+					json = data.getEntity().toString();
+				}
 				QuizQuestion quizQuestion = null;
 				try {
-					quizQuestion = new QuizQuestion(data.getEntity().toString());
+					quizQuestion = new QuizQuestion(json);
 				} catch (JSONException e) {
 					throw new RuntimeException(
 							"You are trying to cache an unvalid question you fool !");
@@ -217,7 +269,7 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 					throw new RuntimeException(
 							"You are trying to cache an unvalid question you fool !");
 				}
-				
+
 				cache.cacheQuestion(question);
 			}
 
@@ -262,8 +314,8 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 			return reqContext;
 		}
 	}
-	
-	private enum ProyState {
+
+	private enum ProxyState {
 		NORMAL, SEARCH, NEXT
 	}
 }

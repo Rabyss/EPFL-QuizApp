@@ -1,5 +1,6 @@
 package epfl.sweng.searchquestions;
 
+import static epfl.sweng.util.StringHelper.containsNonWhitespaceCharacters;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,134 +13,120 @@ import android.widget.Button;
 import android.widget.EditText;
 import epfl.sweng.R;
 import epfl.sweng.proxy.Proxy;
-import epfl.sweng.searchquestions.SearchQuery.InvalidSearchQueryException;
 import epfl.sweng.searchquestions.parser.QueryParser;
 import epfl.sweng.searchquestions.parser.QueryParser.QueryParserResult;
 import epfl.sweng.showquestions.ShowQuestionsActivity;
 import epfl.sweng.testing.TestCoordinator;
 import epfl.sweng.testing.TestCoordinator.TTChecks;
 
-import static epfl.sweng.util.StringHelper.containsNonWhitespaceCharacters;
-
 public class SearchActivity extends Activity {
 
-    private EditText mEditQuery; // the edit text field where the user type the
-    // request
-    private Button mSearchButton; // the button the user press when he wants to
-    // submit its search query
-    private QueryParserResult mParserResult = null; // the result of the parsing
-    // of the question
-    private SearchActivity mSelf;
+	private EditText mEditQuery; // the edit text field where the user type the
+	// request
+	private Button mSearchButton; // the button the user press when he wants to
+	// submit its search query
+	private QueryParserResult mParserResult = null; // the result of the parsing
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search);
-        mSelf = this;
-        mEditQuery = (EditText) findViewById(R.id.editSearchQuery);
-        mEditQuery.addTextChangedListener(new QueryWatcher());
+	// of the question
 
-        mSearchButton = (Button) findViewById(R.id.submitSearchButton);
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_search);
+		mEditQuery = (EditText) findViewById(R.id.editSearchQuery);
+		mEditQuery.addTextChangedListener(new QueryWatcher());
 
-        mSearchButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
+		mSearchButton = (Button) findViewById(R.id.submitSearchButton);
 
-                String shouldNotHappenMessage = "should not happen: invalid query in input and submit button activated";
-                SearchQuery query;
-                try {
-                    query = new SearchQuery(mSearchButton.getText().toString(),
-                            mParserResult, mSelf);
+		mSearchButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View view) {
 
-                } catch (InvalidSearchQueryException e) {
-                    throw new RuntimeException(shouldNotHappenMessage);
-                }
-                assert mParserResult != null;
-                assert mParserResult.isDone();
-                Proxy.getInstance(getApplicationContext()).giveAST(mParserResult.getAST());
-                displayShowQuestionActivity(view);
-            }
+				assert mParserResult != null;
+				assert mParserResult.isDone();
+				Proxy.getInstance(getApplicationContext()).giveQuery(
+						mParserResult);
+				displayShowQuestionActivity(view);
+			}
 
+		});
 
-        });
+	}
 
-    }
+	public void displayShowQuestionActivity(View view) {
+		Intent showQuestionIntent = new Intent(this,
+				ShowQuestionsActivity.class);
+		startActivity(showQuestionIntent);
+	}
 
-    public void displayShowQuestionActivity(View view) {
-        Intent showQuestionIntent = new Intent(this, ShowQuestionsActivity.class);
-        startActivity(showQuestionIntent);
-    }
+	@Override
+	protected void onStart() {
+		TestCoordinator.check(TTChecks.SEARCH_ACTIVITY_SHOWN);
+		super.onStart();
+	}
 
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.search, menu);
+		return true;
+	}
 
-    @Override
-    protected void onStart() {
-        TestCoordinator.check(TTChecks.SEARCH_ACTIVITY_SHOWN);
-        super.onStart();
-    }
+	private class QueryWatcher implements TextWatcher {
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.search, menu);
-        return true;
-    }
+		private static final String QUERY_CHAR_CLASS_REGEX = "^[a-zA-Z0-9\\(\\)\\*\\+ ]+$";
+		private static final int MAX_QUERY_LENGTH = 500;
 
-    private class QueryWatcher implements TextWatcher {
+		@Override
+		public void afterTextChanged(Editable editable) {
 
-        private static final String QUERY_CHAR_CLASS_REGEX = "^[a-zA-Z0-9\\(\\)\\*\\+ ]+$";
-        private static final int MAX_QUERY_LENGTH = 500;
+			String queryStr = editable.toString();
+			// we activate the Search button if the query is a valid one
+			QueryParserResult parserResult = QueryParser.parse(queryStr);
+			if (isQueryValid(queryStr)) { // if the input is a valid query
+				mParserResult = parserResult;
+				mSearchButton.setEnabled(true);
+			} else {
+				mParserResult = null;
+				mSearchButton.setEnabled(false);
+			}
+			TestCoordinator.check(TTChecks.QUERY_EDITED);
+		}
 
-        @Override
-        public void afterTextChanged(Editable editable) {
+		@Override
+		public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
+				int arg3) {
 
-            String queryStr = editable.toString();
-            // we activate the Search button if the query is a valid one
-            QueryParserResult parserResult = QueryParser.parse(queryStr);
-            if (isQueryValid(queryStr)) { // if the input is a valid query
-                mParserResult = parserResult;
-                mSearchButton.setEnabled(true);
-            } else {
-                mParserResult = null;
-                mSearchButton.setEnabled(false);
-            }
-            TestCoordinator.check(TTChecks.QUERY_EDITED);
-        }
+		}
 
-        @Override
-        public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
-                                      int arg3) {
+		@Override
+		public void onTextChanged(CharSequence arg0, int arg1, int arg2,
+				int arg3) {
 
-        }
+		}
 
-        @Override
-        public void onTextChanged(CharSequence arg0, int arg1, int arg2,
-                                  int arg3) {
+		private boolean isQueryValid(String query) {
+			int errors = 0;
 
-        }
+			if (!query.matches(QUERY_CHAR_CLASS_REGEX)) {
+				errors++;
+			}
 
-        private boolean isQueryValid(String query) {
-            int errors = 0;
+			if (query.length() >= MAX_QUERY_LENGTH) {
+				errors++;
+			}
 
-            if (!query.matches(QUERY_CHAR_CLASS_REGEX)) {
-                errors++;
-            }
+			// we make sure the query contains at least one alphanumeric char
+			if (!containsNonWhitespaceCharacters(query)) {
+				errors++;
+			}
 
-            if (query.length() >= MAX_QUERY_LENGTH) {
-                errors++;
-            }
+			if (mParserResult == null || !mParserResult.isDone()) {
+				errors++;
+			}
 
-            // we make sure the query contains at least one alphanumeric char
-            if (!containsNonWhitespaceCharacters(query)) {
-                errors++;
-            }
-
-            if (mParserResult == null || !mParserResult.isDone()) {
-                errors++;
-            }
-
-            return errors == 0;
-        }
-    }
-
+			return errors == 0;
+		}
+	}
 
 }
