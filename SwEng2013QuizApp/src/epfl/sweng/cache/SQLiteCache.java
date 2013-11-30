@@ -139,14 +139,14 @@ public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
         // | INT id | STR question | STR owner | INT solution | STR tag | STR answer | INT index |
 
         String questionQuery = "SELECT " + TABLE_TAG+"."+COL_ID_TAG + ", " + COL_QUESTION + ", " + COL_SOLUTION + ", " + COL_OWNER +
-                " FROM " + TABLE_TAG
-                + " INNER JOIN " + TABLE_QUESTION + " ON " + COL_ID + "=" + COL_ID_TAG
-                + " WHERE " + compiler.toSQL(AST);
+               " FROM " +TABLE_QUESTION +
+            " INNER JOIN " + TABLE_TAG + " ON " + COL_ID_TAG +"="+COL_ID + " WHERE " + compiler.toSQL(AST);
 
         System.out.println(questionQuery);
 
         Cursor cursor = db.rawQuery(questionQuery, new String[0]);
 
+        /*  to print the tag db
         String s = "SELECT * FROM "+TABLE_TAG;
 
         Cursor t = db.rawQuery(s, null);
@@ -156,7 +156,7 @@ public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
                 String b = t.getString(t.getColumnIndex(COL_TAG));
                 System.out.println(a + " | "+b);
             } while(t.moveToNext());
-        }
+        } */
 
         if (cursor.moveToFirst()) { //if we get a question
             do {
@@ -172,8 +172,6 @@ public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
 
                 QuizQuestion quizQuestion =
                         new QuizQuestion(quizQuestionBody, quizQuestionAnswers, quizQuestionSolutionIndex, quizQuestionTags, quizQuestionID, quizQuestionOwner);
-
-
 
                 questions.add(quizQuestion);
 
