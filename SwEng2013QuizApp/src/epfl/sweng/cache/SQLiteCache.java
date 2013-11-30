@@ -152,7 +152,7 @@ public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
 
         if (cursor.moveToFirst()) { //if we get a question
             do {
-                QuizQuestion quizQuestion = constructQuizQuestion(db, cursor);
+                QuizQuestion quizQuestion = constructQuizQuestion(db, cursor, COL_ID_TAG);
 
                 questions.add(quizQuestion);
 
@@ -164,11 +164,11 @@ public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
 
     public QuizQuestion getRandomQuestion() {
         SQLiteDatabase db = getReadableDatabase();
-        return constructQuizQuestion(db, db.query(TABLE_QUESTION + " ORDER BY RANDOM() LIMIT 1", new String[] {"*"}, null, null, null, null, null));
+        return constructQuizQuestion(db, db.query(TABLE_QUESTION + " ORDER BY RANDOM() LIMIT 1", new String[] {"*"}, null, null, null, null, null), COL_ID);
     }
 
-    private QuizQuestion constructQuizQuestion(SQLiteDatabase db, Cursor cursor) {
-        int quizQuestionID = cursor.getInt(cursor.getColumnIndex(COL_ID_TAG)); //the id of the tag is the same as the one of the question
+    private QuizQuestion constructQuizQuestion(SQLiteDatabase db, Cursor cursor, String colIDName) {
+        int quizQuestionID = cursor.getInt(cursor.getColumnIndex(colIDName)); //the id of the tag is the same as the one of the question
 
         String quizQuestionBody = cursor.getString(cursor.getColumnIndex(COL_QUESTION));
         int quizQuestionSolutionIndex = cursor.getInt(cursor.getColumnIndex(COL_SOLUTION));
