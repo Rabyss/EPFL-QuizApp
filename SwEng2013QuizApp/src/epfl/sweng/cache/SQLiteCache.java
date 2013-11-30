@@ -144,7 +144,7 @@ public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
         SQLQueryCompiler compiler = new SQLQueryCompiler();
         // | INT id | STR question | STR owner | INT solution | STR tag | STR answer | INT index |
 
-        String questionQuery = "SELECT " + TABLE_TAG+"."+COL_ID_TAG + ", " + COL_QUESTION + ", " + COL_SOLUTION + ", " + COL_OWNER +
+        String questionQuery = "SELECT " + COL_ID + ", " + COL_QUESTION + ", " + COL_SOLUTION + ", " + COL_OWNER +
                " FROM " +TABLE_QUESTION +
             " INNER JOIN " + TABLE_TAG + " ON " + COL_ID_TAG +"="+COL_ID + " WHERE " + compiler.toSQL(AST);
 
@@ -152,7 +152,7 @@ public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
 
         if (cursor.moveToFirst()) { //if we get a question
             do {
-                QuizQuestion quizQuestion = constructQuizQuestion(db, cursor, COL_ID_TAG);
+                QuizQuestion quizQuestion = constructQuizQuestion(db, cursor);
 
                 questions.add(quizQuestion);
 
@@ -164,11 +164,18 @@ public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
 
     public QuizQuestion getRandomQuestion() {
         SQLiteDatabase db = getReadableDatabase();
-        return constructQuizQuestion(db, db.query(TABLE_QUESTION + " ORDER BY RANDOM() LIMIT 1", new String[] {"*"}, null, null, null, null, null), COL_ID);
+        Cursor quizQuestionCursor = db.query(TABLE_QUESTION + " ORDER BY RANDOM() LIMIT 1", new String[] {"*"}, null, null, null, null, null);
+        if (quizQuestionCursor.getCount() > 0) {
+            quizQuestionCursor.moveToFirst();
+            return constructQuizQuestion(db, quizQuestionCursor);
+        } else {
+            return null;
+        }
+
     }
 
-    private QuizQuestion constructQuizQuestion(SQLiteDatabase db, Cursor cursor, String colIDName) {
-        int quizQuestionID = cursor.getInt(cursor.getColumnIndex(colIDName)); //the id of the tag is the same as the one of the question
+    private QuizQuestion constructQuizQuestion(SQLiteDatabase db, Cursor cursor) {
+        int quizQuestionID = cursor.getInt(cursor.getColumnIndex(COL_ID)); //the id of the tag is the same as the one of the question
 
         String quizQuestionBody = cursor.getString(cursor.getColumnIndex(COL_QUESTION));
         int quizQuestionSolutionIndex = cursor.getInt(cursor.getColumnIndex(COL_SOLUTION));
