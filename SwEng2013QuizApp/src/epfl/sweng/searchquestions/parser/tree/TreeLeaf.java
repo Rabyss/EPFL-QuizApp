@@ -4,14 +4,14 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class TreeLeaf extends TreeNode {
-    private Integer id;
+    private String mTag;
 
-    public TreeLeaf(Integer id) {
-        this.id = id;
+    public TreeLeaf(String tag) {
+        mTag = tag;
     }
 
-    public Integer getId() {
-        return id;
+    public String getTag() {
+        return mTag;
     }
 
     @Override
@@ -21,6 +21,6 @@ public class TreeLeaf extends TreeNode {
 
     @Override
     public String toString() {
-        return "LEAF:" + id;
+        return "LEAF:" + mTag;
     }
 }
