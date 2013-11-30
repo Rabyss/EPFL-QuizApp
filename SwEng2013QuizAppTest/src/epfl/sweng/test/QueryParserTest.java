@@ -7,6 +7,7 @@ public class QueryParserTest extends AndroidTestCase {
 
     public void test() {
         assertTrue(QueryParser.parse("(a b) a").isDone());
+        assertTrue(QueryParser.parse("b").isDone());
         assertFalse(QueryParser.parse(")a b( a").isDone());
         assertTrue(QueryParser.parse("a (a + b)").isDone());
         assertTrue(QueryParser.parse("a b + c").isDone());

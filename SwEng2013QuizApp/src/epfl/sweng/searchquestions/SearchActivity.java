@@ -95,8 +95,8 @@ public class SearchActivity extends Activity {
             String queryStr = editable.toString();
             // we activate the Search button if the query is a valid one
             QueryParserResult parserResult = QueryParser.parse(queryStr);
-            if (isQueryValid(queryStr)) { // if the input is a valid query
-                mParserResult = parserResult;
+            mParserResult = parserResult;
+            if (isQueryValid(queryStr)) {
                 mSearchButton.setEnabled(true);
             } else {
                 mParserResult = null;
