@@ -53,10 +53,11 @@ public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
             + " INTEGER" + ");";
     private static final String CREATE_TAG_TABLE = "CREATE TABLE " + TABLE_TAG
             + "(" + COL_TAG + " TEXT," + COL_ID_TAG + " INTEGER"
-            + ");";
+            + ", PRIMARY KEY ("+COL_TAG+","+COL_ID_TAG+"));";
     private static final String CREATE_ANSWER_TABLE = "CREATE TABLE "
             + TABLE_ANSWER + "(" + COL_ID_ANSWER + " INTEGER,"
-            + COL_ANSWER + " TEXT," + COL_INDEX + " INTEGER" + ");";
+            + COL_ANSWER + " TEXT," + COL_INDEX + " INTEGER" + ","
+            + "PRIMARY KEY ("+COL_ID_ANSWER+","+COL_INDEX+"));";
 
     private static final int MAX_SQL_CACHE_SIZE = 100;
     private static final long MAX_SQL_SIZE = 1024 * 1024 * 1024;
@@ -102,7 +103,6 @@ public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
 
         // Insert elements in the tags table
         Set<String> tagSet = question.getTags();
-
         for (String tag : tagSet) {
             ContentValues valuesTags = new ContentValues();
             valuesTags.put(COL_ID_TAG, question.getId());
@@ -112,7 +112,6 @@ public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
 
 
         // Insert elements in the answers table
-
         List<String> answerList = question.getAnswers();
         int index = 0;
         for (String answer : answerList) {
@@ -158,7 +157,9 @@ public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
 
                 QuizQuestion quizQuestion =
                         new QuizQuestion(quizQuestionBody, quizQuestionAnswers, quizQuestionSolutionIndex, quizQuestionTags, quizQuestionID, quizQuestionOwner);
+
                 questions.add(quizQuestion);
+
             } while (cursor.moveToNext());
         }
 
