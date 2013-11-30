@@ -14,19 +14,19 @@ public class QueryParserTest extends AndroidTestCase {
         assertTrue(QueryParser.parse("a + b c").isDone());
         assertFalse(QueryParser.parse("(a b+) a").isDone());
 
-        assertEquals("(tag = 'd' AND (tag = 'a' OR tag = 'b'))",
+        assertEquals("(tagsSel.tag = 'd' AND (tagsSel.tag = 'a' OR tagsSel.tag = 'b'))",
                 new SQLQueryCompiler().toSQL(QueryParser.parse("d (a + b)").getAST())
         );
 
-        assertEquals("((tag = 'd' AND tag = 'a') OR tag = 'b')",
+        assertEquals("((tagsSel.tag = 'd' AND tagsSel.tag = 'a') OR tagsSel.tag = 'b')",
                 new SQLQueryCompiler().toSQL(QueryParser.parse("d a + b").getAST())
         );
 
-        assertEquals("((tag = 'd' AND (tag = 'a' AND (tag = 'r' AND tag = 'q'))) OR tag = 'b')",
+        assertEquals("((tagsSel.tag = 'd' AND (tagsSel.tag = 'a' AND (tagsSel.tag = 'r' AND tagsSel.tag = 'q'))) OR tagsSel.tag = 'b')",
                 new SQLQueryCompiler().toSQL(QueryParser.parse("d a r q + b").getAST())
         );
 
-        assertEquals("((tag = 'd' AND tag = 'a') OR (tag = 'g' AND tag = 'q'))",
+        assertEquals("((tagsSel.tag = 'd' AND tagsSel.tag = 'a') OR (tagsSel.tag = 'g' AND tagsSel.tag = 'q'))",
                 new SQLQueryCompiler().toSQL(QueryParser.parse("d * a + g * q").getAST())
         );
     }
