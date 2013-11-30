@@ -49,10 +49,10 @@ public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
 
     private static final String CREATE_QUESTION_TABLE = "CREATE TABLE "
             + TABLE_QUESTION + "(" + COL_ID + " INTEGER PRIMARY KEY,"
-            + COL_QUESTION + " TEXT," + COL_OWNER + " TEXT," + COL_SOLUTION
+            + COL_QUESTION + " VARCHAR(500)," + COL_OWNER + " TEXT," + COL_SOLUTION
             + " INTEGER" + ");";
     private static final String CREATE_TAG_TABLE = "CREATE TABLE " + TABLE_TAG
-            + "(" + COL_TAG + " TEXT," + COL_ID_TAG + " INTEGER"
+            + "(" + COL_TAG + " VARCHAR(20)," + COL_ID_TAG + " INTEGER"
             + ", PRIMARY KEY ("+COL_TAG+","+COL_ID_TAG+"));";
     private static final String CREATE_ANSWER_TABLE = "CREATE TABLE "
             + TABLE_ANSWER + "(" + COL_ID_ANSWER + " INTEGER,"
@@ -64,6 +64,8 @@ public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
 
     public SQLiteCache(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        onUpgrade(getWritableDatabase(), 0, 0);
+
     }
 
     @Override
@@ -132,8 +134,6 @@ public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
     public Set<QuizQuestion> getQuestionSetByTag(TreeNode AST) {
         Set<QuizQuestion> questions = new HashSet<QuizQuestion>();
 
-        //TODO A completer la demande!!
-
         SQLiteDatabase db = this.getReadableDatabase();
         SQLQueryCompiler compiler = new SQLQueryCompiler();
         // | INT id | STR question | STR owner | INT solution | STR tag | STR answer | INT index |
@@ -142,11 +142,26 @@ public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
                 " FROM " + TABLE_TAG
                 + " INNER JOIN " + TABLE_QUESTION + " ON " + COL_ID + "=" + COL_ID_TAG
                 + " WHERE " + compiler.toSQL(AST);
+
+        System.out.println(questionQuery);
+
         Cursor cursor = db.rawQuery(questionQuery, new String[0]);
+
+        String s = "SELECT * FROM "+TABLE_TAG;
+
+        Cursor t = db.rawQuery(s, null);
+        if (t.moveToFirst()) {
+            do {
+                String a = t.getString(t.getColumnIndex(COL_ID_TAG));
+                String b = t.getString(t.getColumnIndex(COL_TAG));
+                System.out.println(a + " | "+b);
+            } while(t.moveToNext());
+        }
 
         if (cursor.moveToFirst()) { //if we get a question
             do {
                 int quizQuestionID = cursor.getInt(cursor.getColumnIndex(COL_ID_TAG)); //the id of the tag is the same as the one of the question
+
                 String quizQuestionBody = cursor.getString(cursor.getColumnIndex(COL_QUESTION));
                 int quizQuestionSolutionIndex = cursor.getInt(cursor.getColumnIndex(COL_SOLUTION));
                 String quizQuestionOwner = cursor.getString(cursor.getColumnIndex(COL_OWNER));
@@ -157,6 +172,8 @@ public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
 
                 QuizQuestion quizQuestion =
                         new QuizQuestion(quizQuestionBody, quizQuestionAnswers, quizQuestionSolutionIndex, quizQuestionTags, quizQuestionID, quizQuestionOwner);
+
+
 
                 questions.add(quizQuestion);
 
