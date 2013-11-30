@@ -1,11 +1,12 @@
 package epfl.sweng.proxy;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 import org.apache.http.HttpStatus;
+import org.json.JSONException;
 
 import android.content.Context;
+import epfl.sweng.cache.SQLiteCache;
 import epfl.sweng.context.AppContext;
 import epfl.sweng.context.ConnectionEvent;
 import epfl.sweng.context.ConnectionEvent.ConnectionEventType;
@@ -14,6 +15,9 @@ import epfl.sweng.editquestions.PostedQuestionEvent;
 import epfl.sweng.entry.SwitchSuccessfulEvent;
 import epfl.sweng.events.EventEmitter;
 import epfl.sweng.events.EventListener;
+import epfl.sweng.quizquestions.MalformedQuestionException;
+import epfl.sweng.quizquestions.QuizQuestion;
+import epfl.sweng.searchquestions.parser.tree.TreeNode;
 import epfl.sweng.servercomm.RequestContext;
 import epfl.sweng.servercomm.ServerCommunicator;
 import epfl.sweng.servercomm.ServerEvent;
@@ -43,17 +47,20 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 	private ArrayList<QuestionToSubmit> postQuestion;
 
 	/** Cache for retrieving questions while offline */
-	private ArrayList<ServerResponse> getQuestion;
+	private SQLiteCache cache;
 
 	/** Temporary for a question we tried to submit online but IOException */
 	private QuestionToSubmit questionToSubmit;
+	
+	private ProyState state = ProyState.NORMAL;
+	private TreeNode AST;
 
 	private Proxy(Context context) {
 		serverComm = ServerCommunicator.getInstance();
 		postQuestion = new ArrayList<Proxy.QuestionToSubmit>();
-		getQuestion = new ArrayList<ServerResponse>();
 		serverComm.addListener(this);
 		AppContext.getContext().addAsListener(this);
+		cache = new SQLiteCache(context);
 	}
 
 	/**
@@ -104,18 +111,32 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 		}
 
 	}
+	
+	public void giveAST(TreeNode AST) {
+		state = ProyState.SEARCH;
+		this.AST = AST;
+	}
 
 	public boolean isOnline() {
 		return AppContext.getContext().isOnline();
 	}
 
 	private ServerResponse offlineRandomQuestion() {
-		Random r = new Random();
-		if (getQuestion.isEmpty()) {
-			// TODO retourn�� un ServerResponse diff��rent?
+		QuizQuestion question = cache.getRandomQuestion();
+
+		if (question == null) {
 			return new ServerResponse(null, HttpStatus.SC_NOT_FOUND);
 		} else {
-			return getQuestion.get(r.nextInt(getQuestion.size()));
+			ServerResponse response = null;
+			try {
+				response = new ServerResponse(question.toJSON(),
+						HttpStatus.SC_OK);
+			} catch (MalformedQuestionException e) {
+				throw new RuntimeException(
+						"You cached an unvalid question you fool !");
+			}
+
+			return response;
 		}
 	}
 
@@ -147,7 +168,17 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 				this.emit(new ConnectionEvent(
 						ConnectionEventType.COMMUNICATION_SUCCESS));
 			} else {
-				getQuestion.add(data);
+
+				QuizQuestion quizQuestion = null;
+				try {
+					quizQuestion = new QuizQuestion(data.getEntity().toString());
+				} catch (JSONException e) {
+					throw new RuntimeException(
+							"You are trying to cache an unvalid question you fool !");
+				}
+
+				cache.cacheQuestion(quizQuestion);
+
 				this.emit(new ConnectionEvent(
 						ConnectionEventType.COMMUNICATION_SUCCESS));
 			}
@@ -179,9 +210,15 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 			if (data.getStatusCode() >= HTTP_ERROR_INTERMEDIATE_THRESHOLD) {
 				event.setResponse(null);
 			} else {
-				ServerResponse serverResponse = new ServerResponse(
-						data.getEntity(), data.getStatusCode());
-				getQuestion.add(serverResponse);
+				QuizQuestion question = null;
+				try {
+					question = new QuizQuestion(data.getEntity());
+				} catch (JSONException e) {
+					throw new RuntimeException(
+							"You are trying to cache an unvalid question you fool !");
+				}
+				
+				cache.cacheQuestion(question);
 			}
 
 			this.emit(event);
@@ -224,5 +261,9 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 		public RequestContext getReqContext() {
 			return reqContext;
 		}
+	}
+	
+	private enum ProyState {
+		NORMAL, SEARCH, NEXT
 	}
 }

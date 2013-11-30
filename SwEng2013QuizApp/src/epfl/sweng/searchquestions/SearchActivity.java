@@ -11,6 +11,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import epfl.sweng.R;
+import epfl.sweng.proxy.Proxy;
 import epfl.sweng.searchquestions.SearchQuery.InvalidSearchQueryException;
 import epfl.sweng.searchquestions.parser.QueryParser;
 import epfl.sweng.searchquestions.parser.QueryParser.QueryParserResult;
@@ -50,8 +51,10 @@ public class SearchActivity extends Activity {
 				} catch (InvalidSearchQueryException e) {
 					throw new RuntimeException(shouldNotHappenMessage);
 				}
+				assert mParserResult != null;
+				assert mParserResult.isDone();
+				Proxy.getInstance(getApplicationContext()).giveAST(mParserResult.getAST());
 				displayShowQuestionActivity(view);
-
 			}
 
 			
