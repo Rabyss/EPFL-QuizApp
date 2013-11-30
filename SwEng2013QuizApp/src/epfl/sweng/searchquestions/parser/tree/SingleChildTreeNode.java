@@ -3,14 +3,10 @@ package epfl.sweng.searchquestions.parser.tree;
 import java.util.Set;
 
 public class SingleChildTreeNode extends TreeNode {
-    @Override
-    public Set<Integer> getIDs() {
-        return getChild(0).getIDs();
-    }
 
     @Override
-    public void accept(ASTVisitor visitor) {
-        visitor.visit(this);
+    public String accept(ASTVisitor visitor) {
+        return visitor.visit(this);
     }
 
     @Override

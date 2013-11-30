@@ -13,8 +13,8 @@ public class TreeOr extends TreeNode {
     }
 
     @Override
-    public void accept(ASTVisitor visitor) {
-        visitor.visit(this);
+    public String accept(ASTVisitor visitor) {
+        return visitor.visit(this);
     }
 
     @Override

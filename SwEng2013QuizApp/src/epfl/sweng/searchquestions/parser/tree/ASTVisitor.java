@@ -1,11 +1,11 @@
 package epfl.sweng.searchquestions.parser.tree;
 
 public interface ASTVisitor {
-    void visit(TreeLeaf leaf);
+    String visit(TreeLeaf leaf);
 
-    void visit(TreeAnd andNode);
+    String visit(TreeAnd andNode);
 
-    void visit(TreeOr orNode);
+    String visit(TreeOr orNode);
 
-    void visit(SingleChildTreeNode scNode);
+    String visit(SingleChildTreeNode scNode);
 }

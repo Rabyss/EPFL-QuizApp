@@ -15,13 +15,8 @@ public class TreeLeaf extends TreeNode {
     }
 
     @Override
-    public Set<Integer> getIDs() {
-        return new HashSet<Integer>(id);
-    }
-
-    @Override
-    public void accept(ASTVisitor visitor) {
-        visitor.visit(this);
+    public String accept(ASTVisitor visitor) {
+        return visitor.visit(this);
     }
 
     @Override
