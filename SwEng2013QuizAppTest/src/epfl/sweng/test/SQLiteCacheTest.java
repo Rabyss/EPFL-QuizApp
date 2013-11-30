@@ -104,6 +104,11 @@ public class SQLiteCacheTest extends AndroidTestCase {
 		assertTrue(set.contains(qu4));
 	}
 	
+	public void testGetRandomQuestion() {
+		cache.cacheQuestion(qu1);
+		assertTrue(cache.getRandomQuestion().auditErrors() == 0);
+	}
+	
 	
 	@Override
 	protected void tearDown() throws Exception {
