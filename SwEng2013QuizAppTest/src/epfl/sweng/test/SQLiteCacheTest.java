@@ -38,12 +38,54 @@ public class SQLiteCacheTest extends AndroidTestCase {
 				new QuizQuestion("Question 2", answers2, 1, tags2, 2424, "otherOwner");
 	}
 	
-	public void testSearchOneTagQuestion() {
+	public void testSearchOneTagOneQuestion() {
 		cache.cacheQuestion(qu1);
 		QueryParserResult res = QueryParser.parse("Taga");
 		assertTrue(res.isDone());
-		assertTrue(cache.getQuestionSetByTag(res.getAST()).contains(qu1));
+		Set<QuizQuestion> set = cache.getQuestionSetByTag(res.getAST());
+		assertTrue(set.contains(qu1));
 	}
+	
+	public void testSearchOneTagTwoQuestion() {
+		cache.cacheQuestion(qu1);
+		cache.cacheQuestion(qu2);
+		QueryParserResult res = QueryParser.parse("Taga");
+		assertTrue(res.isDone());
+		Set<QuizQuestion> set = cache.getQuestionSetByTag(res.getAST());
+		assertTrue(set.contains(qu1));
+		assertTrue(set.contains(qu2));
+	}
+	
+	public void testSearchTwoTagOr() {
+		cache.cacheQuestion(qu1);
+		cache.cacheQuestion(qu2);
+		QueryParserResult res = QueryParser.parse("NotTag+Taga");
+		assertTrue(res.isDone());
+		Set<QuizQuestion> set = cache.getQuestionSetByTag(res.getAST());
+		assertTrue(set.contains(qu1));
+		assertTrue(set.contains(qu2));
+	}
+	
+	public void testSearchTwoTagAnd() {
+		cache.cacheQuestion(qu1);
+		cache.cacheQuestion(qu2);
+		QueryParserResult res = QueryParser.parse("Taga Tagb");
+		assertTrue(res.isDone());
+		Set<QuizQuestion> set = cache.getQuestionSetByTag(res.getAST());
+		assertTrue(set.contains(qu1));
+		assertFalse(set.contains(qu2));
+	}
+	
+	public void testSearchTwoTagAndOr() {
+		cache.cacheQuestion(qu1);
+		cache.cacheQuestion(qu2);
+		QueryParserResult res = QueryParser.parse("Taga (Tagb + Tagc)");
+		assertTrue(res.isDone());
+		Set<QuizQuestion> set = cache.getQuestionSetByTag(res.getAST());
+		assertTrue(set.contains(qu1));
+		assertTrue(set.contains(qu2));
+	}
+	
 	
 	@Override
 	protected void tearDown() throws Exception {
