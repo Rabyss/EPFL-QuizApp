@@ -101,27 +101,26 @@ public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
         db.replace(TABLE_QUESTION, null, valuesQuestion);
 
         // Insert elements in the tags table
-        ContentValues valuesTags = new ContentValues();
         Set<String> tagSet = question.getTags();
 
         for (String tag : tagSet) {
+            ContentValues valuesTags = new ContentValues();
             valuesTags.put(COL_ID_TAG, question.getId());
             valuesTags.put(COL_TAG, tag);
             db.replace(TABLE_TAG, null, valuesTags);
-            valuesTags.clear();
         }
 
 
         // Insert elements in the answers table
-        ContentValues valuesAnswers = new ContentValues();
+
         List<String> answerList = question.getAnswers();
         int index = 0;
         for (String answer : answerList) {
+            ContentValues valuesAnswers = new ContentValues();
             valuesAnswers.put(COL_ID_ANSWER, question.getId());
             valuesAnswers.put(COL_ANSWER, answer);
             valuesAnswers.put(COL_INDEX, index);
             db.replace(TABLE_ANSWER, null, valuesAnswers);
-            valuesAnswers.clear();
             index++;
         }
 
