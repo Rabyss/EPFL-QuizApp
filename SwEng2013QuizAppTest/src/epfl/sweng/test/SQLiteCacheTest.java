@@ -5,9 +5,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import android.test.AndroidTestCase;
 import epfl.sweng.cache.SQLiteCache;
 import epfl.sweng.quizquestions.QuizQuestion;
-import android.test.AndroidTestCase;
+import epfl.sweng.searchquestions.parser.QueryParser;
+import epfl.sweng.searchquestions.parser.QueryParser.QueryParserResult;
 
 public class SQLiteCacheTest extends AndroidTestCase {
 	
@@ -38,6 +40,9 @@ public class SQLiteCacheTest extends AndroidTestCase {
 	
 	public void testSearchOneTagQuestion() {
 		cache.cacheQuestion(qu1);
+		QueryParserResult res = QueryParser.parse("tag_a");
+		assertTrue(res.isDone());
+		assertTrue(cache.getQuestionSetByTag(res.getAST()).contains(qu1));
 	}
 	
 	@Override
