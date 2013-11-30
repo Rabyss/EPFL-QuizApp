@@ -136,20 +136,24 @@ public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
 		SQLiteDatabase db = this.getReadableDatabase();
         SQLQueryCompiler compiler = new SQLQueryCompiler();
 		// | INT id | STR question | STR owner | INT solution | STR tag | STR answer | INT index |
-		Cursor cursor = db.rawQuery("SELECT "+
-				TABLE_QUESTION+"."+COL_ID+
-				TABLE_QUESTION+"."+COL_QUESTION+
-				TABLE_QUESTION+"."+COL_OWNER+
-				TABLE_QUESTION+"."+COL_SOLUTION+
-				"tagsShow."+COL_TAG+
-				TABLE_ANSWER+"."+COL_ANSWER+
-				TABLE_ANSWER+"."+COL_INDEX+
-				" FROM "+TABLE_QUESTION+" INNER JOIN "+TABLE_TAG+
-				" AS tagsSel ON tagsSel."+COL_ID_TAG+"="+COL_ID+
-				" INNER JOIN "+TABLE_TAG+" AS tagsShow ON tagsShow."+
-				COL_ID_TAG+"="+COL_ID+" WHERE "+
+        String sqlQuery = "SELECT "+
+                TABLE_QUESTION+"."+COL_ID+","+
+                TABLE_QUESTION+"."+COL_QUESTION+","+
+                TABLE_QUESTION+"."+COL_OWNER+","+
+                TABLE_QUESTION+"."+COL_SOLUTION+","+
+                "tagsShow."+COL_TAG+","+
+                TABLE_ANSWER+"."+COL_ANSWER+","+
+                TABLE_ANSWER+"."+COL_INDEX+
+                " FROM "+TABLE_QUESTION+" "+
+                "INNER JOIN "+TABLE_ANSWER+" ON "+TABLE_ANSWER+"."+COL_ID_ANSWER+"="+TABLE_QUESTION+"."+COL_ID
+                +" INNER JOIN "+TABLE_TAG+
+                " AS tagsSel ON tagsSel."+COL_ID_TAG+"="+TABLE_QUESTION+"."+COL_ID+
+                " INNER JOIN "+TABLE_TAG+" AS tagsShow ON tagsShow."+
+                COL_ID_TAG+"="+TABLE_QUESTION+"."+COL_ID+" WHERE "+
                 compiler.toSQL(AST)
-                +" SORT ORDER BY "+COL_ID+", "+COL_INDEX+" ASC;", new String[0]);
+                +" ORDER BY "+TABLE_QUESTION+"."+COL_ID+", "+TABLE_ANSWER+"."+COL_INDEX+" ASC;";
+        System.out.println(sqlQuery);
+		Cursor cursor = db.rawQuery(sqlQuery, new String[0]);
 		
 		if (cursor.moveToFirst()) {
 			do {
