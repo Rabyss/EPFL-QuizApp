@@ -44,7 +44,7 @@ public final class QueryParser {
         //and the parser cannot parse.
         for (Token token : allTokens) {
             if (token.isKind(ERROR)) {
-                return new QueryParserResult(false, null);
+                return new QueryParserResult(queryStr, false, null);
             }
         }
 
@@ -55,17 +55,18 @@ public final class QueryParser {
         boolean done = parseStart(root);
         //FOR DEBUG: System.out.println(root);
 
-        return new QueryParserResult(done, root);
+        return new QueryParserResult(queryStr, done, root);
     }
 
 
     public static class QueryParserResult {
         private final boolean mDone;
         private final TreeNode mAST;
+        private final String mQueryStr;
 
-        public QueryParserResult(final boolean done, final TreeNode ast) {
+        public QueryParserResult(final String queryStr, final boolean done, final TreeNode ast) {
             assert !(done && ast == null) : "invalid initialization of the query parser result.";
-
+            mQueryStr = queryStr;
             mDone = done;
             mAST = ast;
         }
@@ -80,6 +81,10 @@ public final class QueryParser {
             } else {
                 throw new NoSuchElementException();
             }
+        }
+
+        public String getQueryString() {
+            return mQueryStr;
         }
     }
 
