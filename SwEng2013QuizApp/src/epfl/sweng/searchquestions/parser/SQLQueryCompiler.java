@@ -19,7 +19,7 @@ public class SQLQueryCompiler implements ASTVisitor {
 
     @Override
     public String visit(TreeLeaf leaf) {
-        return SQLiteCache.TAGS_SEL+".tag = '"+leaf.getTag()+"'";
+        return SQLiteCache.COL_TAG+" = '"+leaf.getTag()+"'";
     }
 
     @Override

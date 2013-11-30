@@ -13,191 +13,191 @@ import epfl.sweng.searchquestions.parser.tree.TreeNode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
 
-	public static final String TAGS_SEL = "tagsSel";
-	
-	// Database version
-	private static final int DATABASE_VERSION = 1;
-	// Database name
-	private static final String DATABASE_NAME = "QuizQuestion_Cache";
 
-	// Question table name
-	private static final String TABLE_QUESTION = "table_Question";
+    // Database version
+    private static final int DATABASE_VERSION = 1;
+    // Database name
+    private static final String DATABASE_NAME = "QuizQuestion_Cache";
 
-	// Question table columns name
-	private static final String COL_ID = "id";
-	private static final String COL_QUESTION = "question";
-	private static final String COL_SOLUTION = "solution";
-	private static final String COL_OWNER = "owner";
+    // Question table name
+    private static final String TABLE_QUESTION = "table_Question";
 
-	// Tab table name
-	private static final String TABLE_TAG = "table_tag";
-	private static final String COL_ID_TAG = "id";
-	private static final String COL_TAG = "tag";
+    // Question table columns name
+    private static final String COL_ID = "question_id";
+    private static final String COL_QUESTION = "question_text";
+    private static final String COL_SOLUTION = "question_solution_index";
+    private static final String COL_OWNER = "question_owner";
 
-	// Answer table name
-	private static final String TABLE_ANSWER = "table_answer";
+    // Tab table name
+    private static final String TABLE_TAG = "table_tag";
+    private static final String COL_ID_TAG = "tag_question_id";
+    public static final String COL_TAG = "tag_text";
 
-	private static final String COL_ID_ANSWER = "id";
-	private static final String COL_ANSWER = "answer";
-	private static final String COL_INDEX = "index_";
-	
-	private static final String CREATE_QUESTION_TABLE = "CREATE TABLE "
-			+ TABLE_QUESTION + "(" + COL_ID + " INTEGER PRIMARY KEY,"
-			+ COL_QUESTION + " TEXT," + COL_OWNER + " TEXT," + COL_SOLUTION
-			+ " INTEGER" + ");";
-	private static final String CREATE_TAG_TABLE = "CREATE TABLE " + TABLE_TAG
-			+ "(" + COL_ID_TAG + " INTEGER," + COL_TAG + " TEXT"
-			+ ");";
-	private static final String CREATE_ANSWER_TABLE = "CREATE TABLE "
-			+ TABLE_ANSWER + "(" + COL_ID_ANSWER + " INTEGER,"
-			+ COL_ANSWER + " TEXT," + COL_INDEX + " INTEGER" + ");";
-	
-	private static final int MAX_SQL_CACHE_SIZE = 100;
-	private static final long MAX_SQL_SIZE = 1024 * 1024 * 1024;
-	
-	public SQLiteCache(Context context) {
-		super(context, DATABASE_NAME, null, DATABASE_VERSION);
-	}
+    // Answer table name
+    private static final String TABLE_ANSWER = "table_answer";
 
-	@Override
-	public void onCreate(SQLiteDatabase db) {
+    private static final String COL_ID_ANSWER = "answer_question_id";
+    private static final String COL_ANSWER = "answer_text";
+    private static final String COL_INDEX = "answer_index";
 
-		// change de size of the cache of the sqlite
-		db.setMaxSqlCacheSize(MAX_SQL_CACHE_SIZE);
+    private static final String CREATE_QUESTION_TABLE = "CREATE TABLE "
+            + TABLE_QUESTION + "(" + COL_ID + " INTEGER PRIMARY KEY,"
+            + COL_QUESTION + " TEXT," + COL_OWNER + " TEXT," + COL_SOLUTION
+            + " INTEGER" + ");";
+    private static final String CREATE_TAG_TABLE = "CREATE TABLE " + TABLE_TAG
+            + "(" + COL_TAG + " TEXT," + COL_ID_TAG + " INTEGER"
+            + ");";
+    private static final String CREATE_ANSWER_TABLE = "CREATE TABLE "
+            + TABLE_ANSWER + "(" + COL_ID_ANSWER + " INTEGER,"
+            + COL_ANSWER + " TEXT," + COL_INDEX + " INTEGER" + ");";
 
-		// change de size of the sqlite : 1 GB
-		db.setMaximumSize(MAX_SQL_SIZE);
+    private static final int MAX_SQL_CACHE_SIZE = 100;
+    private static final long MAX_SQL_SIZE = 1024 * 1024 * 1024;
 
-		db.execSQL(CREATE_QUESTION_TABLE);
-		db.execSQL(CREATE_TAG_TABLE);
-		db.execSQL(CREATE_ANSWER_TABLE);
-	}
+    public SQLiteCache(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    }
 
-	@Override
-	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		db.execSQL("DROP TABLE IF EXISTS " + TABLE_QUESTION);
-		db.execSQL("DROP TABLE IF EXISTS " + TABLE_TAG);
-		db.execSQL("DROP TABLE IF EXISTS " + TABLE_ANSWER);
+    @Override
+    public void onCreate(SQLiteDatabase db) {
 
-		onCreate(db);
+        // change de size of the cache of the sqlite
+        db.setMaxSqlCacheSize(MAX_SQL_CACHE_SIZE);
 
-	}
+        // change de size of the sqlite : 1 GB
+        db.setMaximumSize(MAX_SQL_SIZE);
 
-	@Override
-	public void cacheQuestion(QuizQuestion question) {
-		SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL(CREATE_QUESTION_TABLE);
+        db.execSQL(CREATE_TAG_TABLE);
+        db.execSQL(CREATE_ANSWER_TABLE);
+    }
 
-		// Insert elements in the question table
-		ContentValues valuesQuestion = new ContentValues();
-		valuesQuestion.put(COL_ID, question.getId());
-		valuesQuestion.put(COL_QUESTION, question.getQuestion());
-		valuesQuestion.put(COL_OWNER, question.getOwner());
-		valuesQuestion.put(COL_SOLUTION, question.getSolution());
-		db.insert(TABLE_QUESTION, null, valuesQuestion);
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_QUESTION);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TAG);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ANSWER);
 
-		// Insert elements in the tags table
-		ContentValues valuesTags = new ContentValues();
-		Set<String> tagSet = question.getTags();
+        onCreate(db);
 
-		for (String tag : tagSet) {
-			valuesTags.put(COL_ID_TAG, question.getId());
-			valuesTags.put(COL_TAG, tag);
-		}
-		db.insert(TABLE_TAG, null, valuesTags);
+    }
 
-		// Insert elements in the answers table
-		ContentValues valuesAnswers = new ContentValues();
-		List<String> answerList = question.getAnswers();
-		int index = 0;
-		for (String answer : answerList) {
-			valuesAnswers.put(COL_ID_ANSWER, question.getId());
-			valuesAnswers.put(COL_ANSWER, answer);
-			valuesAnswers.put(COL_INDEX, index);
-			index++;
-		}
-		db.insert(TABLE_ANSWER, null, valuesAnswers);
+    @Override
+    public void cacheQuestion(QuizQuestion question) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        // Insert elements in the question table
+        ContentValues valuesQuestion = new ContentValues();
+        valuesQuestion.put(COL_ID, question.getId());
+        valuesQuestion.put(COL_QUESTION, question.getQuestion());
+        valuesQuestion.put(COL_OWNER, question.getOwner());
+        valuesQuestion.put(COL_SOLUTION, question.getSolution());
+        db.insert(TABLE_QUESTION, null, valuesQuestion);
 
-		db.close();
-	}
+        // Insert elements in the tags table
+        ContentValues valuesTags = new ContentValues();
+        Set<String> tagSet = question.getTags();
 
-	@SuppressLint("UseSparseArrays")
-	@Override
-	public Set<QuizQuestion> getQuestionSetByTag(TreeNode AST) {
-		Map<Integer, QuizQuestion> questionMatching = new HashMap<Integer, QuizQuestion>();
+        for (String tag : tagSet) {
+            valuesTags.put(COL_ID_TAG, question.getId());
+            valuesTags.put(COL_TAG, tag);
+        }
+        db.insert(TABLE_TAG, null, valuesTags);
 
-		//TODO A completer la demande!!
-		
-		SQLiteDatabase db = this.getReadableDatabase();
+        // Insert elements in the answers table
+        ContentValues valuesAnswers = new ContentValues();
+        List<String> answerList = question.getAnswers();
+        int index = 0;
+        for (String answer : answerList) {
+            valuesAnswers.put(COL_ID_ANSWER, question.getId());
+            valuesAnswers.put(COL_ANSWER, answer);
+            valuesAnswers.put(COL_INDEX, index);
+            index++;
+        }
+        db.insert(TABLE_ANSWER, null, valuesAnswers);
+
+        db.close();
+    }
+
+    @SuppressLint("UseSparseArrays")
+    @Override
+    public Set<QuizQuestion> getQuestionSetByTag(TreeNode AST) {
+        Map<Integer, QuizQuestion> questionMatching = new HashMap<Integer, QuizQuestion>();
+
+        //TODO A completer la demande!!
+
+        SQLiteDatabase db = this.getReadableDatabase();
         SQLQueryCompiler compiler = new SQLQueryCompiler();
-		// | INT id | STR question | STR owner | INT solution | STR tag | STR answer | INT index |
-        String sqlQuery = "SELECT "+
-                TABLE_QUESTION+"."+COL_ID+","+
-                TABLE_QUESTION+"."+COL_QUESTION+","+
-                TABLE_QUESTION+"."+COL_OWNER+","+
-                TABLE_QUESTION+"."+COL_SOLUTION+","+
-                "tagsShow."+COL_TAG+","+
-                TABLE_ANSWER+"."+COL_ANSWER+","+
-                TABLE_ANSWER+"."+COL_INDEX+
-                " FROM "+TABLE_QUESTION+" "+
-                "INNER JOIN "+TABLE_ANSWER+" ON "+TABLE_ANSWER+"."+COL_ID_ANSWER+"="+TABLE_QUESTION+"."+COL_ID
-                +" INNER JOIN "+TABLE_TAG+
-                " AS tagsSel ON tagsSel."+COL_ID_TAG+"="+TABLE_QUESTION+"."+COL_ID+
-                " INNER JOIN "+TABLE_TAG+" AS tagsShow ON tagsShow."+
-                COL_ID_TAG+"="+TABLE_QUESTION+"."+COL_ID+" WHERE "+
-                compiler.toSQL(AST)
-                +" ORDER BY "+TABLE_QUESTION+"."+COL_ID+", "+TABLE_ANSWER+"."+COL_INDEX+" ASC;";
-        System.out.println(sqlQuery);
-		Cursor cursor = db.rawQuery(sqlQuery, new String[0]);
-		
-		if (cursor.moveToFirst()) {
-			do {
-				// TODO : initialiser les variables: faut-il faire plusieurs demandes?
-				int id = cursor.getInt(cursor.getColumnIndex(COL_ID));
-				
-				if (!questionMatching.containsKey(id)) {
-					Set<String> tags = new HashSet<String>();
-					ArrayList<String> answers = new ArrayList<String>();
-					
-					String question = cursor.getString(cursor.getColumnIndex(COL_QUESTION));
-					String owner = cursor.getString(cursor.getColumnIndex(COL_OWNER));
-					int solutionIndex = cursor.getInt(cursor.getColumnIndex(COL_SOLUTION));
-					tags.add(cursor.getString(cursor.getColumnIndex(COL_TAG)));
-					answers.add(cursor.getString(cursor.getColumnIndex(COL_ANSWER)));
-					
-					QuizQuestion quizQuestion = new QuizQuestion(question, answers,
-							solutionIndex, tags, id, owner);
+        // | INT id | STR question | STR owner | INT solution | STR tag | STR answer | INT index |
 
-					questionMatching.put(id, quizQuestion);
-				} else {
-					QuizQuestion quizQuestion = questionMatching.get(id);
-					
-					quizQuestion.addTag(cursor.getString(cursor.getColumnIndex(COL_TAG)));
-					quizQuestion.addAnswer(cursor.getString(cursor.getColumnIndex(COL_ANSWER)));
-				}
-				
-				
-				
-			} while (cursor.moveToNext());
-		}
-		
-		cursor.close();
-		
-		return new HashSet<QuizQuestion>(questionMatching.values());
-	}
+        String questionQuery = "SELECT " + TABLE_TAG+"."+COL_ID_TAG + ", " + COL_QUESTION + ", " + COL_SOLUTION + ", " + COL_OWNER +
+                " FROM " + TABLE_TAG
+                + " INNER JOIN " + TABLE_QUESTION + " ON " + COL_ID + "=" + COL_ID_TAG
+                + " WHERE " + compiler.toSQL(AST);
+        Cursor cursor = db.rawQuery(questionQuery, new String[0]);
 
-	@Override
-	public void clearCache() {
-		SQLiteDatabase db= this.getWritableDatabase();
-		db.delete(TABLE_QUESTION, null, null);
-		db.delete(TABLE_TAG, null, null);
-		db.delete(TABLE_ANSWER, null, null);
+        if (cursor.moveToFirst()) { //if we get a question
+            do {
+                int quizQuestionID = cursor.getInt(cursor.getColumnIndex(COL_ID_TAG)); //the id of the tag is the same as the one of the question
+                String quizQuestionBody = cursor.getString(cursor.getColumnIndex(COL_QUESTION));
+                int quizQuestionSolutionIndex = cursor.getInt(cursor.getColumnIndex(COL_SOLUTION));
+                String quizQuestionOwner = cursor.getString(cursor.getColumnIndex(COL_OWNER));
 
-	}
+                List<String> quizQuestionAnswers = getAnswersForQuizQuestionWithID(db, quizQuestionID);
+
+                Set<String> quizQuestionTags = getTagsForQuizQuestionWithID(db, quizQuestionID);
+
+                QuizQuestion quizQuestion =
+                        new QuizQuestion(quizQuestionBody, quizQuestionAnswers, quizQuestionSolutionIndex, quizQuestionTags, quizQuestionID, quizQuestionOwner);
+            } while (cursor.moveToNext());
+        }
+
+        return new HashSet<QuizQuestion>(questionMatching.values());
+    }
+
+    private List<String> getAnswersForQuizQuestionWithID(SQLiteDatabase db, int quizQuestionID) {
+        List<String> answers = new LinkedList<String>();
+
+        String answersQuery = "SELECT " + COL_ANSWER + " FROM " + TABLE_ANSWER + " WHERE " + COL_ID_ANSWER + "=" + quizQuestionID + " ORDER BY " + COL_INDEX;
+        Cursor answersCursor = db.rawQuery(answersQuery, new String[0]);
+
+        if (answersCursor.moveToFirst()) {
+            do {
+                answers.add(answersCursor.getString(answersCursor.getColumnIndex(COL_ANSWER)));
+            } while (answersCursor.moveToNext());
+        }
+
+        return answers;
+    }
+
+    private Set<String> getTagsForQuizQuestionWithID(SQLiteDatabase db, int quizQuestionID) {
+        Set<String> tags = new HashSet<String>();
+
+        String tagsQuery = "SELECT " + COL_TAG + " FROM " + TABLE_TAG + " WHERE " + COL_ID_TAG + "=" + quizQuestionID;
+        Cursor tagsCursor = db.rawQuery(tagsQuery, new String[0]);
+
+        if (tagsCursor.moveToFirst()) {
+            do {
+                tags.add(tagsCursor.getString(tagsCursor.getColumnIndex(COL_TAG)));
+            } while (tagsCursor.moveToNext());
+        }
+
+        return tags;
+    }
+
+    @Override
+    public void clearCache() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_QUESTION, null, null);
+        db.delete(TABLE_TAG, null, null);
+        db.delete(TABLE_ANSWER, null, null);
+
+    }
 
 }
