@@ -60,7 +60,7 @@ public class QuizQuestionTest extends AndroidTestCase {
 		}
 
 	}
-	
+
 	public void testRemainings() {
 		LinkedList<String> answers = new LinkedList<String>();
 		answers.add("hihi");
@@ -68,13 +68,86 @@ public class QuizQuestionTest extends AndroidTestCase {
 		HashSet<String> tags = new HashSet<String>();
 		tags.add("te");
 		tags.add("st");
-		QuizQuestion question1 = new QuizQuestion("What ?", answers, 0, tags, 0, "test");
-		QuizQuestion question2 = new QuizQuestion("What ?", answers, 0, tags, 0, "test");
+		QuizQuestion question1 = new QuizQuestion("What ?", answers, 0, tags,
+				0, "test");
+		QuizQuestion question2 = new QuizQuestion("What ?", answers, 0, tags,
+				0, "test");
 		assertTrue("Equals() does not work", question1.equals(question2));
 		assertTrue("GetId() does not owrk", question1.getId() == 0);
-		assertTrue("GetOwner() does not work", question1.getOwner().equals("test"));
+		assertTrue("GetOwner() does not work",
+				question1.getOwner().equals("test"));
 		assertTrue("GetSolution() does not work", question1.getSolution() == 0);
-		assertTrue("HashCode() does not work", question1.hashCode() == question2.hashCode());
-		assertTrue("ToString does not work", question1.toString().equals(question2.toString()));
+		assertTrue("HashCode() does not work",
+				question1.hashCode() == question2.hashCode());
+		assertTrue("ToString does not work",
+				question1.toString().equals(question2.toString()));
+	}
+
+	public void testEqualsFailure() {
+		HashSet<String> tags = new HashSet<String>();
+		tags.add("te");
+		tags.add("st");
+		LinkedList<String> answers = new LinkedList<String>();
+		answers.add("hihi");
+		answers.add("huhu");
+		String owner = "moi";
+		String question = "what?";
+		QuizQuestion question1 = new QuizQuestion(question, answers, 0, tags,
+				0, owner);
+		assertTrue("Equals does not work", question1.equals(question1));
+		assertFalse("Equals does not work", question1.equals(null));
+
+		QuizQuestion question2 = new QuizQuestion(null, null, 0, null, 0, null);
+		assertFalse("Equals does not work", question2.equals(question1));
+		QuizQuestion question3 = new QuizQuestion(null, answers, 0, tags, 0,
+				owner);
+		assertFalse("Equals does not work", question2.equals(question3));
+		QuizQuestion question4 = new QuizQuestion(null, null, 1, tags, 0, owner);
+		assertFalse("Equals does not work", question2.equals(question4));
+		QuizQuestion question5 = new QuizQuestion(null, null, 0, tags, 0, owner);
+		assertFalse("Equals does not work", question2.equals(question5));
+		QuizQuestion question6 = new QuizQuestion(null, null, 0, null, 1, owner);
+		assertFalse("Equals does not work", question2.equals(question6));
+		QuizQuestion question7 = new QuizQuestion(null, null, 0, null, 0, owner);
+		assertFalse("Equals does not work", question2.equals(question7));
+		HashSet<String> tagsBis = new HashSet<String>();
+		tags.add("faux");
+		tags.add("tags");
+		LinkedList<String> answersBis = new LinkedList<String>();
+		answers.add("bad number of answers");
+		String questionBis = "wtf?";
+		String ownerBis = "toi";
+		QuizQuestion question8 = new QuizQuestion(questionBis, answers, 0,
+				tags, 0, owner);
+		assertFalse("Equals does not work", question1.equals(question8));
+		QuizQuestion question9 = new QuizQuestion(question, answersBis, 0,
+				tags, 0, owner);
+		assertFalse("Equals does not work", question1.equals(question9));
+		QuizQuestion question10 = new QuizQuestion(question, answers, 0,
+				tagsBis, 0, owner);
+		assertFalse("Equals does not work", question1.equals(question10));
+		QuizQuestion question11 = new QuizQuestion(question, answers, 0, tags,
+				0, ownerBis);
+		assertFalse("Equals does not work", question1.equals(question11));
+	}
+
+	public void testAddAnswerAndTags() {
+		HashSet<String> tags = new HashSet<String>();
+		tags.add("te");
+		tags.add("st");
+		LinkedList<String> answers = new LinkedList<String>();
+		answers.add("hihi");
+		answers.add("huhu");
+		String owner = "moi";
+		String question = "what?";
+		QuizQuestion question1 = new QuizQuestion(question, answers, 0, tags,
+				0, owner);
+		question1.addAnswer("salut");
+		question1.addTag("ici");
+		assertTrue("AddAnswer does not work",
+				question1.getAnswers().contains("salut"));
+		assertTrue("addTag() does not work", question1.getTags()
+				.contains("ici"));
+
 	}
 }

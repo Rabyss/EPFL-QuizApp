@@ -29,11 +29,8 @@ public class MainActivityTest extends
 	protected void setUp() {
 		getActivityAndWaitFor(TTChecks.MAIN_ACTIVITY_SHOWN);
 		solo = new Solo(getInstrumentation(), getActivity());
-		if (solo.searchButton("Log out")) {
-			solo.clickOnButton("Log out");
-			getActivityAndWaitFor(TTChecks.LOGGED_OUT);
-		}
-		//AppContext.getContext().resetState();
+
+		// AppContext.getContext().resetState();
 	}
 
 	@Override
@@ -62,7 +59,8 @@ public class MainActivityTest extends
 		assertTrue("Log in button is enabled",
 				solo.getButton("Log in using Tequila").isEnabled());
 		assertTrue("Search button is shown", solo.searchText("Search"));
-		assertFalse("Search Button is enabled", solo.getButton("Search").isEnabled());
+		assertFalse("Search Button is enabled", solo.getButton("Search")
+				.isEnabled());
 	}
 
 	/**
@@ -82,7 +80,8 @@ public class MainActivityTest extends
 		assertTrue("Log in button is enabled", solo.getButton("Log out")
 				.isEnabled());
 		assertTrue("Search button is shown", solo.searchText("Search"));
-		assertTrue("Search button is enabled", solo.getButton("Search").isEnabled());
+		assertTrue("Search button is enabled", solo.getButton("Search")
+				.isEnabled());
 
 	}
 
@@ -107,9 +106,14 @@ public class MainActivityTest extends
 	}
 
 	public void testAuthenticateButton() {
+		if (solo.searchButton("Log out")) {
+			solo.clickOnButton("Log out");
+			getActivityAndWaitFor(TTChecks.LOGGED_OUT);
+		}
 		solo.clickOnButton("Log in using Tequila");
 		getActivityAndWaitFor(TTChecks.AUTHENTICATION_ACTIVITY_SHOWN);
 	}
+
 	public void testSearchButton() {
 		login();
 		solo.clickOnButton("Search");
@@ -117,48 +121,48 @@ public class MainActivityTest extends
 	}
 
 	private void login() {
+		if (!solo.searchButton("Log out")) {
+			solo.clickOnButton("Log in using Tequila");
+			getActivityAndWaitFor(TTChecks.AUTHENTICATION_ACTIVITY_SHOWN);
+			httpClient = new MockHttpClient();
+			SwengHttpClientFactory.setInstance(httpClient);
 
-		solo.clickOnButton("Log in using Tequila");
-		getActivityAndWaitFor(TTChecks.AUTHENTICATION_ACTIVITY_SHOWN);
-		httpClient = new MockHttpClient();
-		SwengHttpClientFactory.setInstance(httpClient);
+			httpClient
+					.pushCannedResponse(
+							"POST https://sweng-quiz.appspot.com/login",
+							STATUS_200,
+							"{\"session\": \"<random_string>\","
+									+ " \"message\": \"Here's your session id. Please include the following HTTP"
+									+ "             header in your subsequent requests:\n"
+									+ "            Authorization: Tequila <random_string>\"}",
+							"application/json");
 
-		httpClient
-				.pushCannedResponse(
-						"POST https://sweng-quiz.appspot.com/login",
-						STATUS_200,
-						"{\"session\": \"<random_string>\","
-								+ " \"message\": \"Here's your session id. Please include the following HTTP"
-								+ "             header in your subsequent requests:\n"
-								+ "            Authorization: Tequila <random_string>\"}",
-						"application/json");
+			httpClient
+					.pushCannedResponse(
+							"POST https://tequila.epfl.ch/cgi-bin/tequila/login",
+							STATUS_302,
+							"{"
+									+ "  \"token\": \"rqtvk5d3za2x6ocak1a41dsmywogrdlv5\","
+									+ "  \"message\": \"Here's your authentication token. Please validate it "
+									+ "              with Tequila at https://tequila.epfl.ch/cgi-bin/tequila/login\" }",
+							"application/json");
 
-		httpClient
-				.pushCannedResponse(
-						"POST https://tequila.epfl.ch/cgi-bin/tequila/login",
-						STATUS_302,
-						"{"
-								+ "  \"token\": \"rqtvk5d3za2x6ocak1a41dsmywogrdlv5\","
-								+ "  \"message\": \"Here's your authentication token. Please validate it "
-								+ "              with Tequila at https://tequila.epfl.ch/cgi-bin/tequila/login\" }",
-						"application/json");
-
-		httpClient
-				.pushCannedResponse(
-						"GET.*https://sweng-quiz.appspot.com/login",
-						STATUS_200,
-						"{"
-								+ "  \"token\": \"rqtvk5d3za2x6ocak1a41dsmywogrdlv5\","
-								+ "  \"message\": \"Here's your authentication token. Please validate it "
-								+ "              with Tequila at https://tequila.epfl.ch/cgi-bin/tequila/login\" }",
-						"application/json");
-		EditText username = solo.getEditText("GASPAR Username");
-		EditText password = solo.getEditText("GASPAR Password");
-		solo.typeText(username, "SnowWhite");
-		solo.typeText(password, "SevenDwarfs");
-		solo.clickOnButton("Log in using Tequila");
-		getActivityAndWaitFor(TTChecks.MAIN_ACTIVITY_SHOWN);
-
+			httpClient
+					.pushCannedResponse(
+							"GET.*https://sweng-quiz.appspot.com/login",
+							STATUS_200,
+							"{"
+									+ "  \"token\": \"rqtvk5d3za2x6ocak1a41dsmywogrdlv5\","
+									+ "  \"message\": \"Here's your authentication token. Please validate it "
+									+ "              with Tequila at https://tequila.epfl.ch/cgi-bin/tequila/login\" }",
+							"application/json");
+			EditText username = solo.getEditText("GASPAR Username");
+			EditText password = solo.getEditText("GASPAR Password");
+			solo.typeText(username, "SnowWhite");
+			solo.typeText(password, "SevenDwarfs");
+			solo.clickOnButton("Log in using Tequila");
+			getActivityAndWaitFor(TTChecks.MAIN_ACTIVITY_SHOWN);
+		}
 	}
 
 	private void getActivityAndWaitFor(final TestCoordinator.TTChecks expected) {
