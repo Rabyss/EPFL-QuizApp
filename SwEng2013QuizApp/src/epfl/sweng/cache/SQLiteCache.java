@@ -98,7 +98,7 @@ public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
         valuesQuestion.put(COL_QUESTION, question.getQuestion());
         valuesQuestion.put(COL_OWNER, question.getOwner());
         valuesQuestion.put(COL_SOLUTION, question.getSolution());
-        db.insert(TABLE_QUESTION, null, valuesQuestion);
+        db.replace(TABLE_QUESTION, null, valuesQuestion);
 
         // Insert elements in the tags table
         ContentValues valuesTags = new ContentValues();
@@ -108,7 +108,7 @@ public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
             valuesTags.put(COL_ID_TAG, question.getId());
             valuesTags.put(COL_TAG, tag);
         }
-        db.insert(TABLE_TAG, null, valuesTags);
+        db.replace(TABLE_TAG, null, valuesTags);
 
         // Insert elements in the answers table
         ContentValues valuesAnswers = new ContentValues();
@@ -120,7 +120,7 @@ public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
             valuesAnswers.put(COL_INDEX, index);
             index++;
         }
-        db.insert(TABLE_ANSWER, null, valuesAnswers);
+        db.replace(TABLE_ANSWER, null, valuesAnswers);
 
         db.close();
     }
@@ -128,7 +128,7 @@ public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
     @SuppressLint("UseSparseArrays")
     @Override
     public Set<QuizQuestion> getQuestionSetByTag(TreeNode AST) {
-        Map<Integer, QuizQuestion> questionMatching = new HashMap<Integer, QuizQuestion>();
+        Set<QuizQuestion> questions = new HashSet<QuizQuestion>();
 
         //TODO A completer la demande!!
 
@@ -155,10 +155,11 @@ public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
 
                 QuizQuestion quizQuestion =
                         new QuizQuestion(quizQuestionBody, quizQuestionAnswers, quizQuestionSolutionIndex, quizQuestionTags, quizQuestionID, quizQuestionOwner);
+                questions.add(quizQuestion);
             } while (cursor.moveToNext());
         }
 
-        return new HashSet<QuizQuestion>(questionMatching.values());
+        return questions;
     }
 
     private List<String> getAnswersForQuizQuestionWithID(SQLiteDatabase db, int quizQuestionID) {
