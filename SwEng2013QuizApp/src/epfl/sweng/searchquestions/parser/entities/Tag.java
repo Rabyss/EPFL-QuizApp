@@ -11,4 +11,8 @@ public class Tag extends Token {
         mStringFormat = stringFormat;
     }
 
+    public String getStringFormat() {
+        return mStringFormat;
+    }
+
 }

@@ -123,6 +123,7 @@ public final class QueryParser {
                 TreeNode orNode = new TreeOr();
                 orNode.addChild(leftHandSide);
                 boolean done = eat(OR) && parseTerm(rightHandSide) && parseExpressionCont(rightHandSide, orNode);
+                orNode.addChild(rightHandSide);
                 parent.addChild(orNode);
 
                 return done;
@@ -162,7 +163,7 @@ public final class QueryParser {
                 return eat(OPEN) && parseExpression(parent) && eat(CLOSE);
             case TAG:
                 if (mCurrentToken.isKind(TAG)) {
-                    TreeLeaf tagLeaf = new TreeLeaf(((Tag) mCurrentToken).hashCode());
+                    TreeLeaf tagLeaf = new TreeLeaf(((Tag) mCurrentToken).getStringFormat());
                     parent.addChild(tagLeaf);
                 }
                 return eat(TAG);

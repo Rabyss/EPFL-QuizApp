@@ -4,28 +4,23 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class TreeLeaf extends TreeNode {
-    private Integer id;
+    private String mTag;
 
-    public TreeLeaf(Integer id) {
-        this.id = id;
+    public TreeLeaf(String tag) {
+        mTag = tag;
     }
 
-    public Integer getId() {
-        return id;
-    }
-
-    @Override
-    public Set<Integer> getIDs() {
-        return new HashSet<Integer>(id);
+    public String getTag() {
+        return mTag;
     }
 
     @Override
-    public void accept(ASTVisitor visitor) {
-        visitor.visit(this);
+    public String accept(ASTVisitor visitor) {
+        return visitor.visit(this);
     }
 
     @Override
     public String toString() {
-        return "LEAF:" + id;
+        return "LEAF:" + mTag;
     }
 }

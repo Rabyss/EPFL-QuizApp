@@ -12,9 +12,7 @@ public abstract class TreeNode {
         childs = new LinkedList<TreeNode>();
     }
 
-    public abstract Set<Integer> getIDs();
-
-    public abstract void accept(ASTVisitor visitor);
+    public abstract String accept(ASTVisitor visitor);
 
     public TreeNode getChild(int index) {
         return childs.get(index);
