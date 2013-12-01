@@ -1,6 +1,5 @@
 package epfl.sweng.servercomm;
 
-import java.io.Serializable;
 import java.util.HashMap;
 
 import org.apache.http.Header;
@@ -13,8 +12,7 @@ import org.apache.http.HttpEntity;
  */
 public class RequestContext {
 
-	private static final long serialVersionUID = -6771365916706236954L;
-	private String mServerURL;
+    private String mServerURL;
     private HashMap<String, String> mHeaders;
     private HttpEntity mEntity;
 
