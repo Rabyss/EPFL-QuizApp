@@ -11,7 +11,7 @@ import org.apache.http.HttpEntity;
  * Class that contains all the parameters
  * 
  */
-public class RequestContext implements Serializable{
+public class RequestContext {
 
 	private static final long serialVersionUID = -6771365916706236954L;
 	private String mServerURL;
