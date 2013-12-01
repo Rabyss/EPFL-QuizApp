@@ -1,5 +1,11 @@
 package epfl.sweng.proxy;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -64,12 +70,17 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 	private ArrayList<ServerResponse> results = new ArrayList<ServerResponse>();
 	private String next;
 
+	private final static String BACKUP_FILE_NAME = "question.backup";
+
+	private Context mContext;
+
 	private Proxy(Context context) {
 		serverComm = ServerCommunicator.getInstance();
 		postQuestion = new ArrayList<Proxy.QuestionToSubmit>();
 		serverComm.addListener(this);
 		AppContext.getContext().addAsListener(this);
 		cache = new SQLiteCache(context);
+		mContext = context;
 	}
 
 	/**
@@ -182,6 +193,12 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 			serverComm.doHttpPost(reqContext, event);
 		} else {
 			postQuestion.add(questionToSubmit);
+			try {
+				serializeQuestionToPostList(postQuestion);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			// TODO Send other status code to display different toast ?
 			PostedQuestionEvent pqe = new PostedQuestionEvent();
 			pqe.setResponse(new ServerResponse(questionToSubmit.reqContext
@@ -221,10 +238,25 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 	}
 
 	public void on(OnlineEvent event) {
+		try {
+			postQuestion = readPendingQuizQuestion();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		if (!postQuestion.isEmpty()) {
 			RequestContext reqContext = postQuestion.get(0).getReqContext();
 			ServerEvent postEvent = postQuestion.get(0).getEvent();
 			postQuestion.remove(0);
+			try {
+				serializeQuestionToPostList(postQuestion);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			doHttpPost(reqContext, postEvent);
 		} else {
 			this.emit(new SwitchSuccessfulEvent());
@@ -354,17 +386,24 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 
 	public void on(PostConnectionErrorEvent event) {
 		postQuestion.add(0, questionToSubmit);
+		try {
+			serializeQuestionToPostList(postQuestion);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		// TestCoordinator.check(TTChecks.OFFLINE_CHECKBOX_ENABLED);
 		this.emit(new ConnectionEvent(ConnectionEventType.COMMUNICATION_ERROR));
 		this.emit(event);
 	}
-	
-	public void resetState(){
+
+	public void resetState() {
 		state = ProxyState.NORMAL;
 		System.out.println("state is reset");
 	}
 
-	private class QuestionToSubmit {
+	private class QuestionToSubmit implements Serializable {
+		private static final long serialVersionUID = 6288410483133964979L;
 		private RequestContext reqContext;
 		private ServerEvent event;
 
@@ -385,7 +424,7 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 	private enum ProxyState {
 		NORMAL, SEARCH, NEXT
 	}
-	
+
 	private void getNextResultFromServer(RequestContext reqContext,
 			ServerEvent event) {
 		reqContext.setServerURL("https://sweng-quiz.appspot.com/search");
@@ -402,5 +441,30 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 		this.emit(new ConnectionEvent(
 				ConnectionEventType.ADD_OR_RETRIEVE_QUESTION));
 		serverComm.doHttpPost(reqContext, event);
+	}
+
+	private void serializeQuestionToPostList(
+			ArrayList<QuestionToSubmit> questions) throws IOException {
+		FileOutputStream fos = mContext.openFileOutput(BACKUP_FILE_NAME,
+				Context.MODE_PRIVATE);
+		ObjectOutputStream oos = new ObjectOutputStream(fos);
+		oos.writeObject(questions);
+		oos.flush();
+		oos.close();
+	}
+
+	@SuppressWarnings("unchecked")
+	private ArrayList<QuestionToSubmit> readPendingQuizQuestion()
+			throws ClassNotFoundException, IOException {
+		FileInputStream fis = mContext.openFileInput(BACKUP_FILE_NAME);
+
+		ObjectInputStream ois = new ObjectInputStream(fis);
+
+		ArrayList<QuestionToSubmit> questions = (ArrayList<Proxy.QuestionToSubmit>) ois
+				.readObject();
+		fis.close();
+		ois.close();
+
+		return questions;
 	}
 }
