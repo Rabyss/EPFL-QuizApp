@@ -89,25 +89,26 @@ public class MainActivity extends Activity implements EventListener {
 
 	}
 
-	public void displayShowQuestion(View view) {
+	private void displayShowQuestion(View view) {
+		Proxy.getInstance(getApplicationContext()).resetState();
 		Intent displayActivityIntent = new Intent(this,
 				ShowQuestionsActivity.class);
 		startActivity(displayActivityIntent);
 	}
 
-	public void displayEditQuestions(View view) {
+	private void displayEditQuestions(View view) {
 		Intent displayEditQuestionsIntent = new Intent(this,
 				EditQuestionActivity.class);
 		startActivity(displayEditQuestionsIntent);
 	}
 
-	public void displayAuthentication(View view) {
+	private void displayAuthentication(View view) {
 		Intent displayAuthenticationIntent = new Intent(this,
 				AuthenticationActivity.class);
 		startActivity(displayAuthenticationIntent);
 	}
 
-	public void displaySearchQuestion(View view) {
+	private void displaySearchQuestion(View view) {
 		Intent displaySearchIntent = new Intent(this, SearchActivity.class);
 		startActivity(displaySearchIntent);
 	}

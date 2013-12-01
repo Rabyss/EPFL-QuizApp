@@ -8,6 +8,7 @@ import android.widget.Button;
 import com.jayway.android.robotium.solo.Solo;
 
 import epfl.sweng.context.AppContext;
+import epfl.sweng.proxy.Proxy;
 import epfl.sweng.servercomm.SwengHttpClientFactory;
 import epfl.sweng.showquestions.ShowQuestionsActivity;
 import epfl.sweng.test.minimalmock.MockHttpClient;
@@ -39,6 +40,7 @@ public class ShowQuestionsActivityTest extends
 	
 	@Override
 	public void tearDown() {
+		Proxy.getInstance(getActivity().getApplicationContext()).resetState();
 	    solo.finishOpenedActivities();
 	}
 
@@ -58,6 +60,7 @@ public class ShowQuestionsActivityTest extends
 	}
 	
 	public void testBadAnswerSelected() {
+		Proxy.getInstance(getActivity().getApplicationContext()).resetState();
 		solo.clickOnText("Twenty-seven");
 		getActivityAndWaitFor(TTChecks.ANSWER_SELECTED);
 		assertTrue("Cross is displayed", solo.searchText("\u2718"));

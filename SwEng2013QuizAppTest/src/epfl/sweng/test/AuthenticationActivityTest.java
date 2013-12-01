@@ -4,6 +4,7 @@ import com.jayway.android.robotium.solo.Solo;
 
 import epfl.sweng.authentication.AuthenticationActivity;
 import epfl.sweng.context.AppContext;
+import epfl.sweng.proxy.Proxy;
 import epfl.sweng.servercomm.SwengHttpClientFactory;
 import epfl.sweng.test.minimalmock.MockHttpClient;
 import epfl.sweng.testing.TestCoordinator;
@@ -33,6 +34,7 @@ public class AuthenticationActivityTest extends ActivityInstrumentationTestCase2
 	
 	@Override
 	public void tearDown() {
+		Proxy.getInstance(getActivity().getApplicationContext()).resetState();
 	    solo.finishOpenedActivities();
 	}
 	

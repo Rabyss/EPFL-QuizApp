@@ -8,6 +8,7 @@ import android.widget.EditText;
 import com.jayway.android.robotium.solo.Solo;
 
 import epfl.sweng.context.AppContext;
+import epfl.sweng.proxy.Proxy;
 import epfl.sweng.searchquestions.SearchActivity;
 import epfl.sweng.servercomm.SwengHttpClientFactory;
 import epfl.sweng.test.minimalmock.MockHttpClient;
@@ -34,6 +35,7 @@ public class SearchActivityTest extends
 
 	@Override
 	public void tearDown() {
+		Proxy.getInstance(getActivity().getApplicationContext()).resetState();
 		solo.finishOpenedActivities();
 	}
 

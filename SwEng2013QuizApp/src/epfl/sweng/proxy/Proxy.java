@@ -172,26 +172,6 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 
 	}
 
-	private void getNextResultFromServer(RequestContext reqContext,
-			ServerEvent event) {
-		reqContext.setServerURL("https://sweng-quiz.appspot.com/search");
-		reqContext.addHeader("Content-type", "application/json");
-		StringEntity queryEntity = null;
-		try {
-			queryEntity = new StringEntity("{ \"query\": \""
-					+ query.getQueryString() + "\", \"from\": \"" + next
-					+ "\"}");
-			System.out.println("{ \"query\": \"" + query.getQueryString()
-					+ "\", +\"from\": \"" + next + "\"}");
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-		reqContext.setEntity(queryEntity);
-		this.emit(new ConnectionEvent(
-				ConnectionEventType.ADD_OR_RETRIEVE_QUESTION));
-		serverComm.doHttpPost(reqContext, event);
-	}
-
 	@Override
 	public void doHttpPost(RequestContext reqContext, ServerEvent event) {
 		questionToSubmit = new QuestionToSubmit(reqContext, event);
@@ -226,6 +206,7 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 		if (question == null) {
 			return new ServerResponse(null, HttpStatus.SC_NOT_FOUND);
 		} else {
+			System.out.println(question);
 			ServerResponse response = null;
 			try {
 				response = new ServerResponse(question.toJSON(),
@@ -377,6 +358,11 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 		this.emit(new ConnectionEvent(ConnectionEventType.COMMUNICATION_ERROR));
 		this.emit(event);
 	}
+	
+	public void resetState(){
+		state = ProxyState.NORMAL;
+		System.out.println("state is reset");
+	}
 
 	private class QuestionToSubmit {
 		private RequestContext reqContext;
@@ -398,5 +384,23 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 
 	private enum ProxyState {
 		NORMAL, SEARCH, NEXT
+	}
+	
+	private void getNextResultFromServer(RequestContext reqContext,
+			ServerEvent event) {
+		reqContext.setServerURL("https://sweng-quiz.appspot.com/search");
+		reqContext.addHeader("Content-type", "application/json");
+		StringEntity queryEntity = null;
+		try {
+			queryEntity = new StringEntity("{ \"query\": \""
+					+ query.getQueryString() + "\", \"from\": \"" + next
+					+ "\"}");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		reqContext.setEntity(queryEntity);
+		this.emit(new ConnectionEvent(
+				ConnectionEventType.ADD_OR_RETRIEVE_QUESTION));
+		serverComm.doHttpPost(reqContext, event);
 	}
 }

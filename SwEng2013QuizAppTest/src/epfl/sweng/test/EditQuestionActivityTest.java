@@ -12,6 +12,7 @@ import android.widget.EditText;
 
 import com.jayway.android.robotium.solo.Solo;
 
+import epfl.sweng.proxy.Proxy;
 import epfl.sweng.quizquestions.MalformedQuestionException;
 import epfl.sweng.quizquestions.QuizQuestion;
 import epfl.sweng.context.AppContext;
@@ -57,6 +58,7 @@ public class EditQuestionActivityTest extends
 
 	@Override
 	protected void tearDown() throws Exception {
+		Proxy.getInstance(getActivity().getApplicationContext()).resetState();
 		solo.finishOpenedActivities();
 	}
 

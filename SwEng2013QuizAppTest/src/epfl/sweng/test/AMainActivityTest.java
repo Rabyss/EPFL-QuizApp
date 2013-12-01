@@ -8,6 +8,7 @@ import android.test.ActivityInstrumentationTestCase2;
 import android.widget.EditText;
 import epfl.sweng.authentication.UserStorage;
 import epfl.sweng.entry.MainActivity;
+import epfl.sweng.proxy.Proxy;
 import epfl.sweng.servercomm.SwengHttpClientFactory;
 import epfl.sweng.test.minimalmock.MockHttpClient;
 import epfl.sweng.testing.TestCoordinator;
@@ -37,6 +38,7 @@ public class AMainActivityTest extends
 	@Override
 	public void tearDown() {
 		UserStorage.getInstance(getActivity()).removeSessionID();
+		Proxy.getInstance(getActivity().getApplicationContext()).resetState();
 		solo.finishOpenedActivities();
 	}
 

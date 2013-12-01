@@ -1,8 +1,6 @@
 package epfl.sweng.quizquestions;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import static epfl.sweng.util.StringHelper.containsNonWhitespaceCharacters;
 
 import java.io.Serializable;
 import java.util.AbstractCollection;
@@ -16,7 +14,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static epfl.sweng.util.StringHelper.containsNonWhitespaceCharacters;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Represents a question of the quiz.
