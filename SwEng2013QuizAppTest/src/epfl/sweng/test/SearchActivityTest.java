@@ -53,12 +53,12 @@ public class SearchActivityTest extends
 		SwengHttpClientFactory.setInstance(httpClient);
 		httpClient
 				.pushCannedResponse(
-						"/POST*/",
+						"POST (?:https?://[^/]+|[^/]+)?/+sweng-quiz.appspot.com/search\\b",
 						HttpStatus.SC_OK,
 						"{ "
 								+ "\"questions\": ["
 								+ "  { "
-								+ "  \"id\": \"7654765\", "
+								+ "  \"id\": 7654765, "
 								+ "  \"owner\": \"fruitninja\", "
 								+ "  \"question\": \"How many calories are in a banana?\", "
 								+ "  \"answers\": [ \"Just enough\", \"Too many\" ], "
@@ -68,14 +68,6 @@ public class SearchActivityTest extends
 								+ "], "
 								+ " \"next\": \"YG9HB8)H9*-BYb88fdsfsyb(08bfsdybfdsoi4\""
 								+ "}", "application/json");
-		httpClient
-				.pushCannedResponse(
-						"POST (?:https?://[^/]+|[^/]+)?/+sweng-quiz.appspot.com/search\\b",
-						HttpStatus.SC_OK,
-						"{\"question\": \"What is the answer to life, the universe, and everything?\","
-								+ " \"answers\": [\"Forty-two\", \"Twenty-seven\"], \"owner\": \"sweng\","
-								+ " \"solutionIndex\": 0, \"tags\": [\"h2g2\", \"trivia\"], \"id\": \"1\" }",
-						"application/json");
 		EditText text = solo.getEditText("Type in the search query");
 		solo.typeText(text, "b");
 		// getActivityAndWaitFor(TTChecks.QUERY_EDITED);

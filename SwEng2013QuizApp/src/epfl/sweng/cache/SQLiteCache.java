@@ -5,6 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.json.JSONException;
+
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
@@ -123,6 +125,18 @@ public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
 
 
         db.close();
+    }
+    
+    public void cacheQuestion(String json) {
+    	QuizQuestion quizQuestion = null;
+		try {
+			quizQuestion = new QuizQuestion(json);
+		} catch (JSONException e) {
+			throw new RuntimeException(
+					"You are trying to cache an invalid question you fool ! "
+							+ json);
+		}
+		cacheQuestion(quizQuestion);
     }
 
     @Override
