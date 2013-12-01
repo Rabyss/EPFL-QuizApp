@@ -46,14 +46,14 @@ public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
     private static final String COL_INDEX = "answer_index";
 
     private static final String CREATE_QUESTION_TABLE = "CREATE TABLE "
-            + TABLE_QUESTION + "(" + COL_ID + " BIGINT PRIMARY KEY,"
-            + COL_QUESTION + " VARCHAR(500)," + COL_OWNER + " TEXT," + COL_SOLUTION
+            + TABLE_QUESTION + "(" + COL_ID + " INT64 PRIMARY KEY,"
+            + COL_QUESTION + " TEXT," + COL_OWNER + " TEXT," + COL_SOLUTION
             + " INTEGER" + ");";
     private static final String CREATE_TAG_TABLE = "CREATE TABLE " + TABLE_TAG
-            + "(" + COL_TAG + " VARCHAR(20)," + COL_ID_TAG + " BIGINT"
+            + "(" + COL_TAG + " TEXT," + COL_ID_TAG + " INT64"
             + ", PRIMARY KEY ("+COL_TAG+","+COL_ID_TAG+"));";
     private static final String CREATE_ANSWER_TABLE = "CREATE TABLE "
-            + TABLE_ANSWER + "(" + COL_ID_ANSWER + " BIGINT,"
+            + TABLE_ANSWER + "(" + COL_ID_ANSWER + " INT64,"
             + COL_ANSWER + " TEXT," + COL_INDEX + " INTEGER" + ","
             + "PRIMARY KEY ("+COL_ID_ANSWER+","+COL_INDEX+"));";
 
