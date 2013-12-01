@@ -55,6 +55,9 @@ public class MainActivity extends Activity implements EventListener {
 		emitter.addListener(Proxy.getInstance(getApplicationContext()));
 		Proxy.getInstance(getApplicationContext()).addListener(this);
 		displayInit();
+		if(AppContext.getContext().isOnline()){
+			emitter.emit(new OnlineEvent());
+		}
 
 	}
 
