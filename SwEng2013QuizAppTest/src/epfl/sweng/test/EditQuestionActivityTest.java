@@ -112,14 +112,12 @@ public class EditQuestionActivityTest extends
 		}
 		QuizQuestion question = new QuizQuestion(questionBody,
 				Arrays.asList(answers), 0, tagsSet, QUIZ_QUEST_ID, "ooiu");
-		// new QuizQuestion(QUIZ_QUEST_ID, questionBody, answers, 0,
-		// tags.split(" "), "ooiu");
-		try {
-			mockHttpClient.pushCannedResponse("/*/", HttpStatus.SC_OK,
-					question.toJSON(), "application/json");
-		} catch (MalformedQuestionException e) {
-			e.printStackTrace();
-		}
+        try {
+            mockHttpClient.pushCannedResponse("/*/", HttpStatus.SC_OK,
+                    question.toJSON(), "application/json");
+        } catch (MalformedQuestionException e) {
+            e.printStackTrace();
+        }
 
 		assertTrue("Submit button not found.",
 				solo.searchButton(SUBMIT_BUTTON_TEXT));
@@ -194,11 +192,13 @@ public class EditQuestionActivityTest extends
 	}
 
 	public void testBadRequest() {
+        mockHttpClient.pushCannedResponse("/*/", HttpStatus.SC_BAD_REQUEST,
+                null, "application/json");
+
 		final String questionBody = "Question body";
 		final String firstAnswerBody = "Answer A";
 		final String scdAnswerBody = "Answer B";
 		final String tags = "A B";
-
 		fillQuestionBody(questionBody);
 		fillNextAnswerBody(firstAnswerBody);
 
@@ -217,10 +217,6 @@ public class EditQuestionActivityTest extends
 				solo.searchEditText(TAGS_EDITOR_TEXT));
 		EditText tagsEditor = solo.getEditText(TAGS_EDITOR_TEXT);
 		solo.typeText(tagsEditor, tags);
-
-		mockHttpClient.pushCannedResponse("/*/", HttpStatus.SC_BAD_REQUEST,
-				null, "application/json");
-
 		solo.clickOnButton(SUBMIT_BUTTON_TEXT);
 		getActivityAndWaitFor(TTChecks.NEW_QUESTION_SUBMITTED);
 		assertTrue(
