@@ -1,5 +1,6 @@
 package epfl.sweng.servercomm;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
 import org.apache.http.Header;
@@ -10,9 +11,10 @@ import org.apache.http.HttpEntity;
  * Class that contains all the parameters
  * 
  */
-public class RequestContext {
+public class RequestContext implements Serializable{
 
-    private String mServerURL;
+	private static final long serialVersionUID = -6771365916706236954L;
+	private String mServerURL;
     private HashMap<String, String> mHeaders;
     private HttpEntity mEntity;
 
