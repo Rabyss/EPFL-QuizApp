@@ -103,6 +103,7 @@ public class ShowQuestionsActivity extends QuestionActivity {
 		mLinearLayout.setLayoutParams(new LayoutParams(
 				LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 		mRandomQuestion = event.getQuizQuestion();
+		System.out.println("Id : " + mRandomQuestion.getId());
 		showQuestion();
 	}
 
