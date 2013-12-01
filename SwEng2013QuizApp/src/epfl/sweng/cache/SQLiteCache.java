@@ -46,15 +46,15 @@ public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
     private static final String COL_INDEX = "answer_index";
 
     private static final String CREATE_QUESTION_TABLE = "CREATE TABLE "
-            + TABLE_QUESTION + "(" + COL_ID + " INT64 PRIMARY KEY,"
+            + TABLE_QUESTION + "(" + COL_ID + " INT PRIMARY KEY,"
             + COL_QUESTION + " TEXT," + COL_OWNER + " TEXT," + COL_SOLUTION
-            + " INTEGER" + ");";
+            + " INT" + ");";
     private static final String CREATE_TAG_TABLE = "CREATE TABLE " + TABLE_TAG
-            + "(" + COL_TAG + " TEXT," + COL_ID_TAG + " INT64"
+            + "(" + COL_TAG + " TEXT," + COL_ID_TAG + " INT"
             + ", PRIMARY KEY ("+COL_TAG+","+COL_ID_TAG+"));";
     private static final String CREATE_ANSWER_TABLE = "CREATE TABLE "
-            + TABLE_ANSWER + "(" + COL_ID_ANSWER + " INT64,"
-            + COL_ANSWER + " TEXT," + COL_INDEX + " INTEGER" + ","
+            + TABLE_ANSWER + "(" + COL_ID_ANSWER + " INT,"
+            + COL_ANSWER + " TEXT," + COL_INDEX + " INT" + ","
             + "PRIMARY KEY ("+COL_ID_ANSWER+","+COL_INDEX+"));";
 
     private static final int MAX_SQL_CACHE_SIZE = 100;
@@ -189,7 +189,7 @@ public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
     }
 
     private QuizQuestion constructQuizQuestion(SQLiteDatabase db, Cursor cursor) {
-        long quizQuestionID = cursor.getInt(cursor.getColumnIndex(COL_ID)); //the id of the tag is the same as the one of the question
+        long quizQuestionID = cursor.getLong(cursor.getColumnIndex(COL_ID)); //the id of the tag is the same as the one of the question
 
         String quizQuestionBody = cursor.getString(cursor.getColumnIndex(COL_QUESTION));
         int quizQuestionSolutionIndex = cursor.getInt(cursor.getColumnIndex(COL_SOLUTION));
