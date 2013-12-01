@@ -70,7 +70,7 @@ public class SearchActivityTest extends
 								+ "}", "application/json");
 		httpClient
 				.pushCannedResponse(
-						"GET (?:https?://[^/]+|[^/]+)?/+quizquestions/random\\b",
+						"POST (?:https?://[^/]+|[^/]+)?/+sweng-quiz.appspot.com/search\\b",
 						HttpStatus.SC_OK,
 						"{\"question\": \"What is the answer to life, the universe, and everything?\","
 								+ " \"answers\": [\"Forty-two\", \"Twenty-seven\"], \"owner\": \"sweng\","
