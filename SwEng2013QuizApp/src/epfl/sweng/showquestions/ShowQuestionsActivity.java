@@ -16,6 +16,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import epfl.sweng.R;
+import epfl.sweng.context.AppContext;
 import epfl.sweng.quizquestions.QuizQuestion;
 import epfl.sweng.services.NothingInCacheEvent;
 import epfl.sweng.services.ServiceFactory;
@@ -83,8 +84,14 @@ public class ShowQuestionsActivity extends QuestionActivity {
 	}
 
 	private void nothingInCache() {
-		Toast.makeText(this, R.string.nothing_in_cache, Toast.LENGTH_LONG)
-				.show();
+		if (AppContext.getContext().isOnline()) {
+			Toast.makeText(this, "Server did not find anything.", Toast.LENGTH_LONG)
+					.show();
+		} else {
+			Toast.makeText(this, R.string.nothing_in_cache, Toast.LENGTH_LONG)
+					.show();
+		}
+
 		TestCoordinator.check(TTChecks.QUESTION_SHOWN);
 	}
 
