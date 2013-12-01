@@ -398,6 +398,13 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 
 	public void resetState() {
 		state = ProxyState.NORMAL;
+		postQuestion = new ArrayList<QuestionToSubmit>();
+		try {
+			serializeQuestionToPostList(postQuestion);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		System.out.println("state is reset");
 	}
 
