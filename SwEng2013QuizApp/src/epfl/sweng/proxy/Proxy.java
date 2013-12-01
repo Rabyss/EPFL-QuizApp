@@ -76,7 +76,7 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 
 	private Proxy(Context context) {
 		serverComm = ServerCommunicator.getInstance();
-		postQuestion = new ArrayList<Proxy.QuestionToSubmit>();
+		postQuestion = new ArrayList<QuestionToSubmit>();
 		serverComm.addListener(this);
 		AppContext.getContext().addAsListener(this);
 		cache = new SQLiteCache(context);
@@ -201,7 +201,7 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 			}
 			// TODO Send other status code to display different toast ?
 			PostedQuestionEvent pqe = new PostedQuestionEvent();
-			pqe.setResponse(new ServerResponse(questionToSubmit.reqContext
+			pqe.setResponse(new ServerResponse(questionToSubmit.getReqContext()
 					.getEntity().toString(), HttpStatus.SC_OK));
 			this.emit(pqe);
 		}
@@ -402,24 +402,7 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 		System.out.println("state is reset");
 	}
 
-	private class QuestionToSubmit implements Serializable {
-		private static final long serialVersionUID = 6288410483133964979L;
-		private RequestContext reqContext;
-		private ServerEvent event;
 
-		public QuestionToSubmit(RequestContext reqContext, ServerEvent event) {
-			this.reqContext = reqContext;
-			this.event = event;
-		}
-
-		public ServerEvent getEvent() {
-			return event;
-		}
-
-		public RequestContext getReqContext() {
-			return reqContext;
-		}
-	}
 
 	private enum ProxyState {
 		NORMAL, SEARCH, NEXT
@@ -460,7 +443,7 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 
 		ObjectInputStream ois = new ObjectInputStream(fis);
 
-		ArrayList<QuestionToSubmit> questions = (ArrayList<Proxy.QuestionToSubmit>) ois
+		ArrayList<QuestionToSubmit> questions = (ArrayList<QuestionToSubmit>) ois
 				.readObject();
 		fis.close();
 		ois.close();
