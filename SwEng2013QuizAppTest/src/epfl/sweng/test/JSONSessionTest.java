@@ -26,7 +26,7 @@ public class JSONSessionTest extends AndroidTestCase {
 			JSONSession jsonSession = new JSONSession(response);
 			assertNotNull(jsonSession);
 		} catch (JSONException e) {
-			Log.d(TAG, e.getMessage());
+			Log.d(TAG, e.getMessage(),e);
 			fail("The JSON string is correct");
 		}
 	}
@@ -37,7 +37,7 @@ public class JSONSessionTest extends AndroidTestCase {
 			new JSONSession(invalidResponse);
 			fail("The consturctor should throw an exception.");
 		} catch (JSONException e) {
-			Log.d(TAG, e.getMessage());
+			Log.d(TAG, e.getMessage(),e);
 			assertTrue(true);
 		}
 	}
@@ -50,7 +50,7 @@ public class JSONSessionTest extends AndroidTestCase {
 			JSONSession jsonSession = new JSONSession(response);
 			assertEquals(jsonSession.getSession(), "c1b897bc7b79ac7b");
 		} catch (JSONException e) {
-			Log.d(TAG, e.getMessage());
+			Log.d(TAG, e.getMessage(),e);
 			fail("The JSON string is correct");
 		}
 	}

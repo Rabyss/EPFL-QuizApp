@@ -40,7 +40,7 @@ public class QuizQuestionTest extends AndroidTestCase {
 			new QuizQuestion(jsonObject.toString());
 			fail("An empty JSON object cannot be used to build a QuizQuestion.");
 		} catch (JSONException e) {
-			Log.d(TAG, e.getMessage());
+			Log.d(TAG, e.getMessage(),e);
 		}
 
 		try {
@@ -52,7 +52,7 @@ public class QuizQuestionTest extends AndroidTestCase {
 			new QuizQuestion(jsonObject.toString());
 			fail("A question without an ID cannot be built.");
 		} catch (JSONException e) {
-			Log.d(TAG, e.getMessage());
+			Log.d(TAG, e.getMessage(),e);
 		}
 
 		try {
@@ -60,7 +60,7 @@ public class QuizQuestionTest extends AndroidTestCase {
 			System.out.println(jsonObject);
 			new QuizQuestion(jsonObject.toString());
 		} catch (JSONException e) {
-			Log.d(TAG, e.getMessage());
+			Log.d(TAG, e.getMessage(),e);
 			fail("A valid question JSON description generates an exception.");
 		}
 

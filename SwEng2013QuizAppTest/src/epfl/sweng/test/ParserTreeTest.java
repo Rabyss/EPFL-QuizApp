@@ -27,7 +27,7 @@ public class ParserTreeTest extends AndroidTestCase {
 			and1.changeChild(or1, and2);
 			assertTrue(false);
 		} catch (NoSuchElementException e) {
-			Log.d(TAG, e.getMessage());
+			Log.d(TAG, e.getMessage(),e);
 		}
 		
 		

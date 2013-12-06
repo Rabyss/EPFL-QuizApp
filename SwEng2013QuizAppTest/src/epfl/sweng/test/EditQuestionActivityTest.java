@@ -101,7 +101,7 @@ public class EditQuestionActivityTest extends
             mockHttpClient.pushCannedResponse("/*/", HttpStatus.SC_OK,
                     question.toJSON(), "application/json");
         } catch (MalformedQuestionException e) {
-        	Log.d(TAG, e.getMessage());
+        	Log.d(TAG, e.getMessage(),e);
         }
 
 		assertTrue("Submit button not found.",

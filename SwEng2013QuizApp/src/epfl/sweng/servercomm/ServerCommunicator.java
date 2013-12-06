@@ -126,7 +126,7 @@ public final class ServerCommunicator extends EventEmitter implements IServer {
 				return SwengHttpClientFactory.getInstance().execute(post,
 						handler);
 			} catch (IOException e) {
-				Log.d(TAG, e.getMessage());
+				Log.d(TAG, e.getMessage(),e);
 				return null;
 			}
 		}
@@ -170,7 +170,7 @@ public final class ServerCommunicator extends EventEmitter implements IServer {
 				return SwengHttpClientFactory.getInstance().execute(get,
 						questionFetchHandler);
 			} catch (IOException e) {
-				Log.d(TAG, e.getMessage());
+				Log.d(TAG, e.getMessage(),e);
 				return null;
 			}
 		}

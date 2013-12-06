@@ -78,7 +78,7 @@ public class AnswerEditor {
 						setCorrect(false);
 					}
 				} catch (MalformedEditorButtonException e) {
-					Log.d(TAG, e.getMessage());
+					Log.d(TAG, e.getMessage(),e);
 				}
 				
 				TestCoordinator.check(TTChecks.QUESTION_EDITED);
@@ -143,7 +143,7 @@ public class AnswerEditor {
 			answers = mActivity.getAnswers();
 			answers.remove(this);
 		} catch (MalformedEditorButtonException e) {
-			Log.d(TAG, e.getMessage());
+			Log.d(TAG, e.getMessage(),e);
 		}
 
 		((ViewGroup) linearLayout.getParent()).removeView(linearLayout);
