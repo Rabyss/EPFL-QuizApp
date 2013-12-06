@@ -16,6 +16,8 @@ public class UserStorageTest extends ActivityInstrumentationTestCase2<MainActivi
 		super(MainActivity.class);
 	}
 	
+	private static final String PONEY = "poney";
+	
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -26,8 +28,8 @@ public class UserStorageTest extends ActivityInstrumentationTestCase2<MainActivi
 	}
 	
 	public void testStoreAndGetSession() {
-		UserStorage.getInstance(mContext).storeSessionID("poney");
-		assertEquals(UserStorage.getInstance(mContext).getSessionID(), "poney");
+		UserStorage.getInstance(mContext).storeSessionID(PONEY);
+		assertEquals(UserStorage.getInstance(mContext).getSessionID(), PONEY);
 		UserStorage.getInstance(mContext).removeSessionID();
 	}
 	

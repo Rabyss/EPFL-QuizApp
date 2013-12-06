@@ -17,6 +17,8 @@ public class MockHttpClientTest extends
 		ActivityInstrumentationTestCase2<ShowQuestionsActivity> {
 
 	protected static final String RANDOM_QUESTION_BUTTON_LABEL = "Show a random question";
+	protected static final String MIME_JSON = "application/json";
+	protected static final String GET_RANDOM = "GET (?:https?://[^/]+|[^/]+)?/+quizquestions/random\\b";
 
 	private MockHttpClient httpClient;
 
@@ -39,12 +41,12 @@ public class MockHttpClientTest extends
 	public void testFetchQuestion() {
 		httpClient
 				.pushCannedResponse(
-						"GET (?:https?://[^/]+|[^/]+)?/+quizquestions/random\\b",
+						GET_RANDOM,
 						HttpStatus.SC_OK,
 						"{\"question\": \"What is the answer to life, the universe, and everything?\","
 								+ " \"answers\": [\"Forty-two\", \"Twenty-seven\"], \"owner\": \"sweng\","
 								+ " \"solutionIndex\": 0, \"tags\": [\"h2g2\", \"trivia\"], \"id\": \"1\" }",
-						"application/json");
+						MIME_JSON);
 
 		getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
 		assertTrue(
@@ -58,8 +60,8 @@ public class MockHttpClientTest extends
 
 	public void testFetchQuestionFails() {
 		httpClient.pushCannedResponse(
-				"GET (?:https?://[^/]+|[^/]+)?/+quizquestions/random\\b",
-				HttpStatus.SC_BAD_REQUEST, null, "application/json");
+				GET_RANDOM,
+				HttpStatus.SC_BAD_REQUEST, null, MIME_JSON);
 		getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
 		assertTrue(
 				"An error message must be display",

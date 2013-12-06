@@ -20,7 +20,10 @@ public class SearchActivityTest extends
 		ActivityInstrumentationTestCase2<SearchActivity> {
 	private Solo solo;
 	private MockHttpClient httpClient;
-
+	
+	private static final String SEARCH = "Search";
+	private static final String TYPE_IN = "Type in the search query";
+	
 	public SearchActivityTest() {
 		super(SearchActivity.class);
 
@@ -41,12 +44,12 @@ public class SearchActivityTest extends
 
 	public void testDisplayActivityCorrectly() {
 		assertTrue("Edit text is found",
-				solo.searchEditText("Type in the search query"));
-		assertTrue("Button search is found", solo.searchText("Search"));
-		assertFalse("Button is disabled", solo.getButton("Search").isEnabled());
-		EditText editText = solo.getEditText("Type in the search query");
+				solo.searchEditText(TYPE_IN));
+		assertTrue("Button search is found", solo.searchText(SEARCH));
+		assertFalse("Button is disabled", solo.getButton(SEARCH).isEnabled());
+		EditText editText = solo.getEditText(TYPE_IN);
 		solo.typeText(editText, "b");
-		assertTrue("Button is enabled", solo.getButton("Search").isEnabled());
+		assertTrue("Button is enabled", solo.getButton(SEARCH).isEnabled());
 	}
 
 	public void testSubmitSearch() {
@@ -69,9 +72,9 @@ public class SearchActivityTest extends
 								+ "], "
 								+ " \"next\": \"YG9HB8)H9*-BYb88fdsfsyb(08bfsdybfdsoi4\""
 								+ "}", "application/json");
-		EditText text = solo.getEditText("Type in the search query");
+		EditText text = solo.getEditText(TYPE_IN);
 		solo.typeText(text, "b");
-		solo.clickOnButton("Search");
+		solo.clickOnButton(SEARCH);
 		getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
 	}
 

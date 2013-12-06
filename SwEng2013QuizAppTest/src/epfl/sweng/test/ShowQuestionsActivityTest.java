@@ -21,12 +21,27 @@ public class ShowQuestionsActivityTest extends
 
 	private Solo solo;
 	private MockHttpClient httpClient;
+	
+	private static final String QUESTION_UNIVERSE = "What is the answer to life, the universe, and everything?";
+	private static final String GET_RANDOM = "GET (?:https?://[^/]+|[^/]+)?/+quizquestions/random\\b";
+	private static final String CORRECT_ANSWER_IS_DISPLAYED = "Correct answer is displayed";
+	private static final String INCORRECT_ANSWER_IS_DISPLAYED = "Incorrect answer is displayed";
+	private static final String WAIT_NOT_DISPLAYED = "Wait for an answer is not displayed";
+	private static final String NEXT_QUESTION_DISABLED = "Next question button is disabled";
+	private static final String WAIT_DISPLAYED = "Wait for an answer is displayed";
+	private static final String NEXT_QUESTION = "Next question";
+	private static final String MIME_JSON = "application/json";
+	private static final String QUESTION_IS_DISPLAYED = "Question is displayed";
+	private static final String CROSS = "\u2718";
+	private static final String WAIT_FOR_ANSWER = "Wait for an answer...";
+	
+	private static final String A42 = "Forty-two";
+	private static final String A27 = "Twenty-seven";
 
 	public ShowQuestionsActivityTest() {
 		super(ShowQuestionsActivity.class);
 	}
 	
-
 	@Override
 	protected void setUp() {
         httpClient = new MockHttpClient();
@@ -46,14 +61,14 @@ public class ShowQuestionsActivityTest extends
 
 	public void testShowQuestion() {
 		assertTrue(
-				"Question is displayed",
-				solo.searchText("What is the answer to life, the universe, and everything?"));
-		assertTrue("Correct answer is displayed", solo.searchText("Forty-two"));
-		assertTrue("Incorrect answer is displayed",
-				solo.searchText("Twenty-seven"));
-		assertTrue("Wait for an answer is displayed", solo.searchText("Wait for an answer..."));
-		Button nextQuestionButton = solo.getButton("Next question");
-		assertFalse("Next question button is disabled",
+				QUESTION_IS_DISPLAYED,
+				solo.searchText(QUESTION_UNIVERSE));
+		assertTrue(CORRECT_ANSWER_IS_DISPLAYED, solo.searchText(A42));
+		assertTrue(INCORRECT_ANSWER_IS_DISPLAYED,
+				solo.searchText(A27));
+		assertTrue(WAIT_DISPLAYED, solo.searchText(WAIT_FOR_ANSWER));
+		Button nextQuestionButton = solo.getButton(NEXT_QUESTION);
+		assertFalse(NEXT_QUESTION_DISABLED,
 				nextQuestionButton.isEnabled());
 		assertTrue("Tag 1 is display", solo.searchText("h2g2"));
 		assertTrue("Tag 2 is display", solo.searchText("trivia"));
@@ -61,66 +76,66 @@ public class ShowQuestionsActivityTest extends
 	
 	public void testBadAnswerSelected() {
 		Proxy.getInstance(getActivity().getApplicationContext()).resetState();
-		solo.clickOnText("Twenty-seven");
+		solo.clickOnText(A27);
 		getActivityAndWaitFor(TTChecks.ANSWER_SELECTED);
-		assertTrue("Cross is displayed", solo.searchText("\u2718"));
-		Button nextQuestionButton = solo.getButton("Next question");
-		assertFalse("Next question button is disabled",
+		assertTrue("Cross is displayed", solo.searchText(CROSS));
+		Button nextQuestionButton = solo.getButton(NEXT_QUESTION);
+		assertFalse(NEXT_QUESTION_DISABLED,
 				nextQuestionButton.isEnabled());
-		assertFalse("Wait for an answer is not displayed", solo.searchText("Wait for an answer..."));
+		assertFalse(WAIT_NOT_DISPLAYED, solo.searchText(WAIT_FOR_ANSWER));
 	}
 	
 	public void testGoodAnswerSelected() {
-		solo.clickOnText("Forty-two");
+		solo.clickOnText(A42);
 		getActivityAndWaitFor(TTChecks.ANSWER_SELECTED);
 		assertTrue("Check is displayed", solo.searchText("\u2714"));
-		assertFalse("Cross is not displayed", solo.searchText("\u2718"));
-		Button nextQuestionButton = solo.getButton("Next question");
+		assertFalse("Cross is not displayed", solo.searchText(CROSS));
+		Button nextQuestionButton = solo.getButton(NEXT_QUESTION);
 		assertTrue("Next question button is enabled",
 				nextQuestionButton.isEnabled());
-		assertFalse("Wait for an answer is not displayed", solo.searchText("Wait for an answer..."));
+		assertFalse(WAIT_NOT_DISPLAYED, solo.searchText(WAIT_FOR_ANSWER));
 	}
 	
 	public void testReloadQuestion() {
 		
 		assertTrue(
-				"Question is displayed",
-				solo.searchText("What is the answer to life, the universe, and everything?"));
-		assertTrue("Correct answer is displayed", solo.searchText("Forty-two"));
-		assertTrue("Incorrect answer is displayed",
-				solo.searchText("Twenty-seven"));
-		assertTrue("Wait for an answer is displayed", solo.searchText("Wait for an answer..."));
-		Button nextQuestionButton = solo.getButton("Next question");
-		assertFalse("Next question button is disabled",
+				QUESTION_IS_DISPLAYED,
+				solo.searchText(QUESTION_UNIVERSE));
+		assertTrue(CORRECT_ANSWER_IS_DISPLAYED, solo.searchText(A42));
+		assertTrue(INCORRECT_ANSWER_IS_DISPLAYED,
+				solo.searchText(A27));
+		assertTrue(WAIT_DISPLAYED, solo.searchText(WAIT_FOR_ANSWER));
+		Button nextQuestionButton = solo.getButton(NEXT_QUESTION);
+		assertFalse(NEXT_QUESTION_DISABLED,
 				nextQuestionButton.isEnabled());
 		
 		
 		httpClient.popCannedResponse();
-		solo.clickOnText("Forty-two");
+		solo.clickOnText(A42);
 		getActivityAndWaitFor(TTChecks.ANSWER_SELECTED);
-		solo.clickOnText("Next question");
+		solo.clickOnText(NEXT_QUESTION);
 		getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
 		assertTrue(
-				"Question is displayed",
+				QUESTION_IS_DISPLAYED,
 				solo.searchText("ONE PLUS ONE"));
-		assertTrue("Correct answer is displayed", solo.searchText("TWO"));
-		assertTrue("Incorrect answer is displayed",
+		assertTrue(CORRECT_ANSWER_IS_DISPLAYED, solo.searchText("TWO"));
+		assertTrue(INCORRECT_ANSWER_IS_DISPLAYED,
 				solo.searchText("ONE"));
-		assertTrue("Wait for an answer is displayed", solo.searchText("Wait for an answer..."));
-		nextQuestionButton = solo.getButton("Next question");
-		assertFalse("Next question button is disabled",
+		assertTrue(WAIT_DISPLAYED, solo.searchText(WAIT_FOR_ANSWER));
+		nextQuestionButton = solo.getButton(NEXT_QUESTION);
+		assertFalse(NEXT_QUESTION_DISABLED,
 				nextQuestionButton.isEnabled());
 	}
 	
 	public void testBadRequest() {
 	    httpClient.pushCannedResponse(
-	            "GET (?:https?://[^/]+|[^/]+)?/+quizquestions/random\\b", 
+	            GET_RANDOM, 
 	            HttpStatus.SC_BAD_REQUEST, 
 	            "", 
-	            "application/json");
-	    solo.clickOnText("Forty-two");
+	            MIME_JSON);
+	    solo.clickOnText(A42);
         getActivityAndWaitFor(TTChecks.ANSWER_SELECTED);
-	    solo.clickOnText("Next question");
+	    solo.clickOnText(NEXT_QUESTION);
 	    getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
 	    assertTrue("Client is not notified of the error.", 
 	            solo.searchText(getActivity().getString(epfl.sweng.R.string.fetch_server_failure)));
@@ -129,24 +144,24 @@ public class ShowQuestionsActivityTest extends
 	private void pushLifeQuestion() {
 		httpClient
 				.pushCannedResponse(
-						"GET (?:https?://[^/]+|[^/]+)?/+quizquestions/random\\b",
+						GET_RANDOM,
 						HttpStatus.SC_OK,
-						"{\"question\": \"What is the answer to life, the universe, and everything?\","
+						"{\"question\": \""+QUESTION_UNIVERSE+"\","
 								+ " \"answers\": [\"Forty-two\", \"Twenty-seven\"], \"owner\": \"sweng\","
 								+ " \"solutionIndex\": 0, \"tags\": [\"h2g2\", \"trivia\"], \"id\": \"1\" }",
-						"application/json");
+						MIME_JSON);
 		
 	}
 	
 	private void pushCalculQuestion() {
 		httpClient
 				.pushCannedResponse(
-						"GET (?:https?://[^/]+|[^/]+)?/+quizquestions/random\\b",
+						GET_RANDOM,
 						HttpStatus.SC_OK,
 						"{\"question\": \"ONE PLUS ONE\","
 								+ " \"answers\": [\"ONE\", \"TWO\"], \"owner\": \"sweng\","
 								+ " \"solutionIndex\": 1, \"tags\": [\"h2g2\", \"trivia\"], \"id\": \"1\" }",
-						"application/json");
+						MIME_JSON);
 	}
 	
 	private void getActivityAndWaitFor(final TestCoordinator.TTChecks expected) {
