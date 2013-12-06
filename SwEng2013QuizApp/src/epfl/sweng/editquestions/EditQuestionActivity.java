@@ -147,7 +147,7 @@ public class EditQuestionActivity extends QuestionActivity {
     private String[] cleanUp(String[] strArray) {
         ArrayList<String> result = new ArrayList<String>();
         for (int i = 0; i < strArray.length; i++) {
-            if (strArray[i] != null && !strArray[i].equals("")) {
+            if (strArray[i] != null && !"".equals(strArray[i])) {
                 result.add(strArray[i]);
             }
         }
@@ -207,14 +207,14 @@ public class EditQuestionActivity extends QuestionActivity {
 
         if (!"+".equals(((Button) findViewById(R.id.buttonAddAnswer)).getText())) {
             errors++;
-        } else if ((findViewById(R.id.buttonAddAnswer)).getVisibility() != View.VISIBLE) {
+        } else if (View.VISIBLE != (findViewById(R.id.buttonAddAnswer)).getVisibility()) {
             errors++;
         }
 
         if (!"Submit".equals(((Button) findViewById(R.id.submitSearchButton))
                 .getText())) {
             errors++;
-        } else if ((findViewById(R.id.buttonSubmitQuestion)).getVisibility() != View.VISIBLE) {
+        } else if (View.VISIBLE != (findViewById(R.id.buttonSubmitQuestion)).getVisibility()) {
             errors++;
         }
 
@@ -222,7 +222,7 @@ public class EditQuestionActivity extends QuestionActivity {
             Button removeBtn = answer.getRemoveButton();
             Button correctBtn = answer.getCorrectButton();
 
-            if (!removeBtn.getText().equals("-")) {
+            if (!"-".equals(removeBtn.getText())) {
                 errors++;
             } else if (View.VISIBLE != removeBtn.getVisibility()) {
                 errors++;

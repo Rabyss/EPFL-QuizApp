@@ -117,7 +117,6 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 						ConnectionEventType.ADD_OR_RETRIEVE_QUESTION));
 				serverComm.doHttpPost(reqContext, event);
 			} else if (state == ProxyState.NEXT) {
-				System.out.println("got next");
 				if (results.isEmpty()) {
 					System.out.println("with request");
 					getNextResultFromServer(reqContext, event);
@@ -125,14 +124,13 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 					ReceivedQuestionEvent receiveEvent = new ReceivedQuestionEvent();
 					receiveEvent.setResponse(results.get(0));
 					results.remove(0);
-					if ((next == null || next.equals("") || next.equals("null"))
+					if ((null == next || "".equals(next) || "null".equals(next))
 							&& results.isEmpty()) {
 						state = ProxyState.NORMAL;
 					}
 					this.emit(receiveEvent);
 				}
 			} else {
-				System.out.println("normal mode");
 				// state machine transition
 				this.emit(new ConnectionEvent(
 						ConnectionEventType.ADD_OR_RETRIEVE_QUESTION));
@@ -305,7 +303,7 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 						next = "";
 						Log.d(TAG, e.getMessage(), e);
 					}
-					if ((next.equals("") || next == null || next.equals("null"))
+					if ((null == next || "".equals(next) || "null".equals(next))
 							&& results.isEmpty()) {
 						state = ProxyState.NORMAL;
 					} else {
