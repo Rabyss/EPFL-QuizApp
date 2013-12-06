@@ -67,8 +67,4 @@ public class QuestionFetcherService extends QuestionActivityService implements
         }
         removeListener(super.getActivity());
     }
-
-    public void setActivity(ShowQuestionsActivity activity) {
-        super.setActivity(activity);
-    }
 }
