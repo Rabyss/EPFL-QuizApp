@@ -29,7 +29,7 @@ public class EditQuestionActivity extends QuestionActivity {
 
     private ArrayList<AnswerEditor> answers;
 
-    private final static int TOAST_DISPLAY_TIME = 2000;
+    private static final int TOAST_DISPLAY_TIME = 2000;
     private boolean resettingUI = false;
 
     @Override

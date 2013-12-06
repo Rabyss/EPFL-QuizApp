@@ -13,5 +13,5 @@ package epfl.sweng.events;
  * être effectué par un gestionnaire, celui-ci doit en différer l'execution.
  */
 public interface EventListener {
-	
+    
 }

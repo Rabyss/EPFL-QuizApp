@@ -89,7 +89,8 @@ public class EditQuestionActivity extends QuestionActivity {
                 getCurrentFocus().getWindowToken(),
                 InputMethodManager.HIDE_NOT_ALWAYS);
 
-        showProgressDialog(); // PUT THIS BEFOR EXECUTE
+        showProgressDialog();
+// PUT THIS BEFOR EXECUTE
         ServiceFactory.getServiceFor(this).execute();
     }
 

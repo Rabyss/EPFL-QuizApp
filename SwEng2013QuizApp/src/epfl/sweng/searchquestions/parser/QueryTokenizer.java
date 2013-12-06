@@ -18,10 +18,12 @@ import static epfl.sweng.searchquestions.parser.entities.TokenKind.SPACE;
  * Transforms a query string into its corresponding list of token.
  */
 public final class QueryTokenizer {
-    private final String mQueryString; // the string to tokenize
-    private int mPointer; // keeps track or where the tokenizer is in the string
+    private final String mQueryString;
+// the string to tokenize
+    private int mPointer;
+// keeps track or where the tokenizer is in the string
 
-    private final static String ALPHANUMERIC_REGEX = "^([A-Za-z0-9]+)";
+    private static final String ALPHANUMERIC_REGEX = "^([A-Za-z0-9]+)";
 
     public QueryTokenizer(final String queryString) {
         mQueryString = queryString;

@@ -36,7 +36,7 @@ public class SwengHttpClientFactory {
 
     private static AbstractHttpClient httpClient;
     private static final int HTTP_PORT = 80;
-    private final static int HTTPS_PORT = 443;
+    private static final int HTTPS_PORT = 443;
 
 
     public static synchronized AbstractHttpClient getInstance() {
@@ -51,7 +51,7 @@ public class SwengHttpClientFactory {
         httpClient = instance;
     }
 
-    final private static RedirectHandler REDIRECT_NO_FOLLOW = new RedirectHandler() {
+    private static final RedirectHandler REDIRECT_NO_FOLLOW = new RedirectHandler() {
         @Override
         public boolean isRedirectRequested(HttpResponse response, HttpContext context) {
             return false;
@@ -63,7 +63,7 @@ public class SwengHttpClientFactory {
         }
     };
 
-    final private static CookieStore COOKIE_MONSTER = new CookieStore() {
+    private static final CookieStore COOKIE_MONSTER = new CookieStore() {
         @Override
         public void addCookie(Cookie cookie) {
         }
@@ -83,14 +83,14 @@ public class SwengHttpClientFactory {
         }
     };
 
-    final private static HttpRequestInterceptor LOGGING_REQUEST_INTERCEPTOR = new HttpRequestInterceptor() {
+    private static final HttpRequestInterceptor LOGGING_REQUEST_INTERCEPTOR = new HttpRequestInterceptor() {
         @Override
         public void process(HttpRequest request, HttpContext context) {
             Log.d("HTTP REQUEST", request.getRequestLine().toString());
         }
     };
 
-    final private static HttpResponseInterceptor LOGGING_RESPONSE_INTERCEPTOR = new HttpResponseInterceptor() {
+    private static final HttpResponseInterceptor LOGGING_RESPONSE_INTERCEPTOR = new HttpResponseInterceptor() {
         @Override
         public void process(HttpResponse response, HttpContext context) {
             Log.d("HTTP RESPONSE", response.getStatusLine().toString());
