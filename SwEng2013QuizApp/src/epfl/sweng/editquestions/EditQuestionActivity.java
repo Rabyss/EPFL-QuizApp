@@ -271,7 +271,7 @@ public class EditQuestionActivity extends QuestionActivity {
 			totalErrors++;
 		}
 
-		// TODO : control that is useful and that is what is asked
+		
 		if (answers.size() < 0) {
 			totalErrors++;
 		} else {

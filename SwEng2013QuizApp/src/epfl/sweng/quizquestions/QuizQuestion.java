@@ -258,11 +258,6 @@ public class QuizQuestion implements Serializable {
 				+ "\ntags : " + mTags + "\nowner : " + mOwner;
 	}
 
-	// TODO : controller cette methode
-	// public int toByteCount() {
-	// return this.toString().getBytes().length;
-	// }
-
 	private class AnswersList extends LinkedList<String> {
 
 		private static final long serialVersionUID = 3821236061355668378L;

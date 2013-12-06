@@ -195,7 +195,7 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 			try {
 				serializeQuestionToPostList(postQuestion);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+			
 				e.printStackTrace();
 			}
 			// TODO Send other status code to display different toast ?
@@ -240,10 +240,10 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 		try {
 			postQuestion = readPendingQuizQuestion();
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
+		
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+	
 			e.printStackTrace();
 		}
 		if (!postQuestion.isEmpty()) {
@@ -253,7 +253,7 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 			try {
 				serializeQuestionToPostList(postQuestion);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			}
 			doHttpPost(reqContext, postEvent);
@@ -388,7 +388,7 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 		try {
 			serializeQuestionToPostList(postQuestion);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+	
 			e.printStackTrace();
 		}
 		// TestCoordinator.check(TTChecks.OFFLINE_CHECKBOX_ENABLED);
@@ -402,7 +402,7 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 		try {
 			serializeQuestionToPostList(postQuestion);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 		System.out.println("state is reset");
