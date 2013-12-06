@@ -38,6 +38,7 @@ public class JSONTokenTest extends AndroidTestCase {
             new JSONToken(invalidResponse);
             fail("The consturctor should throw an exception.");
         } catch (JSONException e) {
+            Log.d(TAG, e.getMessage(), e);
             assertTrue(true);
         }
     }

@@ -99,6 +99,7 @@ public class Event implements Cloneable, Serializable {
                 Log.v(TAG, "Event callback", e);
                 eventClass = getParent(eventClass);
             } catch (IllegalAccessException e) {
+                Log.d(TAG, e.getMessage(), e);
                 eventClass = getParent(eventClass);
             }
             
