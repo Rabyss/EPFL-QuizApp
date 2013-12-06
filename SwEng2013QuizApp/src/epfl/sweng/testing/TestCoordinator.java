@@ -51,7 +51,13 @@ public final class TestCoordinator {
      * to some finished action.
      */
     public enum TTChecks {
-        NONE, QUESTION_SHOWN, ANSWER_SELECTED, QUIZ_SCORE_SHOWN, AVAILABLE_QUIZZES_SHOWN, MAIN_ACTIVITY_SHOWN, EDIT_QUESTIONS_SHOWN, QUESTION_EDITED, NEW_QUESTION_SUBMITTED, AUTHENTICATION_ACTIVITY_SHOWN, LOGGED_OUT, OFFLINE_CHECKBOX_ENABLED, OFFLINE_CHECKBOX_DISABLED, SEARCH_ACTIVITY_SHOWN, QUERY_EDITED
+        NONE, QUESTION_SHOWN, ANSWER_SELECTED, 
+        QUIZ_SCORE_SHOWN, AVAILABLE_QUIZZES_SHOWN,
+        MAIN_ACTIVITY_SHOWN, EDIT_QUESTIONS_SHOWN, 
+        QUESTION_EDITED, NEW_QUESTION_SUBMITTED, 
+        AUTHENTICATION_ACTIVITY_SHOWN, LOGGED_OUT, 
+        OFFLINE_CHECKBOX_ENABLED, OFFLINE_CHECKBOX_DISABLED, 
+        SEARCH_ACTIVITY_SHOWN, QUERY_EDITED
     };
 
     private TTChecks currentCheck = TTChecks.NONE;
@@ -148,7 +154,7 @@ public final class TestCoordinator {
         synchronized (tts) {
             if (tts.state == TTState.IDLE) {
                 return;
-// Do nothing if we're not in testing mode
+                // Do nothing if we're not in testing mode
             } else if (tts.state == TTState.INITIATED) {
                 tts.state = TTState.COMPLETED;
                 tts.currentCheck = completedCheck;
