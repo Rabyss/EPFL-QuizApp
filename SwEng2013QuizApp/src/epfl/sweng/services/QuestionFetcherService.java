@@ -3,6 +3,8 @@ package epfl.sweng.services;
 import org.apache.http.HttpStatus;
 import org.json.JSONException;
 
+import android.util.Log;
+
 import epfl.sweng.context.AppContext;
 import epfl.sweng.events.EventListener;
 import epfl.sweng.proxy.Proxy;
@@ -16,6 +18,8 @@ import epfl.sweng.showquestions.ShowQuestionsActivity;
 
 public class QuestionFetcherService extends QuestionActivityService implements
 		Service, EventListener {
+	
+	private static final String TAG = "QuestionFetcherService";
 
 	public QuestionFetcherService(ShowQuestionsActivity activity) {
 		super(activity);
@@ -46,7 +50,7 @@ public class QuestionFetcherService extends QuestionActivityService implements
 					quizQuestion = new QuizQuestion(response.getEntity()
 							.toString());
 				} catch (JSONException e) {
-					e.printStackTrace();
+					Log.d(TAG, e.getMessage());
 				}
 				this.emit(new ShowQuestionEvent(quizQuestion));
 			}

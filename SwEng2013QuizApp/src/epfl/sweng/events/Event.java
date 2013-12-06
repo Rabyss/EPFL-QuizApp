@@ -4,54 +4,59 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import android.util.Log;
+
 /**
- * Un événement. Cette classe représente un événement pouvant être émit par un
- * EventEmitter et reçu par un EventListener. Il ne possède aucune propriété et
- * doit être étendu pour lui associer une signification.
+ * Un ��v��nement. Cette classe repr��sente un ��v��nement pouvant ��tre ��mit par un
+ * EventEmitter et re��u par un EventListener. Il ne poss��de aucune propri��t�� et
+ * doit ��tre ��tendu pour lui associer une signification.
  */
 @SuppressWarnings("serial")
 public class Event implements Cloneable, Serializable {
+	
+	private static final String TAG = "Event";
+	
 	/**
-	 * L'émetteur qui a émit cet événement. Cet attribut n'est pas sérialisé
-	 * avec l'événement, dans un tel cas, l'émetteur original est perdu.
+	 * L'��metteur qui a ��mit cet ��v��nement. Cet attribut n'est pas s��rialis��
+	 * avec l'��v��nement, dans un tel cas, l'��metteur original est perdu.
 	 */
 	transient private EventEmitterInterface mEmitter;
 
 	/**
-	 * Retourne l'émetteur de cet événement.
+	 * Retourne l'��metteur de cet ��v��nement.
 	 */
 	public EventEmitterInterface getEmitter() {
 		return mEmitter;
 	}
 
 	/**
-	 * Notifie un EventListener précis que cet événement est survenu.
+	 * Notifie un EventListener pr��cis que cet ��v��nement est survenu.
 	 * 
 	 * @param listener
-	 *            L'EventListener à notifier.
+	 *            L'EventListener �� notifier.
 	 * 
 	 * @throws UnhandledEventException
-	 *             Si l'événement n'est pas géré par le listener spécifié.
+	 *             Si l'��v��nement n'est pas g��r�� par le listener sp��cifi��.
 	 * @throws InvocationTargetException
-	 *             Si l'execution du listener a provoqué une exception.
+	 *             Si l'execution du listener a provoqu�� une exception.
 	 */
 	public final void trigger(EventListener listener) throws InvocationTargetException {
 		trigger(listener, null);
 	}
 
 	/**
-	 * Notifie un EventListener précis que cet événement est survenu comme s'il
-	 * provenait d'un émetteur donné.
+	 * Notifie un EventListener pr��cis que cet ��v��nement est survenu comme s'il
+	 * provenait d'un ��metteur donn��.
 	 * 
 	 * @param listener
-	 *            L'EventListener à notifier.
+	 *            L'EventListener �� notifier.
 	 * @param emitter
-	 *            L'émetteur de cet événement.
+	 *            L'��metteur de cet ��v��nement.
 	 * 
 	 * @throws UnhandledEventException
-	 *             Si l'événement n'est pas géré par le listener spécifié.
+	 *             Si l'��v��nement n'est pas g��r�� par le listener sp��cifi��.
 	 * @throws InvocationTargetException
-	 *             Si l'execution du listener a provoqué une exception.
+	 *             Si l'execution du listener a provoqu�� une exception.
 	 */
 	public final void trigger(EventListener listener,
 			EventEmitterInterface emitter) throws InvocationTargetException {
@@ -85,10 +90,12 @@ public class Event implements Cloneable, Serializable {
 			} catch (NoSuchMethodException e) {
 				// A listener should not need to implement a 'on' method.
 				// Maybe a parent handles it.
+				Log.v(TAG, "Event callback");
 				eventClass = getParent(eventClass);
 			} catch (IllegalArgumentException e) {
 				// A listener should not need to handle every 'on' method.
 				// Maybe a parent handles it.
+				Log.v(TAG, "Event callback");
 				eventClass = getParent(eventClass);
 			} catch (IllegalAccessException e) {
 				eventClass = getParent(eventClass);
@@ -115,6 +122,7 @@ public class Event implements Cloneable, Serializable {
 			return super.clone();
 		} catch (CloneNotSupportedException e) {
 			// Should not happen
+			Log.d(TAG, "Clone not supported Exception");
 			return this;
 		}
 	}

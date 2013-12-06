@@ -9,6 +9,7 @@ import epfl.sweng.testing.TestCoordinator;
 import epfl.sweng.testing.TestCoordinator.TTChecks;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -27,6 +28,8 @@ public class AnswerEditor {
 	private boolean mCorrect;
 	private LinearLayout linearLayout;
 	private EditQuestionActivity mActivity;
+	
+	private static final String TAG = "AnswerEditor";
 
 	public AnswerEditor(final EditQuestionActivity activity, ViewGroup view,
 			boolean first) {
@@ -75,7 +78,7 @@ public class AnswerEditor {
 						setCorrect(false);
 					}
 				} catch (MalformedEditorButtonException e) {
-					e.printStackTrace();
+					Log.d(TAG, e.getMessage());
 				}
 				
 				TestCoordinator.check(TTChecks.QUESTION_EDITED);
@@ -140,7 +143,7 @@ public class AnswerEditor {
 			answers = mActivity.getAnswers();
 			answers.remove(this);
 		} catch (MalformedEditorButtonException e) {
-			e.printStackTrace();
+			Log.d(TAG, e.getMessage());
 		}
 
 		((ViewGroup) linearLayout.getParent()).removeView(linearLayout);

@@ -4,6 +4,8 @@ import java.io.UnsupportedEncodingException;
 
 import org.apache.http.entity.StringEntity;
 
+import android.util.Log;
+
 import epfl.sweng.context.AppContext;
 import epfl.sweng.editquestions.EditQuestionActivity;
 import epfl.sweng.editquestions.PostedQuestionEvent;
@@ -17,6 +19,8 @@ import epfl.sweng.servercomm.ServerCommunicator;
 
 public class QuestionPublisherService extends QuestionActivityService implements
 		Service, EventListener {
+	
+	private static final String TAG = "QuestionPublisherService";
 
 	public QuestionPublisherService(EditQuestionActivity activity) {
 		super(activity);
@@ -33,9 +37,9 @@ public class QuestionPublisherService extends QuestionActivityService implements
 		try {
 			reqContext.setEntity(new StringEntity(quizQuestion.toJSON()));
 		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+			Log.d(TAG, e.getMessage());
 		} catch (MalformedQuestionException e) {
-			e.printStackTrace();
+			Log.d(TAG, e.getMessage());
 		}
 		reqContext.addHeader("Content-type", "application/json");
 

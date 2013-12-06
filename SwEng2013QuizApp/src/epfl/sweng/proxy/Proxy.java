@@ -17,6 +17,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
+import android.util.Log;
 import epfl.sweng.cache.SQLiteCache;
 import epfl.sweng.context.AppContext;
 import epfl.sweng.context.ConnectionEvent;
@@ -47,6 +48,8 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 
 	private final static int HTTP_ERROR_THRESHOLD = 500;
 	private final static int HTTP_ERROR_INTERMEDIATE_THRESHOLD = 400;
+	
+	private static final String TAG = "Proxy";
 
 	/** Singleton Instance */
 	private static Proxy sInstance = null;
@@ -106,7 +109,7 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 					queryEntity = new StringEntity("{ \"query\": \""
 							+ query.getQueryString() + "\" }");
 				} catch (UnsupportedEncodingException e) {
-					e.printStackTrace();
+					Log.d(TAG, e.getMessage());
 				}
 				reqContext.setEntity(queryEntity);
 
@@ -122,7 +125,7 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 					ReceivedQuestionEvent receiveEvent = new ReceivedQuestionEvent();
 					receiveEvent.setResponse(results.get(0));
 					results.remove(0);
-					if ((next.equals("") || next == null || next.equals("null"))
+					if ((next == null || next.equals("") || next.equals("null"))
 							&& results.isEmpty()) {
 						state = ProxyState.NORMAL;
 					}
@@ -196,7 +199,7 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 				serializeQuestionToPostList(postQuestion);
 			} catch (IOException e) {
 			
-				e.printStackTrace();
+				Log.d(TAG, e.getMessage());
 			}
 			// TODO Send other status code to display different toast ?
 			PostedQuestionEvent pqe = new PostedQuestionEvent();
@@ -228,8 +231,7 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 				response = new ServerResponse(question.toJSON(),
 						HttpStatus.SC_OK);
 			} catch (MalformedQuestionException e) {
-				throw new RuntimeException(
-						"You cached an unvalid question you fool !");
+				Log.d(TAG, e.getMessage());
 			}
 
 			return response;
@@ -244,7 +246,7 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 			e.printStackTrace();
 		} catch (IOException e) {
 	
-			e.printStackTrace();
+			Log.d(TAG, e.getMessage());
 		}
 		if (!postQuestion.isEmpty()) {
 			RequestContext reqContext = postQuestion.get(0).getReqContext();
@@ -254,7 +256,7 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 				serializeQuestionToPostList(postQuestion);
 			} catch (IOException e) {
 				
-				e.printStackTrace();
+				Log.d(TAG, e.getMessage());
 			}
 			doHttpPost(reqContext, postEvent);
 		} else {
@@ -301,6 +303,7 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 						}
 					} catch (JSONException e) {
 						next = "";
+						Log.d(TAG, e.getMessage());
 					}
 					if ((next.equals("") || next == null || next.equals("null"))
 							&& results.isEmpty()) {
@@ -359,8 +362,7 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 				try {
 					question = new QuizQuestion(data.getEntity());
 				} catch (JSONException e) {
-					throw new RuntimeException(
-							"You are trying to cache an unvalid question you fool !");
+					Log.d(TAG, e.getMessage());
 				}
 
 				cache.cacheQuestion(question);
@@ -389,7 +391,7 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 			serializeQuestionToPostList(postQuestion);
 		} catch (IOException e) {
 	
-			e.printStackTrace();
+			Log.d(TAG, e.getMessage());
 		}
 		this.emit(new ConnectionEvent(ConnectionEventType.COMMUNICATION_ERROR));
 		this.emit(event);
@@ -402,7 +404,7 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 			serializeQuestionToPostList(postQuestion);
 		} catch (IOException e) {
 			
-			e.printStackTrace();
+			Log.d(TAG, e.getMessage());
 		}
 		System.out.println("state is reset");
 	}
@@ -423,7 +425,7 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 					+ query.getQueryString() + "\", \"from\": \"" + next
 					+ "\"}");
 		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+			Log.d(TAG, e.getMessage());
 		}
 		reqContext.setEntity(queryEntity);
 		this.emit(new ConnectionEvent(

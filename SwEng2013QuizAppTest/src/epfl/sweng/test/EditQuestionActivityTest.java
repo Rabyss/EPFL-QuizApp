@@ -7,6 +7,7 @@ import java.util.Set;
 import org.apache.http.HttpStatus;
 
 import android.test.ActivityInstrumentationTestCase2;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -25,6 +26,8 @@ import epfl.sweng.testing.TestingTransaction;
 
 public class EditQuestionActivityTest extends
 		ActivityInstrumentationTestCase2<EditQuestionActivity> {
+	
+	private static final String TAG = "EditQuestionActivityTest";
 
 	private static final String SUBMIT_BUTTON_TEXT = "Submit";
 	private static final String QUESTION_EDITOR_TEXT = "Type in the question's text body";
@@ -98,7 +101,7 @@ public class EditQuestionActivityTest extends
             mockHttpClient.pushCannedResponse("/*/", HttpStatus.SC_OK,
                     question.toJSON(), "application/json");
         } catch (MalformedQuestionException e) {
-            e.printStackTrace();
+        	Log.d(TAG, e.getMessage());
         }
 
 		assertTrue("Submit button not found.",

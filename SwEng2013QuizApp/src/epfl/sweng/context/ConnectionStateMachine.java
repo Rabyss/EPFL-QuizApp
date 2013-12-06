@@ -1,5 +1,6 @@
 package epfl.sweng.context;
 
+import android.util.Log;
 import epfl.sweng.context.conn_states.ConnectionState;
 import epfl.sweng.context.conn_states.IdleOnlineConnectionState;
 import epfl.sweng.events.EventListener;
@@ -8,6 +9,8 @@ import epfl.sweng.events.EventListener;
 public final class ConnectionStateMachine implements EventListener {
     private static final ConnectionState STARTING_STATE = new IdleOnlineConnectionState();
 
+    private static final String TAG = "ConnectionStateMachine";
+    
     private ConnectionState mCurrentState;
 
     public ConnectionStateMachine() {
@@ -23,7 +26,7 @@ public final class ConnectionStateMachine implements EventListener {
             mCurrentState = mCurrentState.getNextState(event);
             System.out.println("On " + event.getType() + " switched to " + mCurrentState);
         } catch (ConnectionState.UnknownTransitionException e) {
-            //TODO : think about this part
+            Log.d(TAG, "Unknown State Transition");
         }
     }
 

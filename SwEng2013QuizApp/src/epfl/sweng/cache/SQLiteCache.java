@@ -13,12 +13,15 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 import epfl.sweng.quizquestions.QuizQuestion;
 import epfl.sweng.searchquestions.parser.SQLQueryCompiler;
 import epfl.sweng.searchquestions.parser.tree.TreeNode;
 
 public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
 
+	private static final String TAG = "SQLiteCache";
+	
     // Database version
     private static final int DATABASE_VERSION = 1;
     // Database name
@@ -131,6 +134,7 @@ public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
 		try {
 			quizQuestion = new QuizQuestion(json);
 		} catch (JSONException e) {
+			Log.d(TAG, "You are trying to cache an invalid question you fool ! ");
 			throw new RuntimeException(
 					"You are trying to cache an invalid question you fool ! "
 							+ json);

@@ -8,6 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.test.AndroidTestCase;
+import android.util.Log;
 import epfl.sweng.context.AppContext;
 import epfl.sweng.quizquestions.QuizQuestion;
 
@@ -15,6 +16,8 @@ public class QuizQuestionTest extends AndroidTestCase {
 
 	private JSONArray answersExamples;
 	private JSONArray tagsExamples;
+	
+	private static final String TAG = "QuizQuestionTest";
 
 	@Override
 	protected void setUp() throws Exception {
@@ -37,7 +40,7 @@ public class QuizQuestionTest extends AndroidTestCase {
 			new QuizQuestion(jsonObject.toString());
 			fail("An empty JSON object cannot be used to build a QuizQuestion.");
 		} catch (JSONException e) {
-
+			Log.d(TAG, e.getMessage());
 		}
 
 		try {
@@ -49,6 +52,7 @@ public class QuizQuestionTest extends AndroidTestCase {
 			new QuizQuestion(jsonObject.toString());
 			fail("A question without an ID cannot be built.");
 		} catch (JSONException e) {
+			Log.d(TAG, e.getMessage());
 		}
 
 		try {
@@ -56,6 +60,7 @@ public class QuizQuestionTest extends AndroidTestCase {
 			System.out.println(jsonObject);
 			new QuizQuestion(jsonObject.toString());
 		} catch (JSONException e) {
+			Log.d(TAG, e.getMessage());
 			fail("A valid question JSON description generates an exception.");
 		}
 
@@ -95,7 +100,7 @@ public class QuizQuestionTest extends AndroidTestCase {
 		QuizQuestion question1 = new QuizQuestion(question, answers, 0, tags,
 				0, owner);
 		assertTrue("Equals does not work", question1.equals(question1));
-		assertFalse("Equals does not work", question1.equals(null));
+		assertFalse("Equals does not work", question1 == null);
 
 		QuizQuestion question2 = new QuizQuestion(null, null, 0, null, 0, null);
 		assertFalse("Equals does not work", question2.equals(question1));

@@ -85,6 +85,7 @@ public final class QueryTokenizer {
                         mPointer++;
                         nextToken = new Token(ERROR);
                     }
+                break;
             }
 
             return nextToken;

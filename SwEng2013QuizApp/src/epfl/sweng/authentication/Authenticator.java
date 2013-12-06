@@ -8,6 +8,8 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 
+import android.util.Log;
+
 import epfl.sweng.entry.MainActivity;
 import epfl.sweng.events.EventEmitter;
 import epfl.sweng.events.EventListener;
@@ -17,6 +19,9 @@ import epfl.sweng.servercomm.RequestContext;
 import epfl.sweng.servercomm.ServerCommunicator;
 
 public class Authenticator extends EventEmitter implements EventListener {
+	
+	private static final String TAG = "Authenticator";
+	
 	private static final int SWENG_OK = 200;
 	private static final int TEQUILA_OK = 302;
 	private static final int TEQUILA_WRONG_CREDITENTIAL = 200;
@@ -51,7 +56,9 @@ public class Authenticator extends EventEmitter implements EventListener {
 				String json = event.getToken();
 				this.mToken = new JSONToken(json).getToken();
 			} catch (JSONException e) {
-				this.error("Error: malformed JSON (token).");
+				String error = "Error: malformed JSON (token).";
+				Log.d(TAG, error);
+				this.error(error);
 			}
 
 			tequilaAuth();
@@ -77,7 +84,9 @@ public class Authenticator extends EventEmitter implements EventListener {
 			ServerCommunicator.getInstance().doHttpPost(req,
 					new ServerAuthenticationEvent.TequilaStatusEvent());
 		} catch (UnsupportedEncodingException e) {
-			this.error("Error: Unsupported Encoding Exception.");
+			String error = "Error: Unsupported Encoding Exception.";
+			Log.d(TAG, error);
+			this.error(error);
 		}
 	}
 
@@ -105,7 +114,9 @@ public class Authenticator extends EventEmitter implements EventListener {
 			ServerCommunicator.getInstance().doHttpPost(req,
 					new ServerAuthenticationEvent.GettingSessionIDEvent());
 		} catch (UnsupportedEncodingException e) {
-			this.error("Error: Unsupported Encoding Exception.");
+			String error = "Error: Unsupported Encoding Exception.";
+			Log.d(TAG, error);
+			this.error(error);
 		}
 	}
 
@@ -121,7 +132,9 @@ public class Authenticator extends EventEmitter implements EventListener {
 
 				this.emit(new AuthenticationEvent.AuthenticatedEvent(mSession));
 			} catch (JSONException e) {
-				this.error("Error: malformed JSON (session).");
+				String error = "Error: malformed JSON (session).";
+				Log.d(TAG, error);
+				this.error(error);
 			}
 		} else {
 			this.error("Error " + status + " on SwengServer");
