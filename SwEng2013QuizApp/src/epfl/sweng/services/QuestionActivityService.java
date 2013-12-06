@@ -6,22 +6,22 @@ import epfl.sweng.proxy.Proxy;
 import epfl.sweng.ui.QuestionActivity;
 
 public abstract class QuestionActivityService extends EventEmitter implements
-		Service, EventListener {
+        Service, EventListener {
 
-	private QuestionActivity mActivity;
-	
-	public QuestionActivityService(QuestionActivity activity) {
-		addListener(activity);
-		mActivity = activity;
-		Proxy.getInstance(activity.getApplicationContext()).addListener(this);
-	}
-	
-	protected QuestionActivity getActivity() {
-		return mActivity;
-	}
-	
-	protected void setActivity(QuestionActivity activity) {
-		mActivity = activity;
-		addListener(activity);
-	}
+    private QuestionActivity mActivity;
+    
+    public QuestionActivityService(QuestionActivity activity) {
+        addListener(activity);
+        mActivity = activity;
+        Proxy.getInstance(activity.getApplicationContext()).addListener(this);
+    }
+    
+    protected QuestionActivity getActivity() {
+        return mActivity;
+    }
+    
+    protected void setActivity(QuestionActivity activity) {
+        mActivity = activity;
+        addListener(activity);
+    }
 }

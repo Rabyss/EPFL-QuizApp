@@ -19,27 +19,27 @@ import android.widget.Toast;
 
 
 public class AuthenticationActivity extends Activity implements EventListener {
-	private Authenticator mAuthenticator;
-	private EditText mUsername;
-	private EditText mPassword;
-	private Button mLogin;
-	private LinearLayout mLinearLayout;
-	private ProgressDialog mLoading;
-	
-	@Override
+    private Authenticator mAuthenticator;
+    private EditText mUsername;
+    private EditText mPassword;
+    private Button mLogin;
+    private LinearLayout mLinearLayout;
+    private ProgressDialog mLoading;
+    
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         displayAuthentication();
     }
 
-	@Override
+    @Override
     public void onBackPressed() {
         Intent displayActivitxIntent = new Intent(this, MainActivity.class);
         startActivity(displayActivitxIntent);
     }
-	
-	private void displayAuthentication() {
-		mLinearLayout = new LinearLayout(this);
+    
+    private void displayAuthentication() {
+        mLinearLayout = new LinearLayout(this);
         mLinearLayout.setOrientation(LinearLayout.VERTICAL);
         mLinearLayout.setLayoutParams(new LayoutParams(
                 LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
@@ -62,58 +62,58 @@ public class AuthenticationActivity extends Activity implements EventListener {
         mLogin.setText(R.string.log_button);
         final AuthenticationActivity mThis = this;
         mLogin.setOnClickListener(new View.OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				mLogin.setEnabled(false);
-				
-				mLoading.show();
-				
-				mAuthenticator = new Authenticator(mUsername.getText().toString(), mPassword.getText().toString());
-				mAuthenticator.addListener(mThis);
-				mAuthenticator.authenticate();
-			}
-		});
+            
+            @Override
+            public void onClick(View v) {
+                mLogin.setEnabled(false);
+                
+                mLoading.show();
+                
+                mAuthenticator = new Authenticator(mUsername.getText().toString(), mPassword.getText().toString());
+                mAuthenticator.addListener(mThis);
+                mAuthenticator.authenticate();
+            }
+        });
         mLinearLayout.addView(mLogin);
         setContentView(mLinearLayout);
         TestCoordinator.check(TTChecks.AUTHENTICATION_ACTIVITY_SHOWN);
-	}
-	
-	public void clearEditField() {
-		mUsername.setText("");
-		mPassword.setText("");
-		TestCoordinator.check(TTChecks.AUTHENTICATION_ACTIVITY_SHOWN);
-	}
-	
-	public void displayMainActivity() {
-		Intent displayMainActivityIntent = new Intent(this,
-				MainActivity.class);
-		startActivity(displayMainActivityIntent);
-	}
-	
-	public void on(AuthenticationEvent.AuthenticatedEvent event) {
-		mAuthenticator.removeListener(this);
-		
-		mLoading.dismiss();
-		
-		String sessionID = event.getSessionID();
-		
-		UserStorage.getInstance(this).storeSessionID(sessionID);
-		
-		displayMainActivity();
-	}
+    }
+    
+    public void clearEditField() {
+        mUsername.setText("");
+        mPassword.setText("");
+        TestCoordinator.check(TTChecks.AUTHENTICATION_ACTIVITY_SHOWN);
+    }
+    
+    public void displayMainActivity() {
+        Intent displayMainActivityIntent = new Intent(this,
+                MainActivity.class);
+        startActivity(displayMainActivityIntent);
+    }
+    
+    public void on(AuthenticationEvent.AuthenticatedEvent event) {
+        mAuthenticator.removeListener(this);
+        
+        mLoading.dismiss();
+        
+        String sessionID = event.getSessionID();
+        
+        UserStorage.getInstance(this).storeSessionID(sessionID);
+        
+        displayMainActivity();
+    }
 
-	public void on(AuthenticationEvent.AuthenticationErrorEvent event) {
-		mLoading.dismiss();
-		mLogin.setEnabled(true);
-		
-		clearEditField();
-			
-		Toast.makeText(this, event.getError(), Toast.LENGTH_LONG).show();
-		
-		String error = event.getError();
-		if (error.equals("wrong indentifier")) {
-			clearEditField();
-		}
-	}
+    public void on(AuthenticationEvent.AuthenticationErrorEvent event) {
+        mLoading.dismiss();
+        mLogin.setEnabled(true);
+        
+        clearEditField();
+            
+        Toast.makeText(this, event.getError(), Toast.LENGTH_LONG).show();
+        
+        String error = event.getError();
+        if (error.equals("wrong indentifier")) {
+            clearEditField();
+        }
+    }
 }

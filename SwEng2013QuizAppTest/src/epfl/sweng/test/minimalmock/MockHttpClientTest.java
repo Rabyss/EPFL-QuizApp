@@ -14,80 +14,80 @@ import epfl.sweng.testing.TestCoordinator.TTChecks;
 
 /** A test that illustrates the use of MockHttpClients */
 public class MockHttpClientTest extends
-		ActivityInstrumentationTestCase2<ShowQuestionsActivity> {
+        ActivityInstrumentationTestCase2<ShowQuestionsActivity> {
 
-	protected static final String RANDOM_QUESTION_BUTTON_LABEL = "Show a random question";
-	protected static final String MIME_JSON = "application/json";
-	protected static final String GET_RANDOM = "GET (?:https?://[^/]+|[^/]+)?/+quizquestions/random\\b";
+    protected static final String RANDOM_QUESTION_BUTTON_LABEL = "Show a random question";
+    protected static final String MIME_JSON = "application/json";
+    protected static final String GET_RANDOM = "GET (?:https?://[^/]+|[^/]+)?/+quizquestions/random\\b";
 
-	private MockHttpClient httpClient;
+    private MockHttpClient httpClient;
 
-	private Solo solo;
+    private Solo solo;
 
-	public MockHttpClientTest() {
-		super(ShowQuestionsActivity.class);
-	}
+    public MockHttpClientTest() {
+        super(ShowQuestionsActivity.class);
+    }
 
-	@Override
-	public void setUp() throws Exception {
-		super.setUp();
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
 
-		httpClient = new MockHttpClient();
-		SwengHttpClientFactory.setInstance(httpClient);
+        httpClient = new MockHttpClient();
+        SwengHttpClientFactory.setInstance(httpClient);
 
-		solo = new Solo(getInstrumentation());
-	}
+        solo = new Solo(getInstrumentation());
+    }
 
-	public void testFetchQuestion() {
-		httpClient
-				.pushCannedResponse(
-						GET_RANDOM,
-						HttpStatus.SC_OK,
-						"{\"question\": \"What is the answer to life, the universe, and everything?\","
-								+ " \"answers\": [\"Forty-two\", \"Twenty-seven\"], \"owner\": \"sweng\","
-								+ " \"solutionIndex\": 0, \"tags\": [\"h2g2\", \"trivia\"], \"id\": \"1\" }",
-						MIME_JSON);
+    public void testFetchQuestion() {
+        httpClient
+                .pushCannedResponse(
+                        GET_RANDOM,
+                        HttpStatus.SC_OK,
+                        "{\"question\": \"What is the answer to life, the universe, and everything?\","
+                                + " \"answers\": [\"Forty-two\", \"Twenty-seven\"], \"owner\": \"sweng\","
+                                + " \"solutionIndex\": 0, \"tags\": [\"h2g2\", \"trivia\"], \"id\": \"1\" }",
+                        MIME_JSON);
 
-		getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
-		assertTrue(
-				"Question must be displayed",
-				solo.searchText("What is the answer to life, the universe, and everything?"));
-		assertTrue("Correct answer must be displayed",
-				solo.searchText("Forty-two"));
-		assertTrue("Incorrect answer must be displayed",
-				solo.searchText("Twenty-seven"));
-	}
+        getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
+        assertTrue(
+                "Question must be displayed",
+                solo.searchText("What is the answer to life, the universe, and everything?"));
+        assertTrue("Correct answer must be displayed",
+                solo.searchText("Forty-two"));
+        assertTrue("Incorrect answer must be displayed",
+                solo.searchText("Twenty-seven"));
+    }
 
-	public void testFetchQuestionFails() {
-		httpClient.pushCannedResponse(
-				GET_RANDOM,
-				HttpStatus.SC_BAD_REQUEST, null, MIME_JSON);
-		getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
-		assertTrue(
-				"An error message must be display",
-				solo.searchText(getActivity().getString(
-						epfl.sweng.R.string.fetch_server_failure)));
-	}
+    public void testFetchQuestionFails() {
+        httpClient.pushCannedResponse(
+                GET_RANDOM,
+                HttpStatus.SC_BAD_REQUEST, null, MIME_JSON);
+        getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
+        assertTrue(
+                "An error message must be display",
+                solo.searchText(getActivity().getString(
+                        epfl.sweng.R.string.fetch_server_failure)));
+    }
 
-	protected void getActivityAndWaitFor(final TestCoordinator.TTChecks expected) {
-		TestCoordinator.run(getInstrumentation(), new TestingTransaction() {
-			@Override
-			public void initiate() {
-				getActivity();
-			}
+    protected void getActivityAndWaitFor(final TestCoordinator.TTChecks expected) {
+        TestCoordinator.run(getInstrumentation(), new TestingTransaction() {
+            @Override
+            public void initiate() {
+                getActivity();
+            }
 
-			@Override
-			public void verify(TestCoordinator.TTChecks notification) {
-				assertEquals(String.format(
-						"Expected notification %s, but received %s", expected,
-						notification), expected, notification);
-			}
+            @Override
+            public void verify(TestCoordinator.TTChecks notification) {
+                assertEquals(String.format(
+                        "Expected notification %s, but received %s", expected,
+                        notification), expected, notification);
+            }
 
-			@Override
-			public String toString() {
-				return String.format("getActivityAndWaitFor(%s)", expected);
-			}
-		});
-	}
+            @Override
+            public String toString() {
+                return String.format("getActivityAndWaitFor(%s)", expected);
+            }
+        });
+    }
 
 }

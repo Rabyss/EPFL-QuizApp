@@ -9,6 +9,6 @@ import epfl.sweng.events.Event;
 
 public  class OnlineEvent extends Event {
 
-	private static final long serialVersionUID = -7735029679304640644L;
-	
+    private static final long serialVersionUID = -7735029679304640644L;
+    
 }

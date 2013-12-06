@@ -16,41 +16,41 @@ import epfl.sweng.testing.TestingTransactions.TTChecks;
  */
 public class MainActivity extends Activity {
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
-		// let the testing infrastructure know that entry point has been
-		// initialized
-		TestingTransactions.check(TTChecks.MAIN_ACTIVITY_SHOWN);
-	}
+        // let the testing infrastructure know that entry point has been
+        // initialized
+        TestingTransactions.check(TTChecks.MAIN_ACTIVITY_SHOWN);
+    }
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
 
-		return true;
-	}
+        return true;
+    }
 
-	public void displayShowQuestion(View view) {
-		Intent displayActivityIntent = new Intent(this,
-				ShowQuestionsActivity.class);
-		startActivity(displayActivityIntent);
-	}
+    public void displayShowQuestion(View view) {
+        Intent displayActivityIntent = new Intent(this,
+                ShowQuestionsActivity.class);
+        startActivity(displayActivityIntent);
+    }
 
-	public void displayEditQuestions(View view) {
-		Intent displayEditQuestionsIntent = new Intent(this,
-				EditQuestionActivity.class);
-		startActivity(displayEditQuestionsIntent);
-	}
+    public void displayEditQuestions(View view) {
+        Intent displayEditQuestionsIntent = new Intent(this,
+                EditQuestionActivity.class);
+        startActivity(displayEditQuestionsIntent);
+    }
 
-	@Override
-	public void onBackPressed() {
-		Intent intent = new Intent(Intent.ACTION_MAIN);
-		intent.addCategory(Intent.CATEGORY_HOME);
-		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		startActivity(intent);
-	}
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
 }

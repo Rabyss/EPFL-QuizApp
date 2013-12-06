@@ -44,11 +44,11 @@ public abstract class QuestionActivity extends Activity implements
     protected abstract void clientFailure();
     
     protected void showProgressDialog() {
-    	progressDialog.show();
+        progressDialog.show();
     }
 
     protected void hideProgressDialog() {
-    	progressDialog.dismiss();
+        progressDialog.dismiss();
     }
 
     public void on(ConnectionErrorEvent event) {

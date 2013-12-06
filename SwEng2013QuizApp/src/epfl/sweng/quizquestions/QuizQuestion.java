@@ -23,304 +23,304 @@ import org.json.JSONObject;
  */
 public class QuizQuestion implements Serializable {
 
-	private static final long serialVersionUID = 1678050024179601632L;
+    private static final long serialVersionUID = 1678050024179601632L;
 
-	// Uses Integer instead of int to allow them to be nullable.
-	private final long mId;
-	private final String mQuestion;
-	private final AnswersList mAnswers;
-	private final int mSolutionIndex;
-	private final TagsSet mTags;
-	private final String mOwner;
+    // Uses Integer instead of int to allow them to be nullable.
+    private final long mId;
+    private final String mQuestion;
+    private final AnswersList mAnswers;
+    private final int mSolutionIndex;
+    private final TagsSet mTags;
+    private final String mOwner;
 
-	private static final int MAX_QUESTION_LENGTH = 500;
-	private static final int MIN_ANSWERS_NUM = 2;
-	private static final int MAX_ANSWERS_NUM = 10;
-	private static final int MIN_TAGS_NUM = 1;
-	private static final int MAX_TAGS_NUM = 20;
-	private static final int MAX_TAG_LEN = 20;
-	private static final int SHIFT_32 = 32;
+    private static final int MAX_QUESTION_LENGTH = 500;
+    private static final int MIN_ANSWERS_NUM = 2;
+    private static final int MAX_ANSWERS_NUM = 10;
+    private static final int MIN_TAGS_NUM = 1;
+    private static final int MAX_TAGS_NUM = 20;
+    private static final int MAX_TAG_LEN = 20;
+    private static final int SHIFT_32 = 32;
 
-	public QuizQuestion(final String question, final List<String> answers,
-			final int solutionIndex, final Set<String> tags, final long id,
-			final String owner) {
-		mId = id;
-		mQuestion = question;
+    public QuizQuestion(final String question, final List<String> answers,
+            final int solutionIndex, final Set<String> tags, final long id,
+            final String owner) {
+        mId = id;
+        mQuestion = question;
 
-		mAnswers = new AnswersList();
-		if (answers != null) {
-			mAnswers.addAll(answers);
-		}
-		mSolutionIndex = solutionIndex;
+        mAnswers = new AnswersList();
+        if (answers != null) {
+            mAnswers.addAll(answers);
+        }
+        mSolutionIndex = solutionIndex;
 
-		mTags = new TagsSet();
-		if (tags != null) {
-			mTags.addAll(tags);
-		}
-		mOwner = owner;
-	}
+        mTags = new TagsSet();
+        if (tags != null) {
+            mTags.addAll(tags);
+        }
+        mOwner = owner;
+    }
 
-	/**
-	 * Constructs the class from a JSONObject
-	 * 
-	 * @param jsonText
-	 * @throws MalformedQuestionException
-	 *             if the JSONObject is malformed
-	 */
-	public QuizQuestion(final String jsonText) throws JSONException {
-		JSONObject jsonModel = new JSONObject(jsonText);
-		mId = jsonModel.getLong("id");
-		mQuestion = jsonModel.getString("question");
+    /**
+     * Constructs the class from a JSONObject
+     * 
+     * @param jsonText
+     * @throws MalformedQuestionException
+     *             if the JSONObject is malformed
+     */
+    public QuizQuestion(final String jsonText) throws JSONException {
+        JSONObject jsonModel = new JSONObject(jsonText);
+        mId = jsonModel.getLong("id");
+        mQuestion = jsonModel.getString("question");
 
-		mAnswers = new AnswersList();
-		mAnswers.addAll(extractCollectionFromJSONArray(jsonModel
-				.getJSONArray("answers")));
+        mAnswers = new AnswersList();
+        mAnswers.addAll(extractCollectionFromJSONArray(jsonModel
+                .getJSONArray("answers")));
 
-		mSolutionIndex = jsonModel.getInt("solutionIndex");
+        mSolutionIndex = jsonModel.getInt("solutionIndex");
 
-		mTags = new TagsSet();
-		mTags.addAll(extractCollectionFromJSONArray(jsonModel
-				.getJSONArray("tags")));
+        mTags = new TagsSet();
+        mTags.addAll(extractCollectionFromJSONArray(jsonModel
+                .getJSONArray("tags")));
 
-		mOwner = jsonModel.getString("owner");
-	}
+        mOwner = jsonModel.getString("owner");
+    }
 
-	public long getId() {
-		return mId;
-	}
+    public long getId() {
+        return mId;
+    }
 
-	public String getQuestion() {
-		return mQuestion;
-	}
+    public String getQuestion() {
+        return mQuestion;
+    }
 
-	public List<String> getAnswers() {
-		return Collections.unmodifiableList(mAnswers);
-	}
+    public List<String> getAnswers() {
+        return Collections.unmodifiableList(mAnswers);
+    }
 
-	/**
-	 * Checks whether the given index is the index of the solution.
-	 */
-	public boolean isSolution(int index) {
-		return mSolutionIndex == index;
-	}
+    /**
+     * Checks whether the given index is the index of the solution.
+     */
+    public boolean isSolution(int index) {
+        return mSolutionIndex == index;
+    }
 
-	public Set<String> getTags() {
-		return Collections.unmodifiableSet(mTags);
-	}
+    public Set<String> getTags() {
+        return Collections.unmodifiableSet(mTags);
+    }
 
-	public String getOwner() {
-		return mOwner;
-	}
+    public String getOwner() {
+        return mOwner;
+    }
 
-	public void addTag(String tag) {
-		mTags.add(tag);
-	}
+    public void addTag(String tag) {
+        mTags.add(tag);
+    }
 
-	public void addAnswer(String answer) {
-		mAnswers.add(answer);
-	}
+    public void addAnswer(String answer) {
+        mAnswers.add(answer);
+    }
 
-	public int getSolution() {
-		return mSolutionIndex;
-	}
+    public int getSolution() {
+        return mSolutionIndex;
+    }
 
-	/**
-	 * Converts the object to its JSON description.
-	 * 
-	 * @return a string containing the JSON description.
-	 * @throws MalformedQuestionException
-	 *             if the question is malformed
-	 */
-	public String toJSON() throws MalformedQuestionException {
-		if (this.auditErrors() != 0) {
-			throw new MalformedQuestionException("Question that must be "
-					+ " converted to JSON is malformed");
-		}
-		Map<String, Object> questionMap = new HashMap<String, Object>();
+    /**
+     * Converts the object to its JSON description.
+     * 
+     * @return a string containing the JSON description.
+     * @throws MalformedQuestionException
+     *             if the question is malformed
+     */
+    public String toJSON() throws MalformedQuestionException {
+        if (this.auditErrors() != 0) {
+            throw new MalformedQuestionException("Question that must be "
+                    + " converted to JSON is malformed");
+        }
+        Map<String, Object> questionMap = new HashMap<String, Object>();
 
-		if (mId != -1) {
-			questionMap.put("id", mId);
-		}
+        if (mId != -1) {
+            questionMap.put("id", mId);
+        }
 
-		questionMap.put("question", mQuestion);
-		questionMap.put("answers", new JSONArray(mAnswers));
-		questionMap.put("solutionIndex", mSolutionIndex);
-		questionMap.put("tags", new JSONArray(mTags));
+        questionMap.put("question", mQuestion);
+        questionMap.put("answers", new JSONArray(mAnswers));
+        questionMap.put("solutionIndex", mSolutionIndex);
+        questionMap.put("tags", new JSONArray(mTags));
 
-		if (mOwner != null) {
-			questionMap.put("owner", mOwner);
-		}
+        if (mOwner != null) {
+            questionMap.put("owner", mOwner);
+        }
 
-		return new JSONObject(questionMap).toString();
-	}
+        return new JSONObject(questionMap).toString();
+    }
 
-	/**
-	 * Audit method for QuizQuestion
-	 * 
-	 * @return the number of errors in this instance representation
-	 */
-	public int auditErrors() {
-		int errors = 0;
+    /**
+     * Audit method for QuizQuestion
+     * 
+     * @return the number of errors in this instance representation
+     */
+    public int auditErrors() {
+        int errors = 0;
 
-		if (!containsNonWhitespaceCharacters(mQuestion)
-				|| mQuestion.length() > MAX_QUESTION_LENGTH) {
-			errors++;
-		}
+        if (!containsNonWhitespaceCharacters(mQuestion)
+                || mQuestion.length() > MAX_QUESTION_LENGTH) {
+            errors++;
+        }
 
-		System.out.println("Errors: " + errors);
+        System.out.println("Errors: " + errors);
 
-		errors += mAnswers.auditErrors();
-		System.out.println("Errors: " + errors);
-		errors += mTags.auditErrors();
-		System.out.println("Errors: " + errors);
+        errors += mAnswers.auditErrors();
+        System.out.println("Errors: " + errors);
+        errors += mTags.auditErrors();
+        System.out.println("Errors: " + errors);
 
-		return errors;
-	}
+        return errors;
+    }
 
-	private static Collection<String> extractCollectionFromJSONArray(
-			JSONArray jsonArray) throws JSONException {
-		final List<String> sourceList = new LinkedList<String>();
-		for (int i = 0; i < jsonArray.length(); i++) {
-			sourceList.add(jsonArray.getString(i));
-		}
+    private static Collection<String> extractCollectionFromJSONArray(
+            JSONArray jsonArray) throws JSONException {
+        final List<String> sourceList = new LinkedList<String>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            sourceList.add(jsonArray.getString(i));
+        }
 
-		return new AbstractCollection<String>() {
+        return new AbstractCollection<String>() {
 
-			private final List<String> strEntries = sourceList;
+            private final List<String> strEntries = sourceList;
 
-			@Override
-			public Iterator<String> iterator() {
-				return strEntries.iterator();
-			}
+            @Override
+            public Iterator<String> iterator() {
+                return strEntries.iterator();
+            }
 
-			@Override
-			public int size() {
-				return strEntries.size();
-			}
-		};
-	}
+            @Override
+            public int size() {
+                return strEntries.size();
+            }
+        };
+    }
 
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ ((mAnswers == null) ? 0 : mAnswers.hashCode());
-		result = prime * result + (int) (mId ^ (mId >>> SHIFT_32));
-		result = prime * result + ((mOwner == null) ? 0 : mOwner.hashCode());
-		result = prime * result
-				+ ((mQuestion == null) ? 0 : mQuestion.hashCode());
-		result = prime * result + mSolutionIndex;
-		result = prime * result + ((mTags == null) ? 0 : mTags.hashCode());
-		return result;
-	}
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result
+                + ((mAnswers == null) ? 0 : mAnswers.hashCode());
+        result = prime * result + (int) (mId ^ (mId >>> SHIFT_32));
+        result = prime * result + ((mOwner == null) ? 0 : mOwner.hashCode());
+        result = prime * result
+                + ((mQuestion == null) ? 0 : mQuestion.hashCode());
+        result = prime * result + mSolutionIndex;
+        result = prime * result + ((mTags == null) ? 0 : mTags.hashCode());
+        return result;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		QuizQuestion other = (QuizQuestion) obj;
-		if (mAnswers == null) {
-			if (other.mAnswers != null) {
-				return false;
-			}
-		} else if (!mAnswers.equals(other.mAnswers)) {
-			return false;	
-		}
-		if (mId != other.mId) {
-			return false;
-		}
-		if (mOwner == null) {
-			if (other.mOwner != null) {
-				return false;
-			}
-		} else if (!mOwner.equals(other.mOwner)) {
-			return false;
-		}
-		if (mQuestion == null) {
-			if (other.mQuestion != null) {
-				return false;
-			}
-		} else if (!mQuestion.equals(other.mQuestion)) {
-			return false;
-		}
-		if (mSolutionIndex != other.mSolutionIndex) {
-			return false;
-		}
-		if (mTags == null) {
-			if (other.mTags != null) {
-				return false;
-			}
-		} else if (!mTags.equals(other.mTags)) {
-			return false;
-		}
-		return true;
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        QuizQuestion other = (QuizQuestion) obj;
+        if (mAnswers == null) {
+            if (other.mAnswers != null) {
+                return false;
+            }
+        } else if (!mAnswers.equals(other.mAnswers)) {
+            return false;    
+        }
+        if (mId != other.mId) {
+            return false;
+        }
+        if (mOwner == null) {
+            if (other.mOwner != null) {
+                return false;
+            }
+        } else if (!mOwner.equals(other.mOwner)) {
+            return false;
+        }
+        if (mQuestion == null) {
+            if (other.mQuestion != null) {
+                return false;
+            }
+        } else if (!mQuestion.equals(other.mQuestion)) {
+            return false;
+        }
+        if (mSolutionIndex != other.mSolutionIndex) {
+            return false;
+        }
+        if (mTags == null) {
+            if (other.mTags != null) {
+                return false;
+            }
+        } else if (!mTags.equals(other.mTags)) {
+            return false;
+        }
+        return true;
+    }
 
-	@Override
-	public String toString() {
-		return "id : " + mId + "\nquestion : " + mQuestion + "\nanswers : "
-				+ mAnswers + "\nsolution index : " + mSolutionIndex
-				+ "\ntags : " + mTags + "\nowner : " + mOwner;
-	}
+    @Override
+    public String toString() {
+        return "id : " + mId + "\nquestion : " + mQuestion + "\nanswers : "
+                + mAnswers + "\nsolution index : " + mSolutionIndex
+                + "\ntags : " + mTags + "\nowner : " + mOwner;
+    }
 
-	private class AnswersList extends LinkedList<String> {
+    private class AnswersList extends LinkedList<String> {
 
-		private static final long serialVersionUID = 3821236061355668378L;
+        private static final long serialVersionUID = 3821236061355668378L;
 
-		public int auditErrors() {
-			int errors = 0;
-			int numAnswers = size();
+        public int auditErrors() {
+            int errors = 0;
+            int numAnswers = size();
 
-			if (numAnswers < MIN_ANSWERS_NUM || numAnswers > MAX_ANSWERS_NUM) {
-				errors++;
-			}
+            if (numAnswers < MIN_ANSWERS_NUM || numAnswers > MAX_ANSWERS_NUM) {
+                errors++;
+            }
 
-			if (mSolutionIndex < 0 || mSolutionIndex >= numAnswers) {
-				errors++;
-			}
+            if (mSolutionIndex < 0 || mSolutionIndex >= numAnswers) {
+                errors++;
+            }
 
-			for (String answer : this) {
-				if (!containsNonWhitespaceCharacters(answer)
-						|| answer.length() > MAX_QUESTION_LENGTH) {
-					errors++;
-				}
-			}
+            for (String answer : this) {
+                if (!containsNonWhitespaceCharacters(answer)
+                        || answer.length() > MAX_QUESTION_LENGTH) {
+                    errors++;
+                }
+            }
 
-			return errors;
-		}
+            return errors;
+        }
 
-	}
+    }
 
-	private class TagsSet extends HashSet<String> {
+    private class TagsSet extends HashSet<String> {
 
-		private static final long serialVersionUID = -3692725125179875656L;
+        private static final long serialVersionUID = -3692725125179875656L;
 
-		public int auditErrors() {
-			int errors = 0;
-			int numTags = size();
+        public int auditErrors() {
+            int errors = 0;
+            int numTags = size();
 
-			if (numTags < MIN_TAGS_NUM || numTags > MAX_TAGS_NUM) {
-				errors++;
-			}
+            if (numTags < MIN_TAGS_NUM || numTags > MAX_TAGS_NUM) {
+                errors++;
+            }
 
-			for (String tag : this) {
-				if (!containsNonWhitespaceCharacters(tag)
-						|| tag.length() > MAX_TAG_LEN) {
-					errors++;
-				}
-			}
+            for (String tag : this) {
+                if (!containsNonWhitespaceCharacters(tag)
+                        || tag.length() > MAX_TAG_LEN) {
+                    errors++;
+                }
+            }
 
-			return errors;
-		}
+            return errors;
+        }
 
-	}
+    }
 }

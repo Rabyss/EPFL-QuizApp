@@ -5,8 +5,8 @@ import epfl.sweng.events.Event;
 
 public final class ConnectionEvent extends Event {
 
-	private static final long serialVersionUID = 4608066880261180790L;
-	private final ConnectionEventType mType;
+    private static final long serialVersionUID = 4608066880261180790L;
+    private final ConnectionEventType mType;
 
     public ConnectionEvent(ConnectionEventType type) {
         mType = type;

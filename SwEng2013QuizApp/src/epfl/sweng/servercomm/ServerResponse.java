@@ -10,24 +10,24 @@ import java.io.Serializable;
  */
 public class ServerResponse implements Serializable{
 
-	private static final long serialVersionUID = -3594630550846728123L;
+    private static final long serialVersionUID = -3594630550846728123L;
 
-	private String mStrEntity;
-	private int mStatusCode;
+    private String mStrEntity;
+    private int mStatusCode;
 
-	
-	public ServerResponse(String strEntity, int statusCode) {
-		this.mStrEntity = strEntity;
-		this.mStatusCode = statusCode;
-	}
+    
+    public ServerResponse(String strEntity, int statusCode) {
+        this.mStrEntity = strEntity;
+        this.mStatusCode = statusCode;
+    }
 
-	
-	public String getEntity() {
-		return mStrEntity;
-	}
+    
+    public String getEntity() {
+        return mStrEntity;
+    }
 
-	
-	public int getStatusCode() {
-		return mStatusCode;
-	}
+    
+    public int getStatusCode() {
+        return mStatusCode;
+    }
 }

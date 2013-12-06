@@ -4,9 +4,9 @@ package epfl.sweng.testing;
 * way. 
 */
 public class TestingTransactionsError extends AssertionError {
-	public TestingTransactionsError(String msg) {
-		super(msg);
-	}
+    public TestingTransactionsError(String msg) {
+        super(msg);
+    }
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 }

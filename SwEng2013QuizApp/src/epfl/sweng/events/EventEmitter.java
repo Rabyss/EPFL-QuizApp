@@ -7,17 +7,17 @@ import java.util.Set;
 import android.util.Log;
 
 /**
- * Un ������metteur d'������v������nement. Cette classe fourni les m������thodes de bases pour
- * associer des EventListeners ������ un ������metteur et g������rer le processus
- * d'������mission.
+ * Un émetteur d'événement. Cette classe fourni les méthodes de bases pour
+ * associer des EventListeners é un émetteur et gérer le processus
+ * d'émission.
  * 
- * Cette version basique d'EventEmitter utilise une ������mission synchrone. Le
- * thread ������metteur est bloqu������ tant que la distribution dun ������v������nement n'est
- * pas termin������e.
+ * Cette version basique d'EventEmitter utilise une émission synchrone. Le
+ * thread émetteur est bloqué tant que la distribution dun événement n'est
+ * pas terminée.
  */
 public abstract class EventEmitter implements EventEmitterInterface {
 	/**
-	 * La liste des EventListeners associ������s ������ cet ������metteur.
+	 * La liste des EventListeners associés é cet émetteur.
 	 */
 	private Set<EventListener> mListeners = new HashSet<EventListener>();
 	
@@ -28,10 +28,10 @@ public abstract class EventEmitter implements EventEmitterInterface {
 	}
 
 	/**
-	 * L'objet qui sera associ������ comme ������metteur pour les ������v������nements ������mis par
-	 * cet ������metteur. Ceci permet, avec la classe EventEmitterInterface,
-	 * d'������muler le comportement d'un EventListener complet dans une classe qui
-	 * ne pourrait pas en h������riter.
+	 * L'objet qui sera associé comme émetteur pour les événements émis par
+	 * cet émetteur. Ceci permet, avec la classe EventEmitterInterface,
+	 * d'émuler le comportement d'un EventListener complet dans une classe qui
+	 * ne pourrait pas en hériter.
 	 */
 
 	private EventEmitterInterface mEmitter;
@@ -41,26 +41,26 @@ public abstract class EventEmitter implements EventEmitterInterface {
 	}
 
 	/**
-	 * Cr������e un nouveau ������metteur d'������v������nement.
+	 * Crée un nouveau émetteur d'événement.
 	 */
 	public EventEmitter() {
 		this(null);
 	}
 
 	/**
-	 * Cr������e un nouveau ������metteur d'������v������nement ������mettant des ������v������nements pour
-	 * le compte d'un autre ������m������teur ou pseudo-������metteur.
+	 * Crée un nouveau émetteur d'événement émettant des événements pour
+	 * le compte d'un autre éméteur ou pseudo-émetteur.
 	 * 
 	 * @param emitter
-	 *            L'������metteur ������ utiliser comme origine pour les ������v������nements
-	 *            ������mis. Par d������faut soi-m������me si null.
+	 *            L'émetteur é utiliser comme origine pour les événements
+	 *            émis. Par défaut soi-méme si null.
 	 */
 	public EventEmitter(EventEmitterInterface emitter) {
 		this.mEmitter = emitter != null ? emitter : this;
 	}
 
 	/**
-	 * Ajoute un gestionnaire aux ������v������nements de cet ������m������tteur.
+	 * Ajoute un gestionnaire aux événements de cet émétteur.
 	 */
 	public synchronized void addListener(EventListener listener) {
 		if (listener != null) {
@@ -69,14 +69,14 @@ public abstract class EventEmitter implements EventEmitterInterface {
 	}
 
 	/**
-	 * Retire un gestionnaire de cet ������metteur.
+	 * Retire un gestionnaire de cet émetteur.
 	 */
 	public synchronized void removeListener(EventListener listener) {
 		mListeners.remove(listener);
 	}
 
 	/**
-	 * Emet un ������v������nement.
+	 * Emet un événement.
 	 * 
 	 * @throws UnhandledEventException
 	 */

@@ -71,7 +71,7 @@ public class QuizQuestion {
         return mOwner;
     }
     public int getSolutionIndex() {
-    	return mSolutionIndex;
+        return mSolutionIndex;
     }
 
     /**
@@ -92,7 +92,7 @@ public class QuizQuestion {
         questionMap.put("tags", new JSONArray(Arrays.asList(mTags)));
         
         if (mOwner != null) {
-        	questionMap.put("owner", mOwner);
+            questionMap.put("owner", mOwner);
         }
         
         return new JSONObject(questionMap).toString();
@@ -123,7 +123,7 @@ public class QuizQuestion {
     }
     
     private static String[] extractArrayFromJson(JSONArray jsonArray)
-    	throws JSONException {
+        throws JSONException {
         String[] stringArray = new String[jsonArray.length()];
         for (int i = 0; i < stringArray.length; i++) {
             stringArray[i] = jsonArray.getString(i);

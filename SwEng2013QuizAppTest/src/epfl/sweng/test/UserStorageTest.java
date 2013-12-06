@@ -10,53 +10,53 @@ import android.content.Context;
 import android.test.ActivityInstrumentationTestCase2;
 
 public class UserStorageTest extends ActivityInstrumentationTestCase2<MainActivity> {
-	private Context mContext;
-	
-	public UserStorageTest() {
-		super(MainActivity.class);
-	}
-	
-	private static final String PONEY = "poney";
-	
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+    private Context mContext;
+    
+    public UserStorageTest() {
+        super(MainActivity.class);
+    }
+    
+    private static final String PONEY = "poney";
+    
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
 
-		getActivityAndWaitFor(TTChecks.MAIN_ACTIVITY_SHOWN);
-		mContext = getInstrumentation().getTargetContext();
-		AppContext.getContext().resetState();
-	}
-	
-	public void testStoreAndGetSession() {
-		UserStorage.getInstance(mContext).storeSessionID(PONEY);
-		assertEquals(UserStorage.getInstance(mContext).getSessionID(), PONEY);
-		UserStorage.getInstance(mContext).removeSessionID();
-	}
-	
-	public void testRemoveSession() {
-		UserStorage.getInstance(mContext).storeSessionID("kittens");
-		UserStorage.getInstance(mContext).removeSessionID();
-		assertEquals(UserStorage.getInstance(mContext).getSessionID(), null);
-	}
-	
-	private void getActivityAndWaitFor(final TestCoordinator.TTChecks expected) {
-		TestCoordinator.run(getInstrumentation(), new TestingTransaction() {
-			@Override
-			public void initiate() {
-				getActivity();
-			}
+        getActivityAndWaitFor(TTChecks.MAIN_ACTIVITY_SHOWN);
+        mContext = getInstrumentation().getTargetContext();
+        AppContext.getContext().resetState();
+    }
+    
+    public void testStoreAndGetSession() {
+        UserStorage.getInstance(mContext).storeSessionID(PONEY);
+        assertEquals(UserStorage.getInstance(mContext).getSessionID(), PONEY);
+        UserStorage.getInstance(mContext).removeSessionID();
+    }
+    
+    public void testRemoveSession() {
+        UserStorage.getInstance(mContext).storeSessionID("kittens");
+        UserStorage.getInstance(mContext).removeSessionID();
+        assertEquals(UserStorage.getInstance(mContext).getSessionID(), null);
+    }
+    
+    private void getActivityAndWaitFor(final TestCoordinator.TTChecks expected) {
+        TestCoordinator.run(getInstrumentation(), new TestingTransaction() {
+            @Override
+            public void initiate() {
+                getActivity();
+            }
 
-			@Override
-			public void verify(TestCoordinator.TTChecks notification) {
-				assertEquals(String.format(
-						"Expected notification %s, but received %s", expected,
-						notification), expected, notification);
-			}
+            @Override
+            public void verify(TestCoordinator.TTChecks notification) {
+                assertEquals(String.format(
+                        "Expected notification %s, but received %s", expected,
+                        notification), expected, notification);
+            }
 
-			@Override
-			public String toString() {
-				return String.format("getActivityAndWaitFor(%s)", expected);
-			}
-		});
-	}
+            @Override
+            public String toString() {
+                return String.format("getActivityAndWaitFor(%s)", expected);
+            }
+        });
+    }
 }

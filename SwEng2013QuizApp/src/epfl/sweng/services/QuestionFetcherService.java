@@ -50,7 +50,7 @@ public class QuestionFetcherService extends QuestionActivityService implements
 					quizQuestion = new QuizQuestion(response.getEntity()
 							.toString());
 				} catch (JSONException e) {
-					Log.d(TAG, e.getMessage(),e);
+					Log.d(TAG, e.getMessage(), e);
 				}
 				this.emit(new ShowQuestionEvent(quizQuestion));
 			}

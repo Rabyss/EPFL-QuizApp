@@ -37,9 +37,9 @@ public class QuestionPublisherService extends QuestionActivityService implements
 		try {
 			reqContext.setEntity(new StringEntity(quizQuestion.toJSON()));
 		} catch (UnsupportedEncodingException e) {
-			Log.d(TAG, e.getMessage(),e);
+			Log.d(TAG, e.getMessage(), e);
 		} catch (MalformedQuestionException e) {
-			Log.d(TAG, e.getMessage(),e);
+			Log.d(TAG, e.getMessage(), e);
 		}
 		reqContext.addHeader("Content-type", "application/json");
 

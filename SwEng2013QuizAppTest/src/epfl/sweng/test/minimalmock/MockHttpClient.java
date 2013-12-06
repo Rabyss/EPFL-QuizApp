@@ -124,9 +124,9 @@ class MockRequestDirector implements RequestDirector {
 
 /** The HTTP Response returned by a MockHttpServer */
 class MockHttpResponse extends BasicHttpResponse {
-	
-	private static final String TAG = "MockHttpResponse";
-	
+    
+    private static final String TAG = "MockHttpResponse";
+    
     public MockHttpResponse(int statusCode, String responseBody, String contentType) {
         super(new ProtocolVersion("HTTP", 1, 1),
                 statusCode,
