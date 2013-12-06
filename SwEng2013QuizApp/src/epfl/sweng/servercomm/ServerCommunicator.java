@@ -27,6 +27,7 @@ import epfl.sweng.proxy.PostConnectionErrorEvent;
  */
 public final class ServerCommunicator extends EventEmitter implements IServer {
     private static final String TAG = "ServerCommunicator";
+    private static final String NOT_FOUND = "No URL found !";
 
     /**
      * Singleton instance
@@ -65,7 +66,7 @@ public final class ServerCommunicator extends EventEmitter implements IServer {
     @Override
     public void doHttpGet(RequestContext reqContext, ServerEvent event) {
         assert !"".equals(reqContext.getServerURL())
-                && null != reqContext.getServerURL() : "No URL found !";
+                && null != reqContext.getServerURL() : NOT_FOUND;
         assert null != event : "Event is null";
         // Creates an asynchronous task to send a GET request.
         new GetTask(event).execute(reqContext);
@@ -73,7 +74,7 @@ public final class ServerCommunicator extends EventEmitter implements IServer {
 
     public void doHttpPost(RequestContext reqContext, ServerEvent event) {
         assert !"".equals(reqContext.getServerURL())
-                && null != reqContext.getServerURL() : "No URL found !";
+                && null != reqContext.getServerURL() : NOT_FOUND;
         assert null != reqContext.getEntity() : "No HttpEntity found !";
         assert !reqContext.getHeaders().isEmpty() : "No Header found !";
         assert null != event : "Event is null";

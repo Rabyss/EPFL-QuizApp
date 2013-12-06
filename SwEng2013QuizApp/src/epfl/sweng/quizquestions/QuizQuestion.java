@@ -40,6 +40,10 @@ public class QuizQuestion implements Serializable {
     private static final int MAX_TAGS_NUM = 20;
     private static final int MAX_TAG_LEN = 20;
     private static final int SHIFT_32 = 32;
+    private static final String ANSWERS = "answers";
+    private static final String QUESTION = "question";
+    private static final String OWNER = "owner";
+    private static final String SOLUTION_INDEX = "solutionIndex";
 
     public QuizQuestion(final String question, final List<String> answers,
             final int solutionIndex, final Set<String> tags, final long id,
@@ -70,19 +74,19 @@ public class QuizQuestion implements Serializable {
     public QuizQuestion(final String jsonText) throws JSONException {
         JSONObject jsonModel = new JSONObject(jsonText);
         mId = jsonModel.getLong("id");
-        mQuestion = jsonModel.getString("question");
+        mQuestion = jsonModel.getString(QUESTION);
 
         mAnswers = new AnswersList();
         mAnswers.addAll(extractCollectionFromJSONArray(jsonModel
-                .getJSONArray("answers")));
+                .getJSONArray(ANSWERS)));
 
-        mSolutionIndex = jsonModel.getInt("solutionIndex");
+        mSolutionIndex = jsonModel.getInt(SOLUTION_INDEX);
 
         mTags = new TagsSet();
         mTags.addAll(extractCollectionFromJSONArray(jsonModel
                 .getJSONArray("tags")));
 
-        mOwner = jsonModel.getString("owner");
+        mOwner = jsonModel.getString(OWNER);
     }
 
     public long getId() {
@@ -142,13 +146,13 @@ public class QuizQuestion implements Serializable {
             questionMap.put("id", mId);
         }
 
-        questionMap.put("question", mQuestion);
-        questionMap.put("answers", new JSONArray(mAnswers));
-        questionMap.put("solutionIndex", mSolutionIndex);
+        questionMap.put(QUESTION, mQuestion);
+        questionMap.put(ANSWERS, new JSONArray(mAnswers));
+        questionMap.put(SOLUTION_INDEX, mSolutionIndex);
         questionMap.put("tags", new JSONArray(mTags));
 
         if (mOwner != null) {
-            questionMap.put("owner", mOwner);
+            questionMap.put(OWNER, mOwner);
         }
 
         return new JSONObject(questionMap).toString();

@@ -45,11 +45,11 @@ import epfl.sweng.showquestions.ReceivedQuestionWithError;
  * Emits events to AppContext to control state machine
  */
 public final class Proxy extends EventEmitter implements IServer, EventListener {
-
     private static final int HTTP_ERROR_THRESHOLD = 500;
     private static final int HTTP_ERROR_INTERMEDIATE_THRESHOLD = 400;
 
     private static final String TAG = "Proxy";
+    private static final String QUERY_KEY = "{ \"query\": \"";
 
     /** Singleton Instance */
     private static Proxy sInstance = null;
@@ -106,7 +106,7 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
                 reqContext.addHeader("Content-type", "application/json");
                 StringEntity queryEntity = null;
                 try {
-                    queryEntity = new StringEntity("{ \"query\": \""
+                    queryEntity = new StringEntity(QUERY_KEY
                             + query.getQueryString() + "\" }");
                 } catch (UnsupportedEncodingException e) {
                     Log.d(TAG, e.getMessage(), e);
@@ -414,7 +414,7 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
         reqContext.addHeader("Content-type", "application/json");
         StringEntity queryEntity = null;
         try {
-            queryEntity = new StringEntity("{ \"query\": \""
+            queryEntity = new StringEntity(QUERY_KEY
                     + query.getQueryString() + "\", \"from\": \"" + next
                     + "\"}");
         } catch (UnsupportedEncodingException e) {
