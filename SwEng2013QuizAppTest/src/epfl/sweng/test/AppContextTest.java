@@ -3,11 +3,11 @@ package epfl.sweng.test;
 import android.test.AndroidTestCase;
 import epfl.sweng.context.AppContext;
 import epfl.sweng.context.ConnectionEvent;
-import epfl.sweng.context.conn_states.ConnectionState;
-import epfl.sweng.context.conn_states.IdleOfflineConnectionState;
-import epfl.sweng.context.conn_states.IdleOnlineConnectionState;
-import epfl.sweng.context.conn_states.ServerInCommunicationConnectionState;
-import epfl.sweng.context.conn_states.ServerSyncConnectionState;
+import epfl.sweng.context.connstates.ConnectionState;
+import epfl.sweng.context.connstates.IdleOfflineConnectionState;
+import epfl.sweng.context.connstates.IdleOnlineConnectionState;
+import epfl.sweng.context.connstates.ServerInCommunicationConnectionState;
+import epfl.sweng.context.connstates.ServerSyncConnectionState;
 import epfl.sweng.events.EventEmitter;
 
 public class AppContextTest extends AndroidTestCase {

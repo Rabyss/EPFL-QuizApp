@@ -1,4 +1,4 @@
-package epfl.sweng.context.conn_states;
+package epfl.sweng.context.connstates;
 
 import epfl.sweng.context.ConnectionEvent;
 import epfl.sweng.testing.TestCoordinator;

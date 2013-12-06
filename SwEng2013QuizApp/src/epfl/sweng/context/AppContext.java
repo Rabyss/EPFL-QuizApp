@@ -1,6 +1,6 @@
 package epfl.sweng.context;
 
-import epfl.sweng.context.conn_states.ConnectionState;
+import epfl.sweng.context.connstates.ConnectionState;
 import epfl.sweng.events.EventEmitter;
 
 import java.util.Collection;

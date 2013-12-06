@@ -22,7 +22,7 @@ import epfl.sweng.cache.SQLiteCache;
 import epfl.sweng.context.AppContext;
 import epfl.sweng.context.ConnectionEvent;
 import epfl.sweng.context.ConnectionEvent.ConnectionEventType;
-import epfl.sweng.context.conn_states.ServerSyncConnectionState;
+import epfl.sweng.context.connstates.ServerSyncConnectionState;
 import epfl.sweng.editquestions.PostedQuestionEvent;
 import epfl.sweng.entry.SwitchSuccessfulEvent;
 import epfl.sweng.events.EventEmitter;

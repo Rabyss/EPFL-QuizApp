@@ -1,8 +1,8 @@
 package epfl.sweng.context;
 
 import android.util.Log;
-import epfl.sweng.context.conn_states.ConnectionState;
-import epfl.sweng.context.conn_states.IdleOnlineConnectionState;
+import epfl.sweng.context.connstates.ConnectionState;
+import epfl.sweng.context.connstates.IdleOnlineConnectionState;
 import epfl.sweng.events.EventListener;
 
 
