@@ -57,7 +57,7 @@ public class Authenticator extends EventEmitter implements EventListener {
                 this.mToken = new JSONToken(json).getToken();
             } catch (JSONException e) {
                 String error = "Error: malformed JSON (token).";
-                Log.d(TAG, error);
+                Log.d(TAG, error, e);
                 this.error(error);
             }
 
@@ -85,7 +85,7 @@ public class Authenticator extends EventEmitter implements EventListener {
                     new ServerAuthenticationEvent.TequilaStatusEvent());
         } catch (UnsupportedEncodingException e) {
             String error = "Error: Unsupported Encoding Exception.";
-            Log.d(TAG, error);
+            Log.d(TAG, error, e);
             this.error(error);
         }
     }
@@ -115,7 +115,7 @@ public class Authenticator extends EventEmitter implements EventListener {
                     new ServerAuthenticationEvent.GettingSessionIDEvent());
         } catch (UnsupportedEncodingException e) {
             String error = "Error: Unsupported Encoding Exception.";
-            Log.d(TAG, error);
+            Log.d(TAG, error, e);
             this.error(error);
         }
     }
@@ -133,7 +133,7 @@ public class Authenticator extends EventEmitter implements EventListener {
                 this.emit(new AuthenticationEvent.AuthenticatedEvent(mSession));
             } catch (JSONException e) {
                 String error = "Error: malformed JSON (session).";
-                Log.d(TAG, error);
+                Log.d(TAG, error, e);
                 this.error(error);
             }
         } else {

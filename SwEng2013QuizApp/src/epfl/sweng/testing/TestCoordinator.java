@@ -114,7 +114,7 @@ public final class TestCoordinator {
                         Log.d(TAG, String.format(
                                 "Waiting for transaction %s... done", t));
                     } catch (InterruptedException e) {
-                        // Nothing...
+                        Log.d(TAG, e.getMessage(), e);
                     }
                     currentTime = System.currentTimeMillis();
                 }

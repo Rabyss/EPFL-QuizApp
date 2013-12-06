@@ -153,7 +153,7 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
                         results.add(new ServerResponse(quizQuestion.toJSON(),
                                 HttpStatus.SC_OK));
                     } catch (MalformedQuestionException e) {
-                        e.printStackTrace();
+                        Log.d(TAG, e.getMessage(), e);
                     }
                 }
                 receiveEvent.setResponse(results.remove(0));
@@ -237,7 +237,7 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
             postQuestion = readPendingQuizQuestion();
         } catch (ClassNotFoundException e) {
 
-            e.printStackTrace();
+            Log.d(TAG, e.getMessage(), e);
         } catch (IOException e) {
 
             Log.d(TAG, e.getMessage(), e);

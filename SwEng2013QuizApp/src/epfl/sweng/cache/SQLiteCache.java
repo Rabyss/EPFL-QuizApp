@@ -134,7 +134,7 @@ public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
         try {
             quizQuestion = new QuizQuestion(json);
         } catch (JSONException e) {
-            Log.d(TAG, "You are trying to cache an invalid question you fool ! ");
+            Log.d(TAG, "You are trying to cache an invalid question you fool ! ", e);
             throw new RuntimeException(
                     "You are trying to cache an invalid question you fool ! "
                             + json);

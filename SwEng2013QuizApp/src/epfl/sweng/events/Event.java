@@ -91,12 +91,12 @@ public class Event implements Cloneable, Serializable {
             } catch (NoSuchMethodException e) {
                 // A listener should not need to implement a 'on' method.
                 // Maybe a parent handles it.
-                Log.v(TAG, "Event callback");
+                Log.v(TAG, "Event callback", e);
                 eventClass = getParent(eventClass);
             } catch (IllegalArgumentException e) {
                 // A listener should not need to handle every 'on' method.
                 // Maybe a parent handles it.
-                Log.v(TAG, "Event callback");
+                Log.v(TAG, "Event callback", e);
                 eventClass = getParent(eventClass);
             } catch (IllegalAccessException e) {
                 eventClass = getParent(eventClass);
@@ -123,7 +123,7 @@ public class Event implements Cloneable, Serializable {
             return super.clone();
         } catch (CloneNotSupportedException e) {
             // Should not happen
-            Log.d(TAG, "Clone not supported Exception");
+            Log.d(TAG, "Clone not supported Exception", e);
             return this;
         }
     }

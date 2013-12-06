@@ -25,7 +25,7 @@ public final class ConnectionStateMachine implements EventListener {
         try {
             mCurrentState = mCurrentState.getNextState(event);
         } catch (ConnectionState.UnknownTransitionException e) {
-            Log.d(TAG, "Unknown State Transition");
+            Log.d(TAG, "Unknown State Transition", e);
         }
     }
 

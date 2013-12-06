@@ -85,7 +85,7 @@ public abstract class EventEmitter implements EventEmitterInterface {
 			try {
 				event.trigger(listener, mEmitter);
 			} catch (InvocationTargetException e) {
-				Log.d(TAG, "'on' methods shouldn't throw exception");
+				Log.d(TAG, "'on' methods shouldn't throw exception", e);
 			}
 		}
 	}

@@ -4,11 +4,14 @@ package epfl.sweng.test;
 import org.json.JSONException;
 
 import android.test.AndroidTestCase;
+import android.util.Log;
 
 import epfl.sweng.authentication.JSONToken;
 import epfl.sweng.context.AppContext;
 
 public class JSONTokenTest extends AndroidTestCase {
+    
+    private static final String TAG = "JSONTokenTest";
     
     @Override
     protected void setUp() throws Exception {
@@ -24,6 +27,7 @@ public class JSONTokenTest extends AndroidTestCase {
             JSONToken jsonToken = new JSONToken(response);
             assertNotNull(jsonToken);
         } catch (JSONException e) {
+            Log.d(TAG, e.getMessage(), e);
             fail("The JSON string is correct");
         }
     }
@@ -45,6 +49,7 @@ public class JSONTokenTest extends AndroidTestCase {
             JSONToken jsonToken = new JSONToken(response);
             assertEquals(jsonToken.getToken(), "5jiju5n4edckf6264u6kd5w7gpx73zdb");
         } catch (JSONException e) {
+            Log.d(TAG, e.getMessage(), e);
             fail("The JSON string is correct");
         }
     }
