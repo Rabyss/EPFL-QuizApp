@@ -230,8 +230,8 @@ public class EditQuestionActivity extends QuestionActivity {
 
             if (View.VISIBLE != removeBtn.getVisibility()) {
                 errors++;
-            } else if (!correctBtn.getText().equals("\u2718")
-                    && !correctBtn.getText().equals("\u2714")) {
+            } else if (!"\u2718".equals(correctBtn.getText())
+                    && !"\u2714".equals(correctBtn.getText())) {
                 errors++;
             }
         }
