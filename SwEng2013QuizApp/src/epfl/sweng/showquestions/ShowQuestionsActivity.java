@@ -66,7 +66,6 @@ public class ShowQuestionsActivity extends QuestionActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mSelf = this;
-        // TODO : TTChecks ?
         getQuestion();
     }
 
