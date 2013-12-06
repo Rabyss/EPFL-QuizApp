@@ -167,12 +167,9 @@ public class QuizQuestion implements Serializable {
             errors++;
         }
 
-        System.out.println("Errors: " + errors);
-
         errors += mAnswers.auditErrors();
-        System.out.println("Errors: " + errors);
+
         errors += mTags.auditErrors();
-        System.out.println("Errors: " + errors);
 
         return errors;
     }
@@ -199,7 +196,6 @@ public class QuizQuestion implements Serializable {
             }
         };
     }
-
 
     @Override
     public int hashCode() {
@@ -233,7 +229,7 @@ public class QuizQuestion implements Serializable {
                 return false;
             }
         } else if (!mAnswers.equals(other.mAnswers)) {
-            return false;    
+            return false;
         }
         if (mId != other.mId) {
             return false;

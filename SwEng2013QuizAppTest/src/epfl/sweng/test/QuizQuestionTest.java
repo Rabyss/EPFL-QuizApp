@@ -56,7 +56,6 @@ public class QuizQuestionTest extends AndroidTestCase {
 
         try {
             jsonObject.put("id", 2);
-            System.out.println(jsonObject);
             new QuizQuestion(jsonObject.toString());
         } catch (JSONException e) {
             Log.d(TAG, e.getMessage(), e);
