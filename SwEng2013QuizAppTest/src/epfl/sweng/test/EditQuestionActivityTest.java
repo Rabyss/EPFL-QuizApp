@@ -7,6 +7,7 @@ import java.util.Set;
 import org.apache.http.HttpStatus;
 
 import android.test.ActivityInstrumentationTestCase2;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -25,6 +26,8 @@ import epfl.sweng.testing.TestingTransaction;
 
 public class EditQuestionActivityTest extends
 		ActivityInstrumentationTestCase2<EditQuestionActivity> {
+	
+	private static final String TAG = "EditQuestionActivityTest";
 
 	private static final String SUBMIT_BUTTON_TEXT = "Submit";
 	private static final String QUESTION_EDITOR_TEXT = "Type in the question's text body";
@@ -62,24 +65,6 @@ public class EditQuestionActivityTest extends
 		solo.finishOpenedActivities();
 	}
 
-	/*
-	 * public void testNoResponse() { fillQuestionBody("Question A");
-	 * fillNextAnswerBody("Answer A");
-	 * 
-	 * solo.clickOnButton(PLUS_BUTTON_TEXT); waitForChange();
-	 * fillNextAnswerBody("Answer B");
-	 * 
-	 * solo.clickOnButton(FALSE_ANSWER_BUTTON);
-	 * 
-	 * EditText tagsEditor = solo.getEditText(TAGS_EDITOR_TEXT);
-	 * solo.typeText(tagsEditor, "A B");
-	 * 
-	 * solo.clickOnButton(SUBMIT_BUTTON_TEXT);
-	 * getActivityAndWaitFor(TTChecks.OFFLINE_CHECKBOX_ENABLED);
-	 * 
-	 * }
-	 */
-
 	public void testSubmit() {
 		final String questionBody = "Question body";
 		final String firstAnswerBody = "Answer A";
@@ -116,7 +101,7 @@ public class EditQuestionActivityTest extends
             mockHttpClient.pushCannedResponse("/*/", HttpStatus.SC_OK,
                     question.toJSON(), "application/json");
         } catch (MalformedQuestionException e) {
-            e.printStackTrace();
+        	Log.d(TAG, e.getMessage());
         }
 
 		assertTrue("Submit button not found.",
@@ -175,20 +160,6 @@ public class EditQuestionActivityTest extends
 		solo.clickOnButton(SUBMIT_BUTTON_TEXT);
 
 		getActivityAndWaitFor(TTChecks.NEW_QUESTION_SUBMITTED);
-		// assertTrue("Error message not found.",
-		// solo.searchText(FETCHING_ERROR_MESSAGE));
-
-		// subject to uncomment
-		// assertTrue("Question body has changed after bad submit.",
-		// solo.searchEditText(questionBody));
-		// assertTrue("First answer body has changed after bad submit.",
-		// solo.searchEditText(firstAnswerBody));
-		// assertTrue("Second answer body has changed after bad submit.",
-		// solo.searchEditText(scdAnswerBody));
-		// assertTrue("Tags body has changed after bad submit.",
-		// solo.searchEditText(tags));
-		// assertTrue("The checked answer does no longer exist after bad submit.",
-		// solo.searchButton(TRUE_ANSWER_BUTTON_TEXT));
 	}
 
 	public void testBadRequest() {

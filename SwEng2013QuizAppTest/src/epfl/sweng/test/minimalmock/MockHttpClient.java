@@ -125,6 +125,9 @@ class MockRequestDirector implements RequestDirector {
 
 /** The HTTP Response returned by a MockHttpServer */
 class MockHttpResponse extends BasicHttpResponse {
+	
+	private static final String TAG = "MockHttpResponse";
+	
     public MockHttpResponse(int statusCode, String responseBody, String contentType) {
         super(new ProtocolVersion("HTTP", 1, 1),
                 statusCode,
@@ -139,7 +142,7 @@ class MockHttpResponse extends BasicHttpResponse {
                 }
                 this.setEntity(responseBodyEntity);
             } catch (UnsupportedEncodingException e) {
-                // Nothing, really...
+                Log.d(TAG, e.getMessage());
             }
         }
     }

@@ -31,6 +31,7 @@ import epfl.sweng.ui.QuestionActivity;
  * 
  */
 public class EditQuestionActivity extends QuestionActivity {
+	
 	private ArrayList<AnswerEditor> answers;
 	private boolean resettingUI = false;
 

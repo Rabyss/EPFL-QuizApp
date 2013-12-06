@@ -11,6 +11,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 
 import android.os.AsyncTask;
+import android.util.Log;
 import epfl.sweng.events.EventEmitter;
 import epfl.sweng.proxy.GetConnectionErrorEvent;
 import epfl.sweng.proxy.IServer;
@@ -25,6 +26,8 @@ import epfl.sweng.proxy.PostConnectionErrorEvent;
  * Otherwise emits a Get(/Post)ConnectionErrorEvent if server was unreachable.
  */
 public final class ServerCommunicator extends EventEmitter implements IServer {
+	
+	private static final String TAG = "ServerCommunicator";
 
 	/**
 	 * Singleton instance
@@ -123,6 +126,7 @@ public final class ServerCommunicator extends EventEmitter implements IServer {
 				return SwengHttpClientFactory.getInstance().execute(post,
 						handler);
 			} catch (IOException e) {
+				Log.d(TAG, e.getMessage());
 				return null;
 			}
 		}
@@ -166,6 +170,7 @@ public final class ServerCommunicator extends EventEmitter implements IServer {
 				return SwengHttpClientFactory.getInstance().execute(get,
 						questionFetchHandler);
 			} catch (IOException e) {
+				Log.d(TAG, e.getMessage());
 				return null;
 			}
 		}
