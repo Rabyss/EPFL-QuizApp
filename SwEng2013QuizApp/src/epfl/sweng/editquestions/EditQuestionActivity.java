@@ -31,297 +31,296 @@ import epfl.sweng.ui.QuestionActivity;
  * 
  */
 public class EditQuestionActivity extends QuestionActivity {
-	private ArrayList<AnswerEditor> answers;
-	private boolean resettingUI = false;
+    private ArrayList<AnswerEditor> answers;
+    private boolean resettingUI = false;
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-		setContentView(R.layout.activity_edit_question);
+        setContentView(R.layout.activity_edit_question);
 
-		answers = new ArrayList<AnswerEditor>();
-		answers.add(new AnswerEditor(this,
-				(ViewGroup) findViewById(R.id.linearLayoutAnswers), true));
+        answers = new ArrayList<AnswerEditor>();
+        answers.add(new AnswerEditor(this,
+                (ViewGroup) findViewById(R.id.linearLayoutAnswers), true));
 
-		findViewById(R.id.editQuestionText).requestFocus();
-		((EditText) findViewById(R.id.editQuestionText))
-				.addTextChangedListener(new EditTextWatcher());
-		((EditText) findViewById(R.id.editTags))
-				.addTextChangedListener(new EditTextWatcher());
-		((Button) findViewById(R.id.buttonSubmitQuestion)).setEnabled(false);
+        findViewById(R.id.editQuestionText).requestFocus();
+        ((EditText) findViewById(R.id.editQuestionText))
+                .addTextChangedListener(new EditTextWatcher());
+        ((EditText) findViewById(R.id.editTags))
+                .addTextChangedListener(new EditTextWatcher());
+        ((Button) findViewById(R.id.buttonSubmitQuestion)).setEnabled(false);
 
-		// let the testing infrastructure know that edit question has been
-		// initialized
-		TestCoordinator.check(TTChecks.EDIT_QUESTIONS_SHOWN);
-	}
+        // let the testing infrastructure know that edit question has been
+        // initialized
+        TestCoordinator.check(TTChecks.EDIT_QUESTIONS_SHOWN);
+    }
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.edit_question, menu);
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.edit_question, menu);
 
-		return true;
-	}
+        return true;
+    }
 
-	public void addAnswer(View view) throws MalformedEditorButtonException {
-		ViewGroup linearLayout = (ViewGroup) findViewById(R.id.linearLayoutAnswers);
-		answers.add(new AnswerEditor(this, linearLayout, false));
-		updateSubmitButton();
-	}
+    public void addAnswer(View view) throws MalformedEditorButtonException {
+        ViewGroup linearLayout = (ViewGroup) findViewById(R.id.linearLayoutAnswers);
+        answers.add(new AnswerEditor(this, linearLayout, false));
+        updateSubmitButton();
+    }
 
-	public ArrayList<AnswerEditor> getAnswers() throws MalformedEditorButtonException {
-		return answers;
-	}
+    public ArrayList<AnswerEditor> getAnswers() throws MalformedEditorButtonException {
+        return answers;
+    }
 
-	public boolean isResettingUI() {
-		return resettingUI;
-	}
+    public boolean isResettingUI() {
+        return resettingUI;
+    }
 
-	public void submitQuestion(View view) throws MalformedEditorButtonException {
-		if (auditErrors() > 0) {
-			return;
-		}
+    public void submitQuestion(View view) throws MalformedEditorButtonException {
+        if (auditErrors() > 0) {
+            return;
+        }
 
-		InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 
-		inputManager.hideSoftInputFromWindow(
-				getCurrentFocus().getWindowToken(),
-				InputMethodManager.HIDE_NOT_ALWAYS);
+        inputManager.hideSoftInputFromWindow(
+                getCurrentFocus().getWindowToken(),
+                InputMethodManager.HIDE_NOT_ALWAYS);
 
-		showProgressDialog(); // PUT THIS BEFOR EXECUTE
-		ServiceFactory.getServiceFor(this).execute();
-	}
+        showProgressDialog(); // PUT THIS BEFOR EXECUTE
+        ServiceFactory.getServiceFor(this).execute();
+    }
 
-	public void on(SuccessfulSubmitEvent event) {
-		hideProgressDialog();
-		Toast.makeText(this, R.string.successful_submit, TOAST_DISPLAY_TIME)
-				.show();
+    public void on(SuccessfulSubmitEvent event) {
+        hideProgressDialog();
+        Toast.makeText(this, R.string.successful_submit, TOAST_DISPLAY_TIME)
+                .show();
 
-		clearFields();
-		TestCoordinator.check(TTChecks.NEW_QUESTION_SUBMITTED);
-	}
+        clearFields();
+        TestCoordinator.check(TTChecks.NEW_QUESTION_SUBMITTED);
+    }
 
-	public void on(PostConnectionErrorEvent event) {
-	    super.on(event);
-	    clearFields();
-	}
-	
-	public void updateSubmitButton() {
-		QuizQuestion quizQuestion = extractQuizQuestion();
-		if (quizQuestion.auditErrors() == 0) {
-			((Button) findViewById(R.id.buttonSubmitQuestion)).setEnabled(true);
-		} else {
-			((Button) findViewById(R.id.buttonSubmitQuestion))
-					.setEnabled(false);
-		}
-	}
+    public void on(PostConnectionErrorEvent event) {
+        super.on(event);
+        clearFields();
+    }
 
-	private QuizQuestion extractQuizQuestion() {
-		String question = ((EditText) findViewById(R.id.editQuestionText))
-				.getText().toString();
+    public void updateSubmitButton() {
+        QuizQuestion quizQuestion = extractQuizQuestion();
+        if (quizQuestion.auditErrors() == 0) {
+            ((Button) findViewById(R.id.buttonSubmitQuestion)).setEnabled(true);
+        } else {
+            ((Button) findViewById(R.id.buttonSubmitQuestion))
+                    .setEnabled(false);
+        }
+    }
 
-		ArrayList<String> answersText = new ArrayList<String>();
-		int solutionIndex = -1;
-		for (AnswerEditor answer : answers) {
-			answersText.add(answer.getContent());
-			if (answer.isCorrect()) {
-				solutionIndex = answers.indexOf(answer);
-			}
-		}
-		String tagsText = ((EditText) findViewById(R.id.editTags)).getText()
-				.toString();
-		String[] tags = (tagsText.trim().isEmpty()) ? new String[0]
-				: cleanUp(tagsText.trim().split("\\W+"));
+    private QuizQuestion extractQuizQuestion() {
+        String question = ((EditText) findViewById(R.id.editQuestionText))
+                .getText().toString();
 
-		Set<String> tagsSet = new HashSet<String>();
-		for (String tag : tags) {
-			tagsSet.add(tag);
-		}
+        ArrayList<String> answersText = new ArrayList<String>();
+        int solutionIndex = -1;
+        for (AnswerEditor answer : answers) {
+            answersText.add(answer.getContent());
+            if (answer.isCorrect()) {
+                solutionIndex = answers.indexOf(answer);
+            }
+        }
+        String tagsText = ((EditText) findViewById(R.id.editTags)).getText()
+                .toString();
+        String[] tags = (tagsText.trim().isEmpty()) ? new String[0]
+                : cleanUp(tagsText.trim().split("\\W+"));
 
-		QuizQuestion quizQuestion = new QuizQuestion(question, answersText,
-				solutionIndex, tagsSet, -1, null);
-		return quizQuestion;
-	}
+        Set<String> tagsSet = new HashSet<String>();
+        for (String tag : tags) {
+            tagsSet.add(tag);
+        }
 
-	private String[] cleanUp(String[] strArray) {
-		ArrayList<String> result = new ArrayList<String>();
-		for (int i = 0; i < strArray.length; i++) {
-			if (strArray[i] != null && !strArray[i].equals("")) {
-				result.add(strArray[i]);
-			}
-		}
+        QuizQuestion quizQuestion = new QuizQuestion(question, answersText,
+                solutionIndex, tagsSet, -1, null);
+        return quizQuestion;
+    }
 
-		return result.toArray(new String[result.size()]);
-	}
+    private String[] cleanUp(String[] strArray) {
+        ArrayList<String> result = new ArrayList<String>();
+        for (int i = 0; i < strArray.length; i++) {
+            if (strArray[i] != null && !strArray[i].equals("")) {
+                result.add(strArray[i]);
+            }
+        }
 
-	@Override
-	protected void serverFailure() {
-		Toast.makeText(this, R.string.submit_server_failure, Toast.LENGTH_LONG)
-				.show();
-		TestCoordinator.check(TTChecks.NEW_QUESTION_SUBMITTED);
+        return result.toArray(new String[result.size()]);
+    }
 
-	}
+    @Override
+    protected void serverFailure() {
+        Toast.makeText(this, R.string.submit_server_failure, Toast.LENGTH_LONG)
+                .show();
+        TestCoordinator.check(TTChecks.NEW_QUESTION_SUBMITTED);
 
-	/**
-	 * Test when texts change
-	 */
-	private final class EditTextWatcher implements TextWatcher {
-		@Override
-		public void onTextChanged(CharSequence s, int start, int before,
-				int count) {
-			// Nothing to do
+    }
 
-		}
+    /**
+     * Test when texts change
+     */
+    private final class EditTextWatcher implements TextWatcher {
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before,
+                int count) {
+            // Nothing to do
 
-		@Override
-		public void beforeTextChanged(CharSequence s, int start, int count,
-				int after) {
-			// Nothing to do
+        }
 
-		}
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count,
+                int after) {
+            // Nothing to do
 
-		@Override
-		public void afterTextChanged(Editable s) {
-			if (!resettingUI) {
-				updateSubmitButton();
-				TestCoordinator.check(TTChecks.QUESTION_EDITED);
-			}
+        }
 
-		}
-	}
+        @Override
+        public void afterTextChanged(Editable s) {
+            if (!resettingUI) {
+                updateSubmitButton();
+                TestCoordinator.check(TTChecks.QUESTION_EDITED);
+            }
 
-	public int auditErrors() {
-		int errors = 0;
+        }
+    }
 
-		errors += auditAnswers();
-		errors += auditButtons();
-		errors += auditEditTexts();
-		errors += auditSubmitButton();
+    public int auditErrors() {
+        int errors = 0;
 
-		return errors;
-	}
+        errors += auditAnswers();
+        errors += auditButtons();
+        errors += auditEditTexts();
+        errors += auditSubmitButton();
 
-	private int auditButtons() {
-		int errors = 0;
+        return errors;
+    }
 
-		if (!((Button) findViewById(R.id.buttonAddAnswer)).getText()
-				.equals("+")) {
-			errors++;
-		} else if ((findViewById(R.id.buttonAddAnswer)).getVisibility() != View.VISIBLE) {
-			errors++;
-		}
+    private int auditButtons() {
+        int errors = 0;
 
-		if (!((Button) findViewById(R.id.buttonSubmitQuestion)).getText()
-				.equals("Submit")) {
-			errors++;
-		} else if ((findViewById(R.id.buttonSubmitQuestion)).getVisibility() != View.VISIBLE) {
-			errors++;
-		}
+        if (!"+".equals(((Button) findViewById(R.id.buttonAddAnswer)).getText())) {
+            errors++;
+        } else if ((findViewById(R.id.buttonAddAnswer)).getVisibility() != View.VISIBLE) {
+            errors++;
+        }
 
-		for (AnswerEditor answer : answers) {
-			Button removeBtn = answer.getRemoveButton();
-			Button correctBtn = answer.getCorrectButton();
+        if (!"Submit".equals(((Button) findViewById(R.id.submitSearchButton))
+                .getText())) {
+            errors++;
+        } else if ((findViewById(R.id.buttonSubmitQuestion)).getVisibility() != View.VISIBLE) {
+            errors++;
+        }
 
-			if (!removeBtn.getText().equals("-")) {
-				errors++;
-			} else if (removeBtn.getVisibility() != View.VISIBLE) {
-				errors++;
-			}
+        for (AnswerEditor answer : answers) {
+            Button removeBtn = answer.getRemoveButton();
+            Button correctBtn = answer.getCorrectButton();
 
-			if (correctBtn.getVisibility() != View.VISIBLE) {
-				errors++;
-			} else if (!correctBtn.getText().equals("\u2718")
-					&& !correctBtn.getText().equals("\u2714")) {
-				errors++;
-			}
-		}
+            if (!removeBtn.getText().equals("-")) {
+                errors++;
+            } else if (View.VISIBLE != removeBtn.getVisibility()) {
+                errors++;
+            }
 
-		return errors;
-	}
+            if (View.VISIBLE != removeBtn.getVisibility()) {
+                errors++;
+            } else if (!correctBtn.getText().equals("\u2718")
+                    && !correctBtn.getText().equals("\u2714")) {
+                errors++;
+            }
+        }
 
-	private int auditAnswers() {
-		int tickCount = 0;
-		for (AnswerEditor answer : answers) {
-			String answerText = answer.getCorrectButton().getText().toString();
-			if (answerText.equals(getString(R.string.button_check))) {
-				tickCount++;
-			}
-		}
-		return tickCount <= 1 ? 0 : 1;
-	}
+        return errors;
+    }
 
-	private int auditEditTexts() {
-		int totalErrors = 0;
+    private int auditAnswers() {
+        int tickCount = 0;
+        for (AnswerEditor answer : answers) {
+            String answerText = answer.getCorrectButton().getText().toString();
+            if (answerText.equals(getString(R.string.button_check))) {
+                tickCount++;
+            }
+        }
+        return tickCount <= 1 ? 0 : 1;
+    }
 
-		EditText questionText = (EditText) findViewById(R.id.editQuestionText);
-		EditText tagsText = (EditText) findViewById(R.id.editTags);
+    private int auditEditTexts() {
+        int totalErrors = 0;
 
-		if (questionText == null
-				|| !questionText.getHint().equals(
-						getResources().getText(R.string.hint_question_text))
-				|| questionText.getVisibility() != View.VISIBLE) {
-			totalErrors++;
-		}
+        EditText questionText = (EditText) findViewById(R.id.editQuestionText);
+        EditText tagsText = (EditText) findViewById(R.id.editTags);
 
-		if (tagsText == null
-				|| !tagsText.getHint().equals(
-						getResources().getText(R.string.edit_tags))
-				|| tagsText.getVisibility() != View.VISIBLE) {
-			totalErrors++;
-		}
+        if (questionText == null
+                || !questionText.getHint().equals(
+                        getResources().getText(R.string.hint_question_text))
+                || questionText.getVisibility() != View.VISIBLE) {
+            totalErrors++;
+        }
 
-		
-		if (answers.size() < 0) {
-			totalErrors++;
-		} else {
-			for (AnswerEditor answer : answers) {
-				if (!answer
-						.getEditText()
-						.getHint()
-						.equals(getResources().getText(
-								R.string.edit_answer_text))
-						|| answer.getEditText().getVisibility() != View.VISIBLE) {
-					totalErrors++;
-				}
-			}
-		}
-		return totalErrors;
-	}
+        if (tagsText == null
+                || !tagsText.getHint().equals(
+                        getResources().getText(R.string.edit_tags))
+                || tagsText.getVisibility() != View.VISIBLE) {
+            totalErrors++;
+        }
 
-	private int auditSubmitButton() {
-		int errors = 0;
-		QuizQuestion quizQuestion = extractQuizQuestion();
+        if (answers.size() < 0) {
+            totalErrors++;
+        } else {
+            for (AnswerEditor answer : answers) {
+                if (!answer
+                        .getEditText()
+                        .getHint()
+                        .equals(getResources().getText(
+                                R.string.edit_answer_text))
+                        || answer.getEditText().getVisibility() != View.VISIBLE) {
+                    totalErrors++;
+                }
+            }
+        }
+        return totalErrors;
+    }
 
-		if (findViewById(R.id.buttonSubmitQuestion).isEnabled()
-				&& quizQuestion.auditErrors() != 0) {
-			errors = 1;
-		}
-		if (!findViewById(R.id.buttonSubmitQuestion).isEnabled()
-				&& quizQuestion.auditErrors() == 0) {
-			errors = 1;
-		}
+    private int auditSubmitButton() {
+        int errors = 0;
+        QuizQuestion quizQuestion = extractQuizQuestion();
 
-		return errors;
-	}
+        if (findViewById(R.id.buttonSubmitQuestion).isEnabled()
+                && quizQuestion.auditErrors() != 0) {
+            errors = 1;
+        }
+        if (!findViewById(R.id.buttonSubmitQuestion).isEnabled()
+                && quizQuestion.auditErrors() == 0) {
+            errors = 1;
+        }
 
-	public QuizQuestion getQuestion() {
-		QuizQuestion quizQuestion = extractQuizQuestion();
-		if (quizQuestion.auditErrors() == 0) {
-			return quizQuestion;
-		} else {
-			return null;
-		}
-	}
+        return errors;
+    }
+
+    public QuizQuestion getQuestion() {
+        QuizQuestion quizQuestion = extractQuizQuestion();
+        if (quizQuestion.auditErrors() == 0) {
+            return quizQuestion;
+        } else {
+            return null;
+        }
+    }
 
     @Override
     protected void clientFailure() {
         TestCoordinator.check(TTChecks.NEW_QUESTION_SUBMITTED);
-        Toast.makeText(this, getString(R.string.submit_server_failure), Toast.LENGTH_LONG).show();
+        Toast.makeText(this, getString(R.string.submit_server_failure),
+                Toast.LENGTH_LONG).show();
     }
-    
+
     private void clearFields() {
-     // Reset UI
+        // Reset UI
         resettingUI = true;
         ((EditText) findViewById(R.id.editQuestionText)).setText("");
         ((EditText) findViewById(R.id.editTags)).setText("");

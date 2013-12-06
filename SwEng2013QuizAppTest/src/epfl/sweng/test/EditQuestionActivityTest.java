@@ -62,24 +62,6 @@ public class EditQuestionActivityTest extends
 		solo.finishOpenedActivities();
 	}
 
-	/*
-	 * public void testNoResponse() { fillQuestionBody("Question A");
-	 * fillNextAnswerBody("Answer A");
-	 * 
-	 * solo.clickOnButton(PLUS_BUTTON_TEXT); waitForChange();
-	 * fillNextAnswerBody("Answer B");
-	 * 
-	 * solo.clickOnButton(FALSE_ANSWER_BUTTON);
-	 * 
-	 * EditText tagsEditor = solo.getEditText(TAGS_EDITOR_TEXT);
-	 * solo.typeText(tagsEditor, "A B");
-	 * 
-	 * solo.clickOnButton(SUBMIT_BUTTON_TEXT);
-	 * getActivityAndWaitFor(TTChecks.OFFLINE_CHECKBOX_ENABLED);
-	 * 
-	 * }
-	 */
-
 	public void testSubmit() {
 		final String questionBody = "Question body";
 		final String firstAnswerBody = "Answer A";
@@ -175,20 +157,6 @@ public class EditQuestionActivityTest extends
 		solo.clickOnButton(SUBMIT_BUTTON_TEXT);
 
 		getActivityAndWaitFor(TTChecks.NEW_QUESTION_SUBMITTED);
-		// assertTrue("Error message not found.",
-		// solo.searchText(FETCHING_ERROR_MESSAGE));
-
-		// subject to uncomment
-		// assertTrue("Question body has changed after bad submit.",
-		// solo.searchEditText(questionBody));
-		// assertTrue("First answer body has changed after bad submit.",
-		// solo.searchEditText(firstAnswerBody));
-		// assertTrue("Second answer body has changed after bad submit.",
-		// solo.searchEditText(scdAnswerBody));
-		// assertTrue("Tags body has changed after bad submit.",
-		// solo.searchEditText(tags));
-		// assertTrue("The checked answer does no longer exist after bad submit.",
-		// solo.searchButton(TRUE_ANSWER_BUTTON_TEXT));
 	}
 
 	public void testBadRequest() {

@@ -53,7 +53,6 @@ public final class QueryParser {
 
         TreeNode root = new SingleChildTreeNode();
         boolean done = parseStart(root);
-        //FOR DEBUG: System.out.println(root);
 
         return new QueryParserResult(queryStr, done, root);
     }

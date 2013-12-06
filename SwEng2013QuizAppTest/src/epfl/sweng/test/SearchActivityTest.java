@@ -46,7 +46,6 @@ public class SearchActivityTest extends
 		assertFalse("Button is disabled", solo.getButton("Search").isEnabled());
 		EditText editText = solo.getEditText("Type in the search query");
 		solo.typeText(editText, "b");
-		// getActivityAndWaitFor(TTChecks.QUERY_EDITED);
 		assertTrue("Button is enabled", solo.getButton("Search").isEnabled());
 	}
 
@@ -72,7 +71,6 @@ public class SearchActivityTest extends
 								+ "}", "application/json");
 		EditText text = solo.getEditText("Type in the search query");
 		solo.typeText(text, "b");
-		// getActivityAndWaitFor(TTChecks.QUERY_EDITED);
 		solo.clickOnButton("Search");
 		getActivityAndWaitFor(TTChecks.QUESTION_SHOWN);
 	}

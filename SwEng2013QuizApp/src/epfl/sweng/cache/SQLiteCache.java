@@ -62,8 +62,7 @@ public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
 
     public SQLiteCache(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        // To delete the database on disk
-       // onUpgrade(getWritableDatabase(), 0, 0);
+        // To delete the database on disk, use reset method
     }
 
     @Override
@@ -236,5 +235,8 @@ public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
         return tags;
     }
 
+    public void reset() {
+        onUpgrade(getWritableDatabase(), 0, 0);
+    }
 
 }

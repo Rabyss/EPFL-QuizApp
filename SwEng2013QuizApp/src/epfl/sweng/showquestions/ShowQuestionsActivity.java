@@ -142,9 +142,6 @@ public class ShowQuestionsActivity extends QuestionActivity {
 		// Display the tags
 		displayTags();
 
-		// Debug: Display the solution
-		// displaySolutionIndex();
-
 		setContentView(mLinearLayout);
 		TestCoordinator.check(TTChecks.QUESTION_SHOWN);
 	}

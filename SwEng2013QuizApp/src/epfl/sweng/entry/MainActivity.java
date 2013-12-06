@@ -73,10 +73,6 @@ public class MainActivity extends Activity implements EventListener {
 		isOfflineCheckBox.setChecked(true);
 	}
 
-	public void on(SwitchSuccessfulEvent event) {
-		// TestCoordinator.check(TTChecks.OFFLINE_CHECKBOX_DISABLED);
-	}
-
 	@Override
 	protected void onStop() {
 		super.onStop();
@@ -219,8 +215,6 @@ public class MainActivity extends Activity implements EventListener {
 						// offline to online
 						if (!isChecked) {
 							emitter.emit(new OnlineEvent());
-						} else {
-							// TestCoordinator.check(TTChecks.OFFLINE_CHECKBOX_ENABLED);
 						}
 					}
 				});
