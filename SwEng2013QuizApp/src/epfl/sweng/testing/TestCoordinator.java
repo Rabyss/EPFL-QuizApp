@@ -13,17 +13,17 @@ import android.util.Log;
  * 
  * We require all SwEng projects to support TestingTransactions. This allows us
  * to create reliable and quick blackbox tests.
- *
+ * 
  * Usage:
- *
+ * 
  * In the test driver, call TestingTransactions.run(getInstrumentation(), new
  * TestingTransaction() { // override the initiate and verify methods, and
  * probably toString });
- *
+ * 
  * In the student code, call
  * TestingTransactions.check(TTChecks.THE_THING_I_JUST_DID) whenever a request
  * is completely done.
- *
+ * 
  * The grading tests make strong assumptions on the behavior of this class; you
  * should not modify it.
  */
@@ -43,6 +43,7 @@ public final class TestCoordinator {
     private enum TTState {
         IDLE, INITIATED, COMPLETED
     };
+
     private TTState state = TTState.IDLE;
 
     /**
@@ -50,21 +51,7 @@ public final class TestCoordinator {
      * to some finished action.
      */
     public enum TTChecks {
-        NONE,
-        QUESTION_SHOWN,
-        ANSWER_SELECTED,
-        QUIZ_SCORE_SHOWN,
-        AVAILABLE_QUIZZES_SHOWN,
-        MAIN_ACTIVITY_SHOWN,
-        EDIT_QUESTIONS_SHOWN,
-        QUESTION_EDITED,
-        NEW_QUESTION_SUBMITTED,
-        AUTHENTICATION_ACTIVITY_SHOWN,
-        LOGGED_OUT,
-        OFFLINE_CHECKBOX_ENABLED,
-        OFFLINE_CHECKBOX_DISABLED,
-        SEARCH_ACTIVITY_SHOWN,
-        QUERY_EDITED
+        NONE, QUESTION_SHOWN, ANSWER_SELECTED, QUIZ_SCORE_SHOWN, AVAILABLE_QUIZZES_SHOWN, MAIN_ACTIVITY_SHOWN, EDIT_QUESTIONS_SHOWN, QUESTION_EDITED, NEW_QUESTION_SUBMITTED, AUTHENTICATION_ACTIVITY_SHOWN, LOGGED_OUT, OFFLINE_CHECKBOX_ENABLED, OFFLINE_CHECKBOX_DISABLED, SEARCH_ACTIVITY_SHOWN, QUERY_EDITED
     };
 
     private TTChecks currentCheck = TTChecks.NONE;
@@ -79,8 +66,8 @@ public final class TestCoordinator {
             synchronized (tts) {
                 if (tts.state != TTState.IDLE) {
                     throw new TestCoordinationError(
-                            "Attempt to run transaction '" + t +
-                            "', but another transaction is running.");
+                            "Attempt to run transaction '" + t
+                                    + "', but another transaction is running.");
                 }
                 tts.startTime = System.currentTimeMillis();
                 Log.d(TAG, String.format("Starting transaction %s", t));
@@ -88,22 +75,25 @@ public final class TestCoordinator {
                 tts.state = TTState.INITIATED;
             }
 
-            // We give up our lock while initiating the transaction. There are now
+            // We give up our lock while initiating the transaction. There are
+            // now
             // two cases:
             // 1) The transaction completes immediately. In that case, the state
-            //    will be set to COMPLETED, and we'll never wait.
-            // 2) The transaction does not complete immediately. In that case, we'll
-            //    call tts.wait() to wait for completion.
+            // will be set to COMPLETED, and we'll never wait.
+            // 2) The transaction does not complete immediately. In that case,
+            // we'll
+            // call tts.wait() to wait for completion.
             t.initiate();
 
             synchronized (tts) {
                 // If the transaction is not initiated or completed, this
                 // probably means that another transaction was run
                 // simultaneously, and set the state back to IDLE.
-                if (tts.state != TTState.INITIATED && tts.state != TTState.COMPLETED) {
+                if (tts.state != TTState.INITIATED
+                        && tts.state != TTState.COMPLETED) {
                     throw new TestCoordinationError(
-                            "Attempt to wait for transaction '" + t +
-                            "', but it was aborted.");
+                            "Attempt to wait for transaction '" + t
+                                    + "', but it was aborted.");
                 }
 
                 // 2) wait for the transaction to complete (i.e., to call check)
@@ -111,9 +101,12 @@ public final class TestCoordinator {
                 while (tts.state != TTState.COMPLETED
                         && currentTime < tts.startTime + TRANSACTION_TIMEOUT) {
                     try {
-                        Log.d(TAG, String.format("Waiting for transaction %s...", t));
-                        tts.wait(TRANSACTION_TIMEOUT - (currentTime - tts.startTime));
-                        Log.d(TAG, String.format("Waiting for transaction %s... done", t));
+                        Log.d(TAG, String.format(
+                                "Waiting for transaction %s...", t));
+                        tts.wait(TRANSACTION_TIMEOUT
+                                - (currentTime - tts.startTime));
+                        Log.d(TAG, String.format(
+                                "Waiting for transaction %s... done", t));
                     } catch (InterruptedException e) {
                         // Nothing...
                     }
@@ -122,8 +115,8 @@ public final class TestCoordinator {
 
                 if (tts.state != TTState.COMPLETED) {
                     throw new TestCoordinationError(String.format(
-                            "Transaction %s timed out (elapsed: %d)",
-                            t, currentTime - tts.startTime));
+                            "Transaction %s timed out (elapsed: %d)", t,
+                            currentTime - tts.startTime));
                 }
                 receivedCheck = tts.currentCheck;
             }
@@ -134,9 +127,11 @@ public final class TestCoordinator {
             // waitForIdleSync().
             instr.waitForIdleSync();
             t.verify(receivedCheck);
-            Log.d(TAG, String.format(
-                    "Completed transaction %s (elapsed: %d)",
-                    t, System.currentTimeMillis() - tts.startTime));
+            synchronized (tts) {
+                Log.d(TAG, String.format(
+                        "Completed transaction %s (elapsed: %d)", t,
+                        System.currentTimeMillis() - tts.startTime));
+            }
         } finally {
             synchronized (tts) {
                 tts.state = TTState.IDLE;
@@ -147,7 +142,8 @@ public final class TestCoordinator {
     // Notifies the waiting thread that the transaction has been completed and
     // is ready to be verified
     public static void check(TTChecks completedCheck) {
-        Log.d(TAG, String.format("TestingTransactions.check(%s)", completedCheck));
+        Log.d(TAG,
+                String.format("TestingTransactions.check(%s)", completedCheck));
         TestCoordinator tts = TestCoordinator.getInstance();
         synchronized (tts) {
             if (tts.state == TTState.IDLE) {
