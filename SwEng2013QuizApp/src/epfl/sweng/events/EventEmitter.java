@@ -75,18 +75,18 @@ public abstract class EventEmitter implements EventEmitterInterface {
         mListeners.remove(listener);
     }
 
-	/**
-	 * Emet un événement.
-	 * 
-	 * @throws UnhandledEventException
-	 */
-	public synchronized void emit(Event event) {
-		for (EventListener listener : mListeners) {
-			try {
-				event.trigger(listener, mEmitter);
-			} catch (InvocationTargetException e) {
-				Log.d(TAG, "'on' methods shouldn't throw exception", e);
-			}
-		}
-	}
+    /**
+     * Emet un événement.
+     * 
+     * @throws UnhandledEventException
+     */
+    public synchronized void emit(Event event) {
+        for (EventListener listener : mListeners) {
+            try {
+                event.trigger(listener, mEmitter);
+            } catch (InvocationTargetException e) {
+                Log.d(TAG, "'on' methods shouldn't throw exception", e);
+            }
+        }
+    }
 }
