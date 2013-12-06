@@ -167,7 +167,8 @@ public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
 
         Cursor cursor = db.rawQuery(questionQuery, new String[0]);
 
-        if (cursor.moveToFirst()) { //if we get a question
+        //if we get a question
+        if (cursor.moveToFirst()) {
             do {
                 QuizQuestion quizQuestion = constructQuizQuestion(db, cursor);
 
