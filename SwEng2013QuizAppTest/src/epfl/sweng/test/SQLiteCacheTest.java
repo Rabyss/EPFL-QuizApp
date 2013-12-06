@@ -120,10 +120,4 @@ public class SQLiteCacheTest extends AndroidTestCase {
         cache.cacheQuestion(qu1);
         assertTrue(cache.getRandomQuestion().auditErrors() == 0);
     }
-
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
-
 }

@@ -61,8 +61,4 @@ public class QuestionPublisherService extends QuestionActivityService implements
         this.emit(event);
         removeListener(super.getActivity());
     }
-
-    public void setActivity(EditQuestionActivity activity) {
-        super.setActivity(activity);
-    }
 }
