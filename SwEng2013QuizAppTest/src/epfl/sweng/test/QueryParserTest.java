@@ -16,21 +16,5 @@ public class QueryParserTest extends AndroidTestCase {
 
         String queryStr = "(a b)";
         assertEquals(queryStr, QueryParser.parse(queryStr).getQueryString());
-
-    /*    assertEquals("(tag_text = 'd' AND (tag_text = 'a' OR tag_text = 'b'))",
-                new SQLQueryCompiler().toSQL(QueryParser.parse("d (a + b)").getAST())
-        );
-
-        assertEquals("((tag_text = 'd' AND tag_text = 'a') OR tag_text = 'b')",
-                new SQLQueryCompiler().toSQL(QueryParser.parse("d a + b").getAST())
-        );
-
-        assertEquals("((tag_text = 'd' AND (tag_text = 'a' AND (tag_text = 'r' AND tag_text = 'q'))) OR tag_text = 'b')",
-                new SQLQueryCompiler().toSQL(QueryParser.parse("d a r q + b").getAST())
-        );
-
-        assertEquals("((tag_text = 'd' AND tag_text = 'a') OR (tag_text = 'g' AND tag_text = 'q'))",
-                new SQLQueryCompiler().toSQL(QueryParser.parse("d * a + g * q").getAST())
-        );*/
     }
 }

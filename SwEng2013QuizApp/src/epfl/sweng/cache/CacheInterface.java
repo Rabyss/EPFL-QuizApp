@@ -10,5 +10,5 @@ public interface CacheInterface {
 	
 	void clearCache();
 
-	Set<QuizQuestion> getQuestionSetByTag(TreeNode AST);
+	Set<QuizQuestion> getQuestionSetByTag(TreeNode ast);
 }

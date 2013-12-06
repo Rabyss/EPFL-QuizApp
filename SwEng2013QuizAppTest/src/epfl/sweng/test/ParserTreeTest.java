@@ -8,7 +8,7 @@ import epfl.sweng.searchquestions.parser.tree.TreeLeaf;
 import epfl.sweng.searchquestions.parser.tree.TreeOr;
 
 public class ParserTreeTest extends AndroidTestCase {
-	public void testToString(){
+	public void testToString() {
 		TreeAnd and1= new TreeAnd();
 		TreeOr or1 = new TreeOr();
 		TreeLeaf tag = new TreeLeaf("tag");
@@ -19,10 +19,10 @@ public class ParserTreeTest extends AndroidTestCase {
 		and2.addChild(tag);
 		and1.changeChild(or1, and2);
 		
-		try{
+		try {
 			and1.changeChild(or1, and2);
 			assertTrue(false);
-		} catch (NoSuchElementException e){
+		} catch (NoSuchElementException e) {
 			
 		}
 		

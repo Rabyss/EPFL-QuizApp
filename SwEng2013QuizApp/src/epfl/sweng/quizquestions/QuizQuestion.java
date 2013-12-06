@@ -39,6 +39,7 @@ public class QuizQuestion implements Serializable {
 	private static final int MIN_TAGS_NUM = 1;
 	private static final int MAX_TAGS_NUM = 20;
 	private static final int MAX_TAG_LEN = 20;
+	private static final int SHIFT_32 = 32;
 
 	public QuizQuestion(final String question, final List<String> answers,
 			final int solutionIndex, final Set<String> tags, final long id,
@@ -206,7 +207,7 @@ public class QuizQuestion implements Serializable {
 		int result = 1;
 		result = prime * result
 				+ ((mAnswers == null) ? 0 : mAnswers.hashCode());
-		result = prime * result + (int) (mId ^ (mId >>> 32));
+		result = prime * result + (int) (mId ^ (mId >>> SHIFT_32));
 		result = prime * result + ((mOwner == null) ? 0 : mOwner.hashCode());
 		result = prime * result
 				+ ((mQuestion == null) ? 0 : mQuestion.hashCode());
@@ -217,37 +218,50 @@ public class QuizQuestion implements Serializable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		QuizQuestion other = (QuizQuestion) obj;
 		if (mAnswers == null) {
-			if (other.mAnswers != null)
+			if (other.mAnswers != null) {
 				return false;
-		} else if (!mAnswers.equals(other.mAnswers))
+			}
+		} else if (!mAnswers.equals(other.mAnswers)) {
+			return false;	
+		}
+		if (mId != other.mId) {
 			return false;
-		if (mId != other.mId)
-			return false;
+		}
 		if (mOwner == null) {
-			if (other.mOwner != null)
+			if (other.mOwner != null) {
 				return false;
-		} else if (!mOwner.equals(other.mOwner))
+			}
+		} else if (!mOwner.equals(other.mOwner)) {
 			return false;
+		}
 		if (mQuestion == null) {
-			if (other.mQuestion != null)
+			if (other.mQuestion != null) {
 				return false;
-		} else if (!mQuestion.equals(other.mQuestion))
+			}
+		} else if (!mQuestion.equals(other.mQuestion)) {
 			return false;
-		if (mSolutionIndex != other.mSolutionIndex)
+		}
+		if (mSolutionIndex != other.mSolutionIndex) {
 			return false;
+		}
 		if (mTags == null) {
-			if (other.mTags != null)
+			if (other.mTags != null) {
 				return false;
-		} else if (!mTags.equals(other.mTags))
+			}
+		} else if (!mTags.equals(other.mTags)) {
 			return false;
+		}
 		return true;
 	}
 

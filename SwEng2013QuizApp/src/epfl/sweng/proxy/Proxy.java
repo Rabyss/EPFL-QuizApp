@@ -207,9 +207,9 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 
 	}
 
-	public void giveQuery(QueryParserResult query) {
+	public void giveQuery(QueryParserResult newQuery) {
 		state = ProxyState.SEARCH;
-		this.query = query;
+		this.query = newQuery;
 	}
 
 	public boolean isOnline() {
@@ -444,7 +444,7 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 
 	@SuppressWarnings("unchecked")
 	private ArrayList<QuestionToSubmit> readPendingQuizQuestion()
-			throws ClassNotFoundException, IOException {
+		throws ClassNotFoundException, IOException {
 		FileInputStream fis = mContext.openFileInput(BACKUP_FILE_NAME);
 
 		ObjectInputStream ois = new ObjectInputStream(fis);

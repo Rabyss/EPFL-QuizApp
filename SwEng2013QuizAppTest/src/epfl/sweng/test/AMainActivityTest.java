@@ -119,7 +119,7 @@ public class AMainActivityTest extends
 	}
 
 	private void login() {
-		if(solo.searchButton("Log in using Tequila")){
+		if (solo.searchButton("Log in using Tequila")) {
 		
 			solo.clickOnButton("Log in using Tequila");
 			getActivityAndWaitFor(TTChecks.AUTHENTICATION_ACTIVITY_SHOWN);

@@ -151,7 +151,7 @@ public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
 
     @SuppressLint("UseSparseArrays")
     @Override
-    public Set<QuizQuestion> getQuestionSetByTag(TreeNode AST) {
+    public Set<QuizQuestion> getQuestionSetByTag(TreeNode ast) {
         Set<QuizQuestion> questions = new HashSet<QuizQuestion>();
 
         SQLiteDatabase db = this.getReadableDatabase();
@@ -160,7 +160,7 @@ public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
 
         String questionQuery = "SELECT " + COL_ID + ", " + COL_QUESTION + ", " + COL_SOLUTION + ", " + COL_OWNER +
                " FROM " +TABLE_QUESTION +
-            " INNER JOIN " + TABLE_TAG + " ON " + COL_ID_TAG +"="+COL_ID + " WHERE " + compiler.toSQL(AST);
+            " INNER JOIN " + TABLE_TAG + " ON " + COL_ID_TAG +"="+COL_ID + " WHERE " + compiler.toSQL(ast);
 
         Cursor cursor = db.rawQuery(questionQuery, new String[0]);
 
@@ -178,7 +178,8 @@ public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
 
     public QuizQuestion getRandomQuestion() {
         SQLiteDatabase db = getReadableDatabase();
-        Cursor quizQuestionCursor = db.query(TABLE_QUESTION + " ORDER BY RANDOM() LIMIT 1", new String[] {"*"}, null, null, null, null, null);
+        Cursor quizQuestionCursor = db.query(TABLE_QUESTION + " ORDER BY RANDOM() LIMIT 1", 
+        	new String[] {"*"}, null, null, null, null, null);
         if (quizQuestionCursor.getCount() > 0) {
             quizQuestionCursor.moveToFirst();
             return constructQuizQuestion(db, quizQuestionCursor);
@@ -189,8 +190,9 @@ public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
     }
 
     private QuizQuestion constructQuizQuestion(SQLiteDatabase db, Cursor cursor) {
-        long quizQuestionID = cursor.getLong(cursor.getColumnIndex(COL_ID)); //the id of the tag is the same as the one of the question
-
+    	//the id of the tag is the same as the one of the question
+    	long quizQuestionID = cursor.getLong(cursor.getColumnIndex(COL_ID));
+        
         String quizQuestionBody = cursor.getString(cursor.getColumnIndex(COL_QUESTION));
         int quizQuestionSolutionIndex = cursor.getInt(cursor.getColumnIndex(COL_SOLUTION));
         String quizQuestionOwner = cursor.getString(cursor.getColumnIndex(COL_OWNER));
@@ -199,13 +201,15 @@ public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
 
         Set<String> quizQuestionTags = getTagsForQuizQuestionWithID(db, quizQuestionID);
 
-        return new QuizQuestion(quizQuestionBody, quizQuestionAnswers, quizQuestionSolutionIndex, quizQuestionTags, quizQuestionID, quizQuestionOwner);
+        return new QuizQuestion(quizQuestionBody, quizQuestionAnswers, quizQuestionSolutionIndex,
+        		quizQuestionTags, quizQuestionID, quizQuestionOwner);
     }
 
     private List<String> getAnswersForQuizQuestionWithID(SQLiteDatabase db, long quizQuestionID) {
         List<String> answers = new LinkedList<String>();
 
-        String answersQuery = "SELECT " + COL_ANSWER + " FROM " + TABLE_ANSWER + " WHERE " + COL_ID_ANSWER + "=" + quizQuestionID + " ORDER BY " + COL_INDEX;
+        String answersQuery = "SELECT " + COL_ANSWER + " FROM " + TABLE_ANSWER + " WHERE " +
+        		COL_ID_ANSWER + "=" + quizQuestionID + " ORDER BY " + COL_INDEX;
         Cursor answersCursor = db.rawQuery(answersQuery, new String[0]);
 
         if (answersCursor.moveToFirst()) {

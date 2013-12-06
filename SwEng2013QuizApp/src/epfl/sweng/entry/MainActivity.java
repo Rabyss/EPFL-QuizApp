@@ -55,7 +55,7 @@ public class MainActivity extends Activity implements EventListener {
 		emitter.addListener(Proxy.getInstance(getApplicationContext()));
 		Proxy.getInstance(getApplicationContext()).addListener(this);
 		displayInit();
-		if(AppContext.getContext().isOnline()){
+		if (AppContext.getContext().isOnline()) {
 			emitter.emit(new OnlineEvent());
 		}
 
@@ -231,12 +231,12 @@ public class MainActivity extends Activity implements EventListener {
 		mLinearLayout.addView(isOfflineCheckBox);
 
 	}
-
+	
 	public static void setIsLogged(boolean isLogged) {
 		mIsLogged = isLogged;
 	}
-	public static boolean isLogged(){
+
+	public static boolean isLogged() {
 		return mIsLogged;
 	}
-
 }
