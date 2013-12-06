@@ -20,8 +20,8 @@ import epfl.sweng.searchquestions.parser.tree.TreeNode;
 
 public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
 
-	private static final String TAG = "SQLiteCache";
-	
+    private static final String TAG = "SQLiteCache";
+    
     // Database version
     private static final int DATABASE_VERSION = 1;
     // Database name
@@ -130,16 +130,16 @@ public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
     }
     
     public void cacheQuestion(String json) {
-    	QuizQuestion quizQuestion = null;
-		try {
-			quizQuestion = new QuizQuestion(json);
-		} catch (JSONException e) {
-			Log.d(TAG, "You are trying to cache an invalid question you fool ! ");
-			throw new RuntimeException(
-					"You are trying to cache an invalid question you fool ! "
-							+ json);
-		}
-		cacheQuestion(quizQuestion);
+        QuizQuestion quizQuestion = null;
+        try {
+            quizQuestion = new QuizQuestion(json);
+        } catch (JSONException e) {
+            Log.d(TAG, "You are trying to cache an invalid question you fool ! ");
+            throw new RuntimeException(
+                    "You are trying to cache an invalid question you fool ! "
+                            + json);
+        }
+        cacheQuestion(quizQuestion);
     }
 
     @Override
@@ -182,7 +182,7 @@ public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
     public QuizQuestion getRandomQuestion() {
         SQLiteDatabase db = getReadableDatabase();
         Cursor quizQuestionCursor = db.query(TABLE_QUESTION + " ORDER BY RANDOM() LIMIT 1", 
-        	new String[] {"*"}, null, null, null, null, null);
+            new String[] {"*"}, null, null, null, null, null);
         if (quizQuestionCursor.getCount() > 0) {
             quizQuestionCursor.moveToFirst();
             return constructQuizQuestion(db, quizQuestionCursor);
@@ -193,8 +193,8 @@ public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
     }
 
     private QuizQuestion constructQuizQuestion(SQLiteDatabase db, Cursor cursor) {
-    	//the id of the tag is the same as the one of the question
-    	long quizQuestionID = cursor.getLong(cursor.getColumnIndex(COL_ID));
+        //the id of the tag is the same as the one of the question
+        long quizQuestionID = cursor.getLong(cursor.getColumnIndex(COL_ID));
         
         String quizQuestionBody = cursor.getString(cursor.getColumnIndex(COL_QUESTION));
         int quizQuestionSolutionIndex = cursor.getInt(cursor.getColumnIndex(COL_SOLUTION));
@@ -205,14 +205,14 @@ public class SQLiteCache extends SQLiteOpenHelper implements CacheInterface {
         Set<String> quizQuestionTags = getTagsForQuizQuestionWithID(db, quizQuestionID);
 
         return new QuizQuestion(quizQuestionBody, quizQuestionAnswers, quizQuestionSolutionIndex,
-        		quizQuestionTags, quizQuestionID, quizQuestionOwner);
+                quizQuestionTags, quizQuestionID, quizQuestionOwner);
     }
 
     private List<String> getAnswersForQuizQuestionWithID(SQLiteDatabase db, long quizQuestionID) {
         List<String> answers = new LinkedList<String>();
 
         String answersQuery = "SELECT " + COL_ANSWER + " FROM " + TABLE_ANSWER + " WHERE " +
-        		COL_ID_ANSWER + "=" + quizQuestionID + " ORDER BY " + COL_INDEX;
+                COL_ID_ANSWER + "=" + quizQuestionID + " ORDER BY " + COL_INDEX;
         Cursor answersCursor = db.rawQuery(answersQuery, new String[0]);
 
         if (answersCursor.moveToFirst()) {

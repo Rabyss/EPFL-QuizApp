@@ -16,78 +16,78 @@ import android.util.Log;
  * pas terminée.
  */
 public abstract class EventEmitter implements EventEmitterInterface {
-	/**
-	 * La liste des EventListeners associés é cet émetteur.
-	 */
-	private Set<EventListener> mListeners = new HashSet<EventListener>();
-	
-	private static final String TAG = "EventEmitter";
+    /**
+     * La liste des EventListeners associés é cet émetteur.
+     */
+    private Set<EventListener> mListeners = new HashSet<EventListener>();
+    
+    private static final String TAG = "EventEmitter";
 
-	protected Set<EventListener> getListeners() {
-		return this.mListeners;
-	}
+    protected Set<EventListener> getListeners() {
+        return this.mListeners;
+    }
 
-	/**
-	 * L'objet qui sera associé comme émetteur pour les événements émis par
-	 * cet émetteur. Ceci permet, avec la classe EventEmitterInterface,
-	 * d'émuler le comportement d'un EventListener complet dans une classe qui
-	 * ne pourrait pas en hériter.
-	 */
+    /**
+     * L'objet qui sera associé comme émetteur pour les événements émis par
+     * cet émetteur. Ceci permet, avec la classe EventEmitterInterface,
+     * d'émuler le comportement d'un EventListener complet dans une classe qui
+     * ne pourrait pas en hériter.
+     */
 
-	private EventEmitterInterface mEmitter;
+    private EventEmitterInterface mEmitter;
 
-	protected EventEmitterInterface getEmitter() {
-		return this.mEmitter;
-	}
+    protected EventEmitterInterface getEmitter() {
+        return this.mEmitter;
+    }
 
-	/**
-	 * Crée un nouveau émetteur d'événement.
-	 */
-	public EventEmitter() {
-		this(null);
-	}
+    /**
+     * Crée un nouveau émetteur d'événement.
+     */
+    public EventEmitter() {
+        this(null);
+    }
 
-	/**
-	 * Crée un nouveau émetteur d'événement émettant des événements pour
-	 * le compte d'un autre éméteur ou pseudo-émetteur.
-	 * 
-	 * @param emitter
-	 *            L'émetteur é utiliser comme origine pour les événements
-	 *            émis. Par défaut soi-méme si null.
-	 */
-	public EventEmitter(EventEmitterInterface emitter) {
-		this.mEmitter = emitter != null ? emitter : this;
-	}
+    /**
+     * Crée un nouveau émetteur d'événement émettant des événements pour
+     * le compte d'un autre éméteur ou pseudo-émetteur.
+     * 
+     * @param emitter
+     *            L'émetteur é utiliser comme origine pour les événements
+     *            émis. Par défaut soi-méme si null.
+     */
+    public EventEmitter(EventEmitterInterface emitter) {
+        this.mEmitter = emitter != null ? emitter : this;
+    }
 
-	/**
-	 * Ajoute un gestionnaire aux événements de cet émétteur.
-	 */
-	public synchronized void addListener(EventListener listener) {
-		if (listener != null) {
-			mListeners.add(listener);
-		}
-	}
+    /**
+     * Ajoute un gestionnaire aux événements de cet émétteur.
+     */
+    public synchronized void addListener(EventListener listener) {
+        if (listener != null) {
+            mListeners.add(listener);
+        }
+    }
 
-	/**
-	 * Retire un gestionnaire de cet émetteur.
-	 */
-	public synchronized void removeListener(EventListener listener) {
-		mListeners.remove(listener);
-	}
+    /**
+     * Retire un gestionnaire de cet émetteur.
+     */
+    public synchronized void removeListener(EventListener listener) {
+        mListeners.remove(listener);
+    }
 
-	/**
-	 * Emet un événement.
-	 * 
-	 * @throws UnhandledEventException
-	 */
-	public synchronized void emit(Event event) {
-		for (EventListener listener : mListeners) {
-			try {
-				event.trigger(listener, mEmitter);
-			} catch (InvocationTargetException e) {
-				System.err.println("'on' methods shouldn't throw exception");
-				Log.d(TAG, "'on' methods shouldn't throw exception");
-			}
-		}
-	}
+    /**
+     * Emet un événement.
+     * 
+     * @throws UnhandledEventException
+     */
+    public synchronized void emit(Event event) {
+        for (EventListener listener : mListeners) {
+            try {
+                event.trigger(listener, mEmitter);
+            } catch (InvocationTargetException e) {
+                System.err.println("'on' methods shouldn't throw exception");
+                Log.d(TAG, "'on' methods shouldn't throw exception");
+            }
+        }
+    }
 }

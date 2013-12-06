@@ -17,58 +17,58 @@ import epfl.sweng.showquestions.ReceivedQuestionWithError;
 import epfl.sweng.showquestions.ShowQuestionsActivity;
 
 public class QuestionFetcherService extends QuestionActivityService implements
-		Service, EventListener {
-	
-	private static final String TAG = "QuestionFetcherService";
+        Service, EventListener {
+    
+    private static final String TAG = "QuestionFetcherService";
 
-	public QuestionFetcherService(ShowQuestionsActivity activity) {
-		super(activity);
-	}
+    public QuestionFetcherService(ShowQuestionsActivity activity) {
+        super(activity);
+    }
 
-	@Override
-	public void execute() {
-		RequestContext reqContext = new RequestContext();
-		reqContext.addHeader("Authorization", "Tequila "
-				+ AppContext.getContext().getSessionID());
-		reqContext
-				.setServerURL(ServerCommunicator.SWENG_GET_RANDOM_QUESTION_URL);
-		Proxy.getInstance(super.getActivity().getApplicationContext())
-				.doHttpGet(reqContext, new ReceivedQuestionEvent());
-	}
+    @Override
+    public void execute() {
+        RequestContext reqContext = new RequestContext();
+        reqContext.addHeader("Authorization", "Tequila "
+                + AppContext.getContext().getSessionID());
+        reqContext
+                .setServerURL(ServerCommunicator.SWENG_GET_RANDOM_QUESTION_URL);
+        Proxy.getInstance(super.getActivity().getApplicationContext())
+                .doHttpGet(reqContext, new ReceivedQuestionEvent());
+    }
 
-	public void on(ReceivedQuestionEvent event) {
-		ServerResponse response = event.getResponse();
-		if (response == null) {
-			this.emit(new ClientErrorEvent());
-		} else {
-			int status = response.getStatusCode();
-			if (status == HttpStatus.SC_NOT_FOUND) {
-				this.emit(new NothingInCacheEvent());
-			} else {
-				QuizQuestion quizQuestion = null;
-				try {
-					quizQuestion = new QuizQuestion(response.getEntity()
-							.toString());
-				} catch (JSONException e) {
-					Log.d(TAG, e.getMessage(), e);
-				}
-				this.emit(new ShowQuestionEvent(quizQuestion));
-			}
-		}
-		removeListener(super.getActivity());
-	}
+    public void on(ReceivedQuestionEvent event) {
+        ServerResponse response = event.getResponse();
+        if (response == null) {
+            this.emit(new ClientErrorEvent());
+        } else {
+            int status = response.getStatusCode();
+            if (status == HttpStatus.SC_NOT_FOUND) {
+                this.emit(new NothingInCacheEvent());
+            } else {
+                QuizQuestion quizQuestion = null;
+                try {
+                    quizQuestion = new QuizQuestion(response.getEntity()
+                            .toString());
+                } catch (JSONException e) {
+                    Log.d(TAG, e.getMessage(), e);
+                }
+                this.emit(new ShowQuestionEvent(quizQuestion));
+            }
+        }
+        removeListener(super.getActivity());
+    }
 
-	public void on(ReceivedQuestionWithError event) {
-		ServerResponse response = event.getResponse();
-		if (response.getStatusCode() == HttpStatus.SC_NOT_FOUND) {
-			this.emit(new NothingInCacheEvent());
-		} else {
-			this.emit(new ConnectionErrorEvent());
-		}
-		removeListener(super.getActivity());
-	}
+    public void on(ReceivedQuestionWithError event) {
+        ServerResponse response = event.getResponse();
+        if (response.getStatusCode() == HttpStatus.SC_NOT_FOUND) {
+            this.emit(new NothingInCacheEvent());
+        } else {
+            this.emit(new ConnectionErrorEvent());
+        }
+        removeListener(super.getActivity());
+    }
 
-	public void setActivity(ShowQuestionsActivity activity) {
-		super.setActivity(activity);
-	}
+    public void setActivity(ShowQuestionsActivity activity) {
+        super.setActivity(activity);
+    }
 }
