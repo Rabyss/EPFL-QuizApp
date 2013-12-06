@@ -29,7 +29,6 @@ public final class QueryParser {
     //global variables used during parsing
     private static Iterator<Token> mTokens = null;
     private static Token mCurrentToken = null;
-
     private QueryParser() {
     }
 
