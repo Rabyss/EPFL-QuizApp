@@ -31,7 +31,7 @@ public class AuthenticationActivity extends Activity implements EventListener {
         super.onCreate(savedInstanceState);
         displayAuthentication();
     }
-
+//test
 	@Override
     public void onBackPressed() {
         Intent displayActivitxIntent = new Intent(this, MainActivity.class);
