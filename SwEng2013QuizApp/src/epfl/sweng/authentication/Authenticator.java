@@ -151,6 +151,5 @@ public class Authenticator extends EventEmitter implements EventListener {
 
 	private void error(String message) {
 		this.emit(new AuthenticationEvent.AuthenticationErrorEvent(message));
-		//ServerCommunicator.getInstance().removeListener(this);
 	}
 }

@@ -393,7 +393,6 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 	
 			Log.d(TAG, e.getMessage(),e);
 		}
-		// TestCoordinator.check(TTChecks.OFFLINE_CHECKBOX_ENABLED);
 		this.emit(new ConnectionEvent(ConnectionEventType.COMMUNICATION_ERROR));
 		this.emit(event);
 	}

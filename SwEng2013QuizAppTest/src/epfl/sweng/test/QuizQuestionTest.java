@@ -18,6 +18,7 @@ public class QuizQuestionTest extends AndroidTestCase {
 	private JSONArray tagsExamples;
 	
 	private static final String TAG = "QuizQuestionTest";
+	private static final String WHAT = "What ?";
 
 	@Override
 	protected void setUp() throws Exception {
@@ -73,9 +74,9 @@ public class QuizQuestionTest extends AndroidTestCase {
 		HashSet<String> tags = new HashSet<String>();
 		tags.add("te");
 		tags.add("st");
-		QuizQuestion question1 = new QuizQuestion("What ?", answers, 0, tags,
+		QuizQuestion question1 = new QuizQuestion(WHAT, answers, 0, tags,
 				0, "test");
-		QuizQuestion question2 = new QuizQuestion("What ?", answers, 0, tags,
+		QuizQuestion question2 = new QuizQuestion(WHAT, answers, 0, tags,
 				0, "test");
 		assertTrue("Equals() does not work", question1.equals(question2));
 		assertTrue("GetId() does not owrk", question1.getId() == 0);

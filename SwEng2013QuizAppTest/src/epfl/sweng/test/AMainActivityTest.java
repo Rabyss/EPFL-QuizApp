@@ -2,18 +2,19 @@ package epfl.sweng.test;
 
 import org.apache.http.HttpStatus;
 
-import com.jayway.android.robotium.solo.Solo;
-
 import android.test.ActivityInstrumentationTestCase2;
 import android.widget.EditText;
+
+import com.jayway.android.robotium.solo.Solo;
+
 import epfl.sweng.authentication.UserStorage;
 import epfl.sweng.entry.MainActivity;
 import epfl.sweng.proxy.Proxy;
 import epfl.sweng.servercomm.SwengHttpClientFactory;
 import epfl.sweng.test.minimalmock.MockHttpClient;
 import epfl.sweng.testing.TestCoordinator;
-import epfl.sweng.testing.TestingTransaction;
 import epfl.sweng.testing.TestCoordinator.TTChecks;
+import epfl.sweng.testing.TestingTransaction;
 
 public class AMainActivityTest extends
 		ActivityInstrumentationTestCase2<MainActivity> {
@@ -31,8 +32,6 @@ public class AMainActivityTest extends
 		super.setUp();
 		getActivityAndWaitFor(TTChecks.MAIN_ACTIVITY_SHOWN);
 		solo = new Solo(getInstrumentation(), getActivity());
-
-		// AppContext.getContext().resetState();
 	}
 
 	@Override

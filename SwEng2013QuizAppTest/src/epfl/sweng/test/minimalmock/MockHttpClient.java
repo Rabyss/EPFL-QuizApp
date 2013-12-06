@@ -114,7 +114,6 @@ class MockRequestDirector implements RequestDirector {
         if (response == null) {
             throw new AssertionError("Request \"" + request.getRequestLine().toString()
                     + "\" did not match any known pattern");
-            //throw new IOException();
         }
 
         Log.v("HTTP", response.getStatusLine().toString());

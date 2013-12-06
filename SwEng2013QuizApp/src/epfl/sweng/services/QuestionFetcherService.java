@@ -63,12 +63,6 @@ public class QuestionFetcherService extends QuestionActivityService implements
 		if (response.getStatusCode() == HttpStatus.SC_NOT_FOUND) {
 			this.emit(new NothingInCacheEvent());
 		} else {
-			/*
-			 * QuizQuestion quizQuestion = null; try { quizQuestion = new
-			 * QuizQuestion(response.getEntity().toString()); } catch
-			 * (JSONException e) { e.printStackTrace(); } //this.emit(new
-			 * ShowQuestionEvent(quizQuestion));
-			 */
 			this.emit(new ConnectionErrorEvent());
 		}
 		removeListener(super.getActivity());
