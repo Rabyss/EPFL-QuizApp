@@ -20,7 +20,7 @@ public class Event implements Cloneable, Serializable {
 	 * L'��metteur qui a ��mit cet ��v��nement. Cet attribut n'est pas s��rialis��
 	 * avec l'��v��nement, dans un tel cas, l'��metteur original est perdu.
 	 */
-	transient private EventEmitterInterface mEmitter;
+	private transient EventEmitterInterface mEmitter;
 
 	/**
 	 * Retourne l'��metteur de cet ��v��nement.
@@ -80,7 +80,8 @@ public class Event implements Cloneable, Serializable {
 				Method on = listener.getClass().getMethod("on", eventClass);
 				
 				// Ensure accessibility
-				on.setAccessible(true); // Inner-class are otherwise unavailable
+				on.setAccessible(true);
+// Inner-class are otherwise unavailable
 
 				// Invoke!
 				on.invoke(listener, event);

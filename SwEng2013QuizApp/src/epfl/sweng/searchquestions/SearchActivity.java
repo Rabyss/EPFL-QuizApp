@@ -21,11 +21,14 @@ import epfl.sweng.testing.TestCoordinator.TTChecks;
 
 public class SearchActivity extends Activity {
 
-    private EditText mEditQuery; // the edit text field where the user type the
+    private EditText mEditQuery;
+// the edit text field where the user type the
     // request
-    private Button mSearchButton; // the button the user press when he wants to
+    private Button mSearchButton;
+// the button the user press when he wants to
     // submit its search query
-    private QueryParserResult mParserResult = null; // the result of the parsing
+    private QueryParserResult mParserResult = null;
+// the result of the parsing
 
     // of the question
 

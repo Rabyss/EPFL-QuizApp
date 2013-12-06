@@ -36,18 +36,18 @@ public final class ServerCommunicator extends EventEmitter implements IServer {
     /**
      * Base server URL
      */
-    public final static String SWENG_SERVER_URL = "https://sweng-quiz.appspot.com";
+    public static final String SWENG_SERVER_URL = "https://sweng-quiz.appspot.com";
 
     /**
      * Server URL for submitting a new question
      */
-    public final static String SWENG_SUBMIT_QUESTION_URL = SWENG_SERVER_URL
+    public static final String SWENG_SUBMIT_QUESTION_URL = SWENG_SERVER_URL
             + "/quizquestions/";
 
     /**
      * Server URL for retrieving a random question
      */
-    public final static String SWENG_GET_RANDOM_QUESTION_URL = SWENG_SUBMIT_QUESTION_URL
+    public  static final String SWENG_GET_RANDOM_QUESTION_URL = SWENG_SUBMIT_QUESTION_URL
             + "random";
 
     /**
@@ -188,5 +188,4 @@ public final class ServerCommunicator extends EventEmitter implements IServer {
             }
         }
     }
-
 }

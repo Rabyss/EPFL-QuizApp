@@ -141,7 +141,8 @@ public final class TestingTransactions {
         TestingTransactions tts = TestingTransactions.getInstance();
         synchronized (tts) {
             if (tts.state == TTState.IDLE) {
-                return; // Do nothing if we're not in testing mode
+                return;
+                // Do nothing if we're not in testing mode
             } else if (tts.state == TTState.INITIATED) {
                 tts.state = TTState.COMPLETED;
                 tts.currentCheck = completedCheck;

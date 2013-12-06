@@ -30,11 +30,11 @@ import epfl.sweng.ui.QuestionActivity;
  */
 public class ShowQuestionsActivity extends QuestionActivity {
 
-	private final static int PADDING_RIGHT = 23;
-	private final static int PADDING_ZERO = 0;
-	private final static int PADDING_FIVE = 5;
-	private final static int PADDING_TEN = 10;
-	private final static int PADDING_TWENTY = 20;
+	private static final int PADDING_RIGHT = 23;
+	private static final int PADDING_ZERO = 0;
+	private static final int PADDING_FIVE = 5;
+	private static final int PADDING_TEN = 10;
+	private static final int PADDING_TWENTY = 20;
 
 	private ShowQuestionsActivity mSelf;
 	private QuizQuestion mRandomQuestion;
@@ -72,7 +72,8 @@ public class ShowQuestionsActivity extends QuestionActivity {
 
 	private void getQuestion() {
 
-		showProgressDialog(); // PUT THIS BEFORE EXECUTE
+		showProgressDialog();
+// PUT THIS BEFORE EXECUTE
 		// downloads a random question from the server
 		ServiceFactory.getServiceFor(this).execute();
 

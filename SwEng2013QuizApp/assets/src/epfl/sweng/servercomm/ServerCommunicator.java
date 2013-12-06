@@ -24,7 +24,7 @@ import epfl.sweng.QuizQuestion;
 public final class ServerCommunicator extends Observable {
 
     private static ServerCommunicator sInstance = null;
-    private final static String SERVER_URL = "https://sweng-quiz.appspot.com";
+    private static final String SERVER_URL = "https://sweng-quiz.appspot.com";
     private boolean isFetching;
     private boolean isSubmitting;
 

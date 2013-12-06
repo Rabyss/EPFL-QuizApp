@@ -21,8 +21,8 @@ import epfl.sweng.ui.QuestionActivity;
  */
 public class ShowQuestionsActivity extends QuestionActivity {
 
-    private final static int PADDING_RIGHT = 23;
-    private final static int PADDING = 0;
+    private static final int PADDING_RIGHT = 23;
+    private static final int PADDING = 0;
 
     private QuizQuestion mRandomQuestion;
     private Button[] mAnswer;

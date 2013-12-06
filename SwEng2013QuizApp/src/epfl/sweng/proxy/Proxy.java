@@ -46,8 +46,8 @@ import epfl.sweng.showquestions.ReceivedQuestionWithError;
  */
 public final class Proxy extends EventEmitter implements IServer, EventListener {
 
-	private final static int HTTP_ERROR_THRESHOLD = 500;
-	private final static int HTTP_ERROR_INTERMEDIATE_THRESHOLD = 400;
+	private static final int HTTP_ERROR_THRESHOLD = 500;
+	private static final int HTTP_ERROR_INTERMEDIATE_THRESHOLD = 400;
 	
 	private static final String TAG = "Proxy";
 
@@ -72,7 +72,7 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 	private ArrayList<ServerResponse> results = new ArrayList<ServerResponse>();
 	private String next;
 
-	private final static String BACKUP_FILE_NAME = "question.backup";
+	private static final String BACKUP_FILE_NAME = "question.backup";
 
 	private Context mContext;
 
