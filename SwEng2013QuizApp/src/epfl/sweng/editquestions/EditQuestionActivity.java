@@ -212,7 +212,7 @@ public class EditQuestionActivity extends QuestionActivity {
             errors++;
         }
 
-        if (!"Submit".equals(((Button) findViewById(R.id.submitSearchButton))
+        if (!"Submit".equals(((Button) findViewById(R.id.buttonSubmitQuestion))
                 .getText())) {
             errors++;
         } else if (View.VISIBLE != (findViewById(R.id.buttonSubmitQuestion)).getVisibility()) {
