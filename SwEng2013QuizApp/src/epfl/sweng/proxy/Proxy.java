@@ -51,19 +51,29 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
     private static final String TAG = "Proxy";
     private static final String QUERY_KEY = "{ \"query\": \"";
 
-    /** Singleton Instance */
+    /**
+     * Singleton Instance
+     */
     private static Proxy sInstance = null;
 
-    /** ServerCommunicator for delegation */
+    /**
+     * ServerCommunicator for delegation
+     */
     private final IServer serverComm;
 
-    /** Cache for questions to be submitted next time online */
+    /**
+     * Cache for questions to be submitted next time online
+     */
     private ArrayList<QuestionToSubmit> postQuestion;
 
-    /** Cache for retrieving questions while offline */
+    /**
+     * Cache for retrieving questions while offline
+     */
     private SQLiteCache cache;
 
-    /** Temporary for a question we tried to submit online but IOException */
+    /**
+     * Temporary for a question we tried to submit online but IOException
+     */
     private QuestionToSubmit questionToSubmit;
 
     private ProxyState state = ProxyState.NORMAL;
@@ -87,7 +97,7 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 
     /**
      * Get the singleton instance of Proxy
-     * 
+     *
      * @return the singleton instance
      */
     public static synchronized Proxy getInstance(Context context) {
@@ -100,83 +110,53 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
     @Override
     public void doHttpGet(RequestContext reqContext, ServerEvent event) {
         if (isOnline()) {
-            if (state == ProxyState.SEARCH) {
-                reqContext
-                        .setServerURL("https://sweng-quiz.appspot.com/search");
-                reqContext.addHeader("Content-type", "application/json");
-                StringEntity queryEntity = null;
-                try {
-                    queryEntity = new StringEntity(QUERY_KEY
-                            + query.getQueryString() + "\" }");
-                } catch (UnsupportedEncodingException e) {
-                    Log.d(TAG, e.getMessage(), e);
-                }
-                reqContext.setEntity(queryEntity);
+            /*
+             * While online the different states have the following semantics:
+             *    - SEARCH implies to start a search request with the server.
+             *    - NEXT means that a search request has already been done and that the
+             *      but the client has displayed all the question of the server answer.
+             *      That is, the client ask the server for further quiz questions matching
+             *      its search.
+             *    - Otherwise, one simply gets a random question from the server.
+             */
 
-                this.emit(new ConnectionEvent(
-                        ConnectionEventType.ADD_OR_RETRIEVE_QUESTION));
-                serverComm.doHttpPost(reqContext, event);
-            } else if (state == ProxyState.NEXT) {
-                if (results.isEmpty()) {
-                    getNextResultFromServer(reqContext, event);
-                } else {
-                    ReceivedQuestionEvent receiveEvent = new ReceivedQuestionEvent();
-                    receiveEvent.setResponse(results.get(0));
-                    results.remove(0);
-                    if ((null == next || "".equals(next) || "null".equals(next))
-                            && results.isEmpty()) {
-                        state = ProxyState.NORMAL;
-                    }
-                    this.emit(receiveEvent);
-                }
-            } else {
-                // state machine transition
-                this.emit(new ConnectionEvent(
-                        ConnectionEventType.ADD_OR_RETRIEVE_QUESTION));
-                // Continue in on(ReceivedQuestionEvent) if server reachable
-                // else (IOException) continue in on(GetConnectionErrorEvent)
-                serverComm.doHttpGet(reqContext, event);
+            switch (state) {
+                case SEARCH:
+                    searchOnServer(reqContext, event);
+                    break;
+                case NEXT:
+                    continueSearchingOnServer(reqContext, event);
+                    break;
+                default:
+                    retrieveQuestionFromServer(reqContext, event);
+                    break;
             }
-        } else if (state == ProxyState.SEARCH) {
-            Set<QuizQuestion> set = cache.getQuestionSetByTag(query.getAST());
-            if (set.isEmpty()) {
-                ReceivedQuestionEvent receiveEvent = new ReceivedQuestionEvent();
-                receiveEvent.setResponse(new ServerResponse(null,
-                        HttpStatus.SC_NOT_FOUND));
-                state = ProxyState.NORMAL;
-            } else {
-                ReceivedQuestionEvent receiveEvent = new ReceivedQuestionEvent();
-                for (Iterator<QuizQuestion> iterator = set.iterator(); iterator
-                        .hasNext();) {
-                    QuizQuestion quizQuestion = (QuizQuestion) iterator.next();
-                    try {
-                        results.add(new ServerResponse(quizQuestion.toJSON(),
-                                HttpStatus.SC_OK));
-                    } catch (MalformedQuestionException e) {
-                        Log.d(TAG, e.getMessage(), e);
-                    }
-                }
-                receiveEvent.setResponse(results.remove(0));
-                if (results.isEmpty()) {
-                    state = ProxyState.NORMAL;
-                } else {
-                    state = ProxyState.NEXT;
-                }
-                this.emit(receiveEvent);
-            }
-        } else if (state == ProxyState.NEXT) {
-            ReceivedQuestionEvent receiveEvent = new ReceivedQuestionEvent();
-            receiveEvent.setResponse(results.remove(0));
-            if (results.isEmpty()) {
-                state = ProxyState.NORMAL;
-            } else {
-                state = ProxyState.NEXT;
-            }
-            this.emit(receiveEvent);
         } else {
-            ReceivedQuestionEvent receiveEvent = new ReceivedQuestionEvent();
-            receiveEvent.setResponse(offlineRandomQuestion());
-            this.emit(receiveEvent);
+
+            /*
+             * While offline the states have almost the same meaning except one fetches questions from cache.
+             * Note that the cache always returns all the questions matching a request. That is, the state
+             * NEXT has a different semantics. A search occurs as follows:
+             *   - Look if questions matches the search query in cache.
+             *   - If there are more than one, display one, store the questions in a list and go to the NEXT state.
+             *     While in NEXT state, if one fetches the next question, we just remove the head of the list until
+             *     the list is empty and finally return to NORMAL mode.
+             *   - If there are one, just display it and stay in NORMAL mode (random question mode)
+             *   - If there are no, stay in normal mode
+             * Then,
+             */
+
+            switch (state) {
+                case SEARCH:
+                    searchInCache();
+                    break;
+                case NEXT:
+                    continueSearchingInCache();
+                    break;
+                default:
+                    retrieveQuestionFromCache();
+                    break;
+            }
         }
 
     }
@@ -214,24 +194,6 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
         return AppContext.getContext().isOnline();
     }
 
-    private ServerResponse offlineRandomQuestion() {
-        QuizQuestion question = cache.getRandomQuestion();
-
-        if (question == null) {
-            return new ServerResponse(null, HttpStatus.SC_NOT_FOUND);
-        } else {
-            ServerResponse response = null;
-            try {
-                response = new ServerResponse(question.toJSON(),
-                        HttpStatus.SC_OK);
-            } catch (MalformedQuestionException e) {
-                Log.d(TAG, e.getMessage(), e);
-            }
-
-            return response;
-        }
-    }
-
     public void on(OnlineEvent event) {
         try {
             postQuestion = readPendingQuizQuestion();
@@ -262,6 +224,10 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 
     }
 
+    /**
+     * Occurrs when a question is receive from server or cache.
+     * @param event
+     */
     public void on(ReceivedQuestionEvent event) {
         // data cannot be null because server answered something
         ServerResponse data = event.getResponse();
@@ -335,7 +301,7 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
 
     /**
      * Server unreachable or answered >= 500 status code
-     * 
+     *
      * @param event
      */
     public void on(GetConnectionErrorEvent event) {
@@ -404,12 +370,123 @@ public final class Proxy extends EventEmitter implements IServer, EventListener 
         }
     }
 
+    private void retrieveQuestionFromCache() {
+        ReceivedQuestionEvent receiveEvent = new ReceivedQuestionEvent();
+        receiveEvent.setResponse(offlineRandomQuestion());
+        this.emit(receiveEvent);
+    }
+
+    private void continueSearchingInCache() {
+        ReceivedQuestionEvent receiveEvent = new ReceivedQuestionEvent();
+        receiveEvent.setResponse(results.remove(0));
+        if (results.isEmpty()) {
+            state = ProxyState.NORMAL;
+        } else {
+            state = ProxyState.NEXT;
+        }
+        this.emit(receiveEvent);
+    }
+
+    private void searchInCache() {
+        Set<QuizQuestion> quizQuestionsMatchingQuery = cache.getQuestionSetByTag(query.getAST());
+
+        if (quizQuestionsMatchingQuery.isEmpty()) {
+
+            ReceivedQuestionEvent receiveEvent = new ReceivedQuestionEvent();
+            receiveEvent.setResponse(new ServerResponse(null, HttpStatus.SC_NOT_FOUND));
+            state = ProxyState.NORMAL;
+
+        } else {
+
+            ReceivedQuestionEvent receiveEvent = new ReceivedQuestionEvent();
+            for (QuizQuestion quizQuestion : quizQuestionsMatchingQuery) {
+                try {
+                    results.add(new ServerResponse(quizQuestion.toJSON(), HttpStatus.SC_OK));
+                } catch (MalformedQuestionException e) {
+                    Log.d(TAG, e.getMessage(), e);
+                }
+            }
+
+            receiveEvent.setResponse(results.remove(0));
+            if (results.isEmpty()) {
+                state = ProxyState.NORMAL;
+            } else {
+                state = ProxyState.NEXT;
+            }
+            this.emit(receiveEvent);
+        }
+    }
+
+    private void retrieveQuestionFromServer(RequestContext reqContext, ServerEvent event) {
+        // state machine transition
+        this.emit(new ConnectionEvent(
+                ConnectionEventType.ADD_OR_RETRIEVE_QUESTION));
+        // Continue in on(ReceivedQuestionEvent) if server reachable
+        // else (IOException) continue in on(GetConnectionErrorEvent)
+        serverComm.doHttpGet(reqContext, event);
+    }
+
+    private void continueSearchingOnServer(RequestContext reqContext, ServerEvent event) {
+        if (results.isEmpty()) {
+            getNextResultFromServer(reqContext, event);
+        } else {
+            ReceivedQuestionEvent receiveEvent = new ReceivedQuestionEvent();
+            receiveEvent.setResponse(results.get(0));
+            results.remove(0);
+            if ((null == next || "".equals(next) || "null".equals(next))
+                    && results.isEmpty()) {
+                state = ProxyState.NORMAL;
+            }
+            this.emit(receiveEvent);
+        }
+    }
+
+    private void searchOnServer(RequestContext reqContext, ServerEvent event) {
+        reqContext
+                .setServerURL("https://sweng-quiz.appspot.com/search");
+        reqContext.addHeader("Content-type", "application/json");
+        StringEntity queryEntity = null;
+        try {
+            queryEntity = new StringEntity(QUERY_KEY
+                    + query.getQueryString() + "\" }");
+        } catch (UnsupportedEncodingException e) {
+            Log.d(TAG, e.getMessage(), e);
+        }
+        reqContext.setEntity(queryEntity);
+
+        this.emit(new ConnectionEvent(
+                ConnectionEventType.ADD_OR_RETRIEVE_QUESTION));
+        serverComm.doHttpPost(reqContext, event);
+    }
+
+
+
+    private ServerResponse offlineRandomQuestion() {
+        QuizQuestion question = cache.getRandomQuestion();
+
+        if (question == null) {
+            return new ServerResponse(null, HttpStatus.SC_NOT_FOUND);
+        } else {
+            ServerResponse response = null;
+            try {
+                response = new ServerResponse(question.toJSON(),
+                        HttpStatus.SC_OK);
+            } catch (MalformedQuestionException e) {
+                Log.d(TAG, e.getMessage(), e);
+            }
+
+            return response;
+        }
+    }
+
+
+
     private enum ProxyState {
         NORMAL, SEARCH, NEXT
     }
 
     private void getNextResultFromServer(RequestContext reqContext,
-            ServerEvent event) {
+                                         ServerEvent event) {
         reqContext.setServerURL("https://sweng-quiz.appspot.com/search");
         reqContext.addHeader("Content-type", "application/json");
         StringEntity queryEntity = null;
