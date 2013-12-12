@@ -223,13 +223,13 @@ public class EditQuestionActivity extends QuestionActivity {
             Button removeBtn = answer.getRemoveButton();
             Button correctBtn = answer.getCorrectButton();
 
-            if (!removeBtn.getText().equals("-")) {
+            if (!"-".equals(removeBtn.getText())) {
                 errors++;
             } else if (View.VISIBLE != removeBtn.getVisibility()) {
                 errors++;
             }
 
-            if (View.VISIBLE != removeBtn.getVisibility()) {
+            if (View.VISIBLE != correctBtn.getVisibility()) {
                 errors++;
             } else if (!"\u2718".equals(correctBtn.getText())
                     && !"\u2714".equals(correctBtn.getText())) {
