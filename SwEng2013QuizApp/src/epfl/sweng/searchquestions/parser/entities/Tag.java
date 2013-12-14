@@ -15,4 +15,8 @@ public class Tag extends Token {
         return mStringFormat;
     }
 
+    @Override
+    public String toString() {
+        return "Tag("+mStringFormat+")";
+    }
 }

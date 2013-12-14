@@ -17,4 +17,9 @@ public class Token {
     public boolean isKind(TokenKind kind) {
         return mKind == kind;
     }
+
+    @Override
+    public String toString() {
+        return mKind.toString();
+    }
 }

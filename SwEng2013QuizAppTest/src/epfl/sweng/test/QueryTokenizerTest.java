@@ -21,7 +21,6 @@ public class QueryTokenizerTest extends AndroidTestCase {
         test("A * B", asList(TAG, SPACE, AND, SPACE, TAG));
     }
 
-
     public void testDisjunction() {
         test("C + D", asList(TAG, SPACE, OR, SPACE, TAG));
     }
@@ -42,6 +41,10 @@ public class QueryTokenizerTest extends AndroidTestCase {
     public void testLongTag() {
         test("(Asflsadlkfja4ljdhfJjalsdhfk0jlsdhfasdkfhkgfk)",
                 asList(OPEN, TAG, CLOSE));
+    }
+
+    public void testForDebug() {
+        test("(Banana)(Kiwi)", asList(OPEN, TAG, CLOSE, OPEN, TAG, CLOSE));
     }
 
     public void testInvalid() {
