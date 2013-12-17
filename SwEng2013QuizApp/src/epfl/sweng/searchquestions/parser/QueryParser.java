@@ -203,14 +203,8 @@ public final class QueryParser {
 
             }
 
-
             if (lastToken != null && !lastToken.isKind(SPACE)) {
                 tokens.add(lastToken);
-
-                //Deal with juxtaposition of parenthesized expression like in "(Kiwi)(Orange)"
-                if (currentToken != null && lastToken.isKind(CLOSE) && currentToken.isKind(OPEN)) {
-                    tokens.add(new Token(AND));
-                }
             }
         }
 
